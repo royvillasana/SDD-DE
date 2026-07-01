@@ -1,6 +1,6 @@
 {
   "name": "@royvillasana/sdd-de",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Spec-Driven Development for Design Engineers — installs the Claude Code skill toolkit into any front-end project",
   "bin": {
     "sdd-de": "bin/sdd-de.js"
@@ -22,6 +22,9 @@
     "figma",
     "design-tokens"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
