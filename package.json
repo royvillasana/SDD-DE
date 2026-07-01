@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Spec-Driven Development for Design Engineers — installs the Claude Code skill toolkit into any front-end project",
   "bin": {
-    "sdd-de": "./bin/sdd-de.js"
+    "sdd-de": "bin/sdd-de.js"
   },
   "files": [
     "bin/",
@@ -25,6 +25,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/royvillasana/SDD-DE"
+    "url": "git+https://github.com/royvillasana/SDD-DE.git"
   }
 }
