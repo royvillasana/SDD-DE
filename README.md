@@ -48,6 +48,8 @@ Build the UI building blocks before composing any page. Follow atomic design ord
 | **Molecules** | SearchBar, Card, FormField |
 | **Organisms** | Header, Sidebar, DataTable |
 
+When all components are built, run `/storybook` to install Storybook, generate stories for every component, and launch a local dev server at `http://localhost:6006`.
+
 ### Epic 2 — Page Composition
 
 Compose Epic 1 components into complete pages and product features.
@@ -109,7 +111,8 @@ your-project/
 │       ├── visual-verify → ...
 │       ├── adversarial-review → ...
 │       ├── sync-tokens → ...
-│       └── commit → ...
+│       ├── commit → ...
+│       └── storybook → ...
 └── .sdd-de/
     ├── project.yaml                 ← framework + design system configuration
     ├── ai-specs/
@@ -121,6 +124,7 @@ your-project/
     │       ├── adversarial-review/  ← red-team before committing
     │       ├── sync-tokens/         ← sync design tokens
     │       ├── commit/              ← PR with spec as description
+    │       ├── storybook/           ← generate Storybook stories for all components
     │       └── sync-agent-symlinks/ ← repair broken symlinks
     └── docs/
         ├── component-standards.md
@@ -149,6 +153,7 @@ Type any skill command inside Claude Code (or your AI agent) to execute it:
 | `/adversarial-review` | Red-team the implementation before committing — finds what visual QA misses |
 | `/sync-tokens` | Sync design tokens between your design source and the project token file |
 | `/commit` | Stage, commit, and open a PR with the Component Spec as the PR description |
+| `/storybook` | Install Storybook, generate stories for all Epic 1 components, launch dev server |
 | `/sync-agent-symlinks` | Audit and repair broken symlinks in `.claude/skills/` and `.cursor/skills/` |
 
 ---

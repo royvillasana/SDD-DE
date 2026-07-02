@@ -422,6 +422,7 @@ async function init() {
       'Epic 1 — Component Library',
       '  Build tokens → atoms → molecules → organisms.',
       '  Run the 7-step cycle once per component.',
+      '  When done → /storybook to generate stories + launch dev server.',
       '',
       'Epic 2 — Page Composition',
       '  Compose Epic 1 components into pages and features.',
@@ -597,6 +598,7 @@ Usage:
     Build the UI building blocks before composing any page.
     Order: Tokens → Atoms → Molecules → Organisms
     Run the 7-step cycle once per component.
+    When done → /storybook to generate stories and launch dev server.
 
   Epic 2 — Page Composition
     Compose Epic 1 components into pages, layouts, and features.
@@ -622,6 +624,7 @@ Usage:
   .sdd-de/ai-specs/skills/       slash commands for Claude Code / Cursor
     /setup               /enrich-brief        /generate-artifacts
     /visual-verify       /adversarial-review  /sync-tokens  /commit
+    /storybook
   .sdd-de/docs/                  spec templates + standards
   CLAUDE.md / AGENTS.md / GEMINI.md / codex.md
   .claude/skills/                symlinks → .sdd-de/ai-specs/skills/

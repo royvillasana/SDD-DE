@@ -45,6 +45,7 @@ and follow the corresponding `SKILL.md` automatically before responding.
 | `/adversarial-review` | `.sdd-de/ai-specs/skills/adversarial-review/SKILL.md` | Red-team implementation before committing |
 | `/sync-tokens` | `.sdd-de/ai-specs/skills/sync-tokens/SKILL.md` | Sync design tokens between Figma and code |
 | `/commit` | `.sdd-de/ai-specs/skills/commit/SKILL.md` | Commit with spec as PR description |
+| `/storybook` | `.sdd-de/ai-specs/skills/storybook/SKILL.md` | Install Storybook, generate stories for all components, launch dev server |
 | `/sync-agent-symlinks` | `.sdd-de/ai-specs/skills/sync-agent-symlinks/SKILL.md` | Repair broken symlinks across editor directories |
 
 ## Standards
@@ -89,6 +90,10 @@ Follow atomic design order: tokens first, then atoms, then molecules, then organ
 | **Organisms** | Header (Nav + CTA), Form (fields + submit) |
 
 Run the **7-step cycle** once per component. Do not start Epic 2 until the atoms your pages depend on are built.
+
+When all components are built, run **`/storybook`** to install Storybook, generate stories
+for every component, and launch a local dev server at `http://localhost:6006` so you can
+browse and interact with the full component library before composing pages.
 
 ---
 
