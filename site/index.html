@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SDD-DE — Spec-Driven Development for Design Engineers</title>
+<meta name="description" content="A portable AI-ready methodology toolkit that teaches AI coding agents to ship production-quality UI through disciplined specification before implementation.">
+<style>
+  /* ── Reset ─────────────────────────────────────────────── */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* ── Tokens ────────────────────────────────────────────── */
+  :root {
+    --bg:           #141413;
+    --bg-surface:   #1e1e1d;
+    --bg-card:      #242423;
+    --bg-code:      #1a1a19;
+    --border:       #2e2e2c;
+    --border-light: #3e3e3c;
+    --text:         #faf9f0;
+    --text-dim:     #b8b5a8;
+    --text-muted:   #6e6b60;
+    --accent:       #56d4c8;
+    --accent-hover: #7ee4da;
+    --cyan:         #cc785c;
+    --cyan-dim:     #9e5e46;
+    --green:        #8ebe8e;
+    --red:          #cf7e7e;
+    --font:         'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --font-mono:    'JetBrains Mono', 'Fira Code', 'SF Mono', 'Cascadia Code', monospace;
+    --max-width:    960px;
+    --radius:       8px;
+    --radius-lg:    12px;
+  }
+
+  ::selection {
+    background: rgba(86, 212, 200, 0.35);
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(250, 249, 240, 0.2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(250, 249, 240, 0.35); }
+
+  /* ── Base ──────────────────────────────────────────────── */
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
+  a:hover { color: var(--accent-hover); }
+  code {
+    font-family: var(--font-mono);
+    background: var(--bg-code);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    border: 1px solid var(--border);
+  }
+  pre {
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--accent);
+  }
+  pre code { background: none; border: none; padding: 0; }
+
+  /* ── Layout ────────────────────────────────────────────── */
+  .container { max-width: var(--max-width); margin: 0 auto; padding: 0 24px; }
+  section { padding: 80px 0; }
+  section + section { border-top: 1px solid var(--border); }
+
+  /* ── Navigation ────────────────────────────────────────── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(26, 26, 26, 0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 0;
+  }
+  nav .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  nav .logo {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+  nav .logo span { color: var(--text-muted); }
+  nav .links { display: flex; gap: 32px; }
+  nav .links a {
+    color: var(--text-dim);
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  nav .links a:hover { color: var(--text); }
+
+  /* ── Hero ──────────────────────────────────────────────── */
+  .hero {
+    padding: 100px 0 80px;
+    text-align: center;
+  }
+  .hero-logo-img {
+    width: clamp(300px, 60vw, 560px);
+    height: auto;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    color: var(--text);
+    letter-spacing: -1px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+  .hero p {
+    font-size: 18px;
+    color: var(--text-dim);
+    max-width: 600px;
+    margin: 0 auto 40px;
+    line-height: 1.6;
+  }
+  .hero-install {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 24px;
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--accent);
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .hero-install:hover {
+    border-color: var(--border-light);
+    background: var(--bg-card);
+  }
+  .hero-install .prompt { color: var(--text-muted); user-select: none; }
+  .hero-install .copy-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: var(--font);
+  }
+
+  /* ── Badges ────────────────────────────────────────────── */
+  .badges {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-dim);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+  }
+  .badge .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+  }
+
+  /* ── Demo videos ───────────────────────────────────────── */
+  .demo-video {
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin: 32px 0;
+    background: #000;
+  }
+  .demo-video img {
+    width: 100%;
+    display: block;
+  }
+  .demo-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 8px;
+    font-family: var(--font-mono);
+  }
+
+  /* ── How it works ──────────────────────────────────────── */
+  .steps-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 40px;
+  }
+  .step-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    transition: border-color 0.2s;
+  }
+  .step-card:hover { border-color: var(--border-light); }
+  .step-num {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    background: rgba(212, 165, 116, 0.1);
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-content h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+  .step-content h3 code {
+    color: var(--accent);
+    font-size: 14px;
+  }
+  .step-content p {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  /* ── Feature grid ──────────────────────────────────────── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 40px;
+  }
+  .feature-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    transition: border-color 0.2s;
+  }
+  .feature-card:hover { border-color: var(--border-light); }
+  .feature-card h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+  .feature-card p {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  /* ── Table ─────────────────────────────────────────────── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    font-size: 14px;
+  }
+  th {
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+  td:first-child {
+    font-family: var(--font-mono);
+    color: var(--accent);
+    font-size: 13px;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* ── Section headers ───────────────────────────────────── */
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: clamp(24px, 3vw, 36px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+  .section-desc {
+    font-size: 16px;
+    color: var(--text-dim);
+    max-width: 600px;
+    line-height: 1.6;
+  }
+
+  /* ── Epics ─────────────────────────────────────────────── */
+  .epic-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin: 40px 0;
+  }
+  .epic-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+  }
+  .epic-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .epic-card .epic-sub {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+  }
+  .epic-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .epic-list li {
+    font-size: 14px;
+    color: var(--text-dim);
+    padding-left: 16px;
+    position: relative;
+  }
+  .epic-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--border-light);
+  }
+  .epic-list li strong { color: var(--text); }
+
+  /* ── Arrow between epics ───────────────────────────────── */
+  .epic-arrow {
+    text-align: center;
+    margin: -8px 0 24px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  /* ── Checklist cards ───────────────────────────────────── */
+  .checklist {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .checklist li {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    transition: border-color 0.2s;
+  }
+  .checklist li:hover { border-color: var(--border-light); }
+  .checklist .check-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--accent);
+    margin-top: 2px;
+  }
+  .checklist .check-text h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .checklist .check-text p {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+  .checklist .check-text code {
+    font-size: 12px;
+  }
+
+  /* ── Phase heading ─────────────────────────────────────── */
+  .phase-heading {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 48px 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .phase-heading .phase-tag {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent);
+    background: rgba(86, 212, 200, 0.1);
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+  .phase-desc {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  /* ── Tabs ───────────────────────────────────────────────── */
+  .tabs {
+    margin: 24px 0;
+  }
+  .tab-bar {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    padding: 12px 20px;
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .tab-btn:hover { color: var(--text-dim); }
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .tab-panel {
+    display: none;
+    padding-top: 8px;
+  }
+  .tab-panel.active { display: block; }
+
+  /* ── Callout box ───────────────────────────────────────── */
+  .callout {
+    background: rgba(86, 212, 200, 0.06);
+    border: 1px solid rgba(86, 212, 200, 0.2);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 24px 0;
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .callout strong { color: var(--accent); }
+  .callout code { font-size: 12px; }
+
+  /* ── Frameworks ────────────────────────────────────────── */
+  .fw-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 24px;
+  }
+  .fw-tag {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 14px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .fw-tag svg, .tab-btn svg, .badge svg, td svg {
+    flex-shrink: 0;
+    vertical-align: middle;
+  }
+  .tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ── Footer ────────────────────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+  footer a { color: var(--text-dim); }
+
+  /* ── Responsive ────────────────────────────────────────── */
+  /* ── Smooth entry animations ────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero-logo-img { animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both; }
+  .hero h1 { animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both; }
+  .hero p { animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both; }
+  .hero-install { animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both; }
+  .badges { animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both; }
+
+  @media (max-width: 768px) {
+    .epic-container { grid-template-columns: 1fr; }
+    nav .links { gap: 16px; }
+    section { padding: 60px 0; }
+    .hero { padding: 60px 0 40px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Nav ──────────────────────────────────────────────── -->
+<nav>
+  <div class="container">
+    <div class="logo">SDD<span>-</span>DE</div>
+    <div class="links">
+      <a href="#prepare">Prepare</a>
+      <a href="#workflow">Workflow</a>
+      <a href="#skills">Skills</a>
+      <a href="#frameworks">Frameworks</a>
+      <a href="https://github.com/royvillasana/SDD-DE">GitHub</a>
+      <a href="https://www.npmjs.com/package/@royvillasana/sdd-de">npm</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="container">
+    <img class="hero-logo-img" src="logo.svg" alt="SDD-DE" />
+
+    <h1>Spec-Driven Development<br>for <em>Design Engineers</em></h1>
+    <p>A portable methodology toolkit that installs into any frontend project and teaches AI coding agents to ship production-quality UI.</p>
+
+    <div class="hero-install" onclick="navigator.clipboard.writeText('npx @royvillasana/sdd-de')">
+      <span class="prompt">$</span>
+      <span>npx @royvillasana/sdd-de</span>
+      <span class="copy-hint">click to copy</span>
+    </div>
+
+    <div class="badges">
+      <span class="badge"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M17.3041 3.541h-3.6718l6.696 16.918H24Zm-10.6082 0L0 20.459h3.7442l1.3693-3.5527h7.0052l1.3693 3.5528h3.7442L10.5363 3.5409Zm-.3712 10.2232 2.2914-5.9456 2.2914 5.9456Z"/></svg> Claude Code</span>
+      <span class="badge"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M2.657 6.338h18.55c.263 0 .43.287.297.515L12.23 22.918c-.062.107-.229.064-.229-.06V12.335a.59.59 0 0 0-.295-.51l-9.11-5.257c-.109-.063-.064-.23.061-.23"/></svg> Cursor</span>
+      <span class="badge"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg> GitHub Copilot</span>
+      <span class="badge"><span class="dot"></span> Any Markdown AI agent</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── Demo ─────────────────────────────────────────────── -->
+<section id="demo">
+  <div class="container">
+    <div class="section-label">See it in action</div>
+    <h2 class="section-title">Install in seconds, start building immediately</h2>
+    <p class="section-desc">The CLI asks about your stack, installs the toolkit, and your AI agent is ready to follow the SDD workflow.</p>
+
+    <div class="demo-video">
+      <img src="demo-setup.gif" alt="SDD-DE setup process" loading="lazy" />
+    </div>
+    <p class="demo-label">Setup &mdash; configuring framework, design source, and styling</p>
+  </div>
+</section>
+
+<!-- ── Before You Start ─────────────────────────────────── -->
+<section id="prepare">
+  <div class="container">
+    <div class="section-label">Before you start</div>
+    <h2 class="section-title">Prepare your design source</h2>
+    <p class="section-desc">SDD-DE supports 5 design sources. Choose yours below to see what you need to prepare before running the CLI.</p>
+
+    <div class="tabs">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab(event, 'tab-figma')"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M15.852 8.981h-4.588V0h4.588c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.491-4.49 4.491zM12.735 7.51h3.117c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-3.117V7.51zm0 1.471H8.148c-2.476 0-4.49-2.014-4.49-4.49S5.672 0 8.148 0h4.588v8.981zm-4.587-7.51c-1.665 0-3.019 1.355-3.019 3.019s1.354 3.02 3.019 3.02h3.117V1.471H8.148zm4.587 15.019H8.148c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h4.588v8.98zM8.148 8.981c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h3.117V8.981H8.148zM8.172 24c-2.489 0-4.515-2.014-4.515-4.49s2.014-4.49 4.49-4.49h4.588v4.441c0 2.503-2.047 4.539-4.563 4.539zm-.024-7.51a3.023 3.023 0 0 0-3.019 3.019c0 1.665 1.365 3.019 3.044 3.019 1.705 0 3.093-1.376 3.093-3.068v-2.97H8.148zm7.704 0h-.098c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h.098c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.49-4.49 4.49zm-.097-7.509c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h.098c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-.098z"/></svg> Figma</button>
+        <button class="tab-btn" onclick="switchTab(event, 'tab-library')"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.565-2.438L1.5 0zm17.09 4.413L5.41 4.41l.213 2.622 10.125.002-.255 2.716h-6.64l.24 2.573h6.182l-.366 3.523-2.91.804-2.956-.81-.188-2.11h-2.61l.29 3.855L12 19.288l5.373-1.53L18.59 4.414z"/></svg> Component Library</button>
+        <button class="tab-btn" onclick="switchTab(event, 'tab-github')"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg> GitHub Repo</button>
+        <button class="tab-btn" onclick="switchTab(event, 'tab-zip')"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M3.5 0A1.5 1.5 0 002 1.5v21A1.5 1.5 0 003.5 24h17a1.5 1.5 0 001.5-1.5v-21A1.5 1.5 0 0020.5 0h-17zm7 1h3v2h-3V1zm0 2h3v2h-3V3zm-3 2h3v2h-3V5zm3 2h3v2h-3V7zm-3 2h3v2h-3V9zm3 2h3v2h-3v-2zm-3 2h3v2h-3v-2zm1 4h4a1 1 0 011 1v3H8.5v-3a1 1 0 011-1z"/></svg> ZIP File</button>
+        <button class="tab-btn" onclick="switchTab(event, 'tab-stitch')"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/></svg> Google Stitch</button>
+      </div>
+
+      <!-- ── Figma ──────────────────────────────────────── -->
+      <div id="tab-figma" class="tab-panel active">
+
+        <div class="phase-heading"><span class="phase-tag">Step 0</span> Connect the Figma MCP to Claude Code</div>
+        <p class="phase-desc">Claude Code needs the Figma MCP server to read your design files. Set this up once &mdash; it takes under a minute.</p>
+        <ul class="checklist">
+          <li>
+            <div class="check-icon">&check;</div>
+            <div class="check-text">
+              <h4>Install the Figma MCP server</h4>
+              <p>Follow the official guide to add the Figma MCP remote server to Claude Code. This gives the AI agent direct access to read your Figma frames, variables, component properties, and styles. <a href="https://developers.figma.com/docs/figma-mcp-server/remote-server-installation/#claude-code" target="_blank" rel="noopener">Figma MCP &mdash; Claude Code installation guide &rarr;</a></p>
+            </div>
+          </li>
+          <li>
+            <div class="check-icon">&check;</div>
+            <div class="check-text">
+              <h4>Verify the connection</h4>
+              <p>Open Claude Code and ask it to read a Figma file. If it can describe the frames and variables, the MCP is working. If not, check your authentication token and server configuration in the guide above.</p>
+            </div>
+          </li>
+        </ul>
+
+        <div class="phase-heading"><span class="phase-tag">Step 1</span> Set up your Figma variables</div>
+        <p class="phase-desc">Create a Variable Collection (e.g., "Tokens") with all your design tokens organized by category. These become CSS custom properties in your codebase.</p>
+        <ul class="checklist">
+          <li>
+            <div class="check-icon">&check;</div>
+            <div class="check-text">
+              <h4>Color tokens</h4>
+              <p>Define all colors as variables: <code>color/primary</code>, <code>color/primary-hover</code>, <code>color/secondary</code>, <code>color/text</code>, <code>color/surface</code>, <code>color/border</code>, <code>color/destructive</code>. Use semantic names, not visual names (not "blue-500").</p>
+            </div>
+          </li>
+          <li>
+            <div class="check-icon">&check;</div>
+            <div class="check-text">
+              <h4>Spacing, typography, radius, shadow tokens</h4>
+              <p>Spacing scale: <code>spacing/xs</code> (4px) through <code>spacing/2xl</code> (48px). Typography: <code>font-size/xs</code> through <code>font-size/2xl</code>. Radius: <code>radius/sm</code> through <code>radius/full</code>. Shadows: <code>shadow/sm</code>, <code>shadow/md</code>, <code>shadow/lg</code>.</p>
+            </div>
+          </li>
+        </ul>
+
+        <div class="phase-heading"><span class="phase-tag">Step 2</span> Build your components in Figma</div>
+        <p class="phase-desc">Create every component as a proper Figma Component with variants. The agent reads component properties, variant names, and layer structure.</p>
+        <ul class="checklist">
+          <li>
+            <div class="check-icon">&check;</div>
+            <div class="check-text">
+              <h4>Use clear, consistent naming</h4>
+              <p>Name components as they should appear in code: <code>Button</code>, <code>Input</code>, <code>SearchBar</code>. Use PascalCase. Group with slashes: <code>UI/Button</code>, <code>Modules/SearchBar</code>.</p>
+            </div>
+          </li>
+          <li>
+            <div class="check-icon">&check;</div>
+            <div class="check-text">
+              <h4>Define variants as component properties</h4>
+              <p>Use Figma's component properties. Create <code>Variant</code> (<code>Primary</code>, <code>Secondary</code>, <code>Ghost</code>), <code>Size</code> (<code>SM</code>, <code>MD</code>, <code>LG</code>), and <code>State</code> (<code>Default</code>, <code>Hover</code>, <code>Disabled</code>, <code>Loading</code>) properties.</p>
+            </div>
+          </li>
+          <li>
+            <div class="check-icon">&check;</div>
+            <div class="check-text">
+              <h4>Apply variables to every value &amp; use auto-layout</h4>
+              <p>Every fill, padding, gap, radius, and font must reference a Figma variable &mdash; no hardcoded values. Use auto-layout for all spacing (maps to Flexbox in code).</p>
+            </div>
+          </li>
+        </ul>
+
+        <div class="phase-heading"><span class="phase-tag">Step 3</span> Organize your pages</div>
+        <p class="phase-desc">For Epic 2, create page compositions at 3 breakpoints using component instances.</p>
+        <ul class="checklist">
+          <li>
+            <div class="check-icon">&check;</div>
+            <div class="check-text">
+              <h4>3 breakpoints, component instances only</h4>
+              <p>Create frames at <code>375px</code>, <code>768px</code>, and <code>1440px</code>. Use instances of your component library &mdash; not detached copies. This ensures accurate imports in generated code.</p>
+            </div>
+          </li>
+        </ul>
+
+        <div class="callout">
+          <strong>Then run the CLI.</strong> Run <code>npx @royvillasana/sdd-de</code>, select <strong>Figma</strong> as your design source, and paste your Figma file URL. The AI agent can now read your design system and generate spec-accurate code.
+        </div>
+      </div>
+
+      <!-- ── Component Library ──────────────────────────── -->
+      <div id="tab-library" class="tab-panel">
+
+        <div class="phase-heading"><span class="phase-tag">Step 0</span> Install your component library</div>
+        <p class="phase-desc">Make sure the library is installed in your project before running the CLI.</p>
+        <ul class="checklist">
+          <li>
+            <div class="check-icon">&check;</div>
+            <div class="check-text">
+              <h4>Install the library package</h4>
+              <p>Run the library's install command in your project: <code>npx shadcn@latest init</code> for shadcn/ui, <code>npm install @mui/material</code> for Material UI, <code>npm install antd</code> for Ant Design, etc. The CLI will ask which library you're using.</p>
+            </div>
+          </li>
+          <li>
+            <div class="check-icon">&check;</div>
+            <div class="check-text">
+              <h4>Know which components you need</h4>
+              <p>Have a list of the base components you'll customize: Button, Input, Card, Dialog, etc. The agent reads the library's documentation and API to generate specs that extend the base components with your design requirements.</p>
+            </div>
+          </li>
+        </ul>
+
+        <div class="phase-heading"><span class="phase-tag">Step 1</span> Prepare your design tokens</div>
+        <p class="phase-desc">Define your brand's token file so generated components reference your tokens, not the library defaults.</p>
+        <ul class="checklist">
+          <li>
+            <div class="check-icon">&check;</div>
+            <div class="check-text">
+              <h4>Create a token file with your brand values</h4>
+              <p>Create CSS custom properties for colors, spacing, radius, and typography in your token file (e.g., <code>src/styles/tokens.css</code> or <code>app/globals.css</code>). The CLI auto-suggests the path based on your framework.</p>
+            </div>
+          </li>
+        </ul>
+
+        <div class="callout">
+          <strong>Then run the CLI.</strong> Run <code>npx @royvillasana/sdd-de</code>, select <strong>Component Library</strong>, and choose your library (shadcn/ui, Material UI, Radix, Ant Design, Chakra, Mantine, or Headless UI). No MCP needed &mdash; the agent reads library docs directly.
+        </div>
+      </div>
+
+      <!-- ── GitHub Repo ────────────────────────────────── -->
+      <div id="tab-github" class="tab-panel">
+
+        <div class="phase-heading"><span class="phase-tag">Step 0</span> Identify your source repository</div>
+        <p class="phase-desc">The agent reads component source files directly from a GitHub repository.</p>
+        <ul class="checklist">
+          <li>
+            <div class="check-icon">&check;</div>
+            <div class="check-text">
+              <h4>Have the repo URL, branch, and component directory</h4>
+              <p>You'll need the full GitHub URL (e.g., <code>https://github.com/org/design-system</code>), the branch name (usually <code>main</code>), and the path to the component directory (e.g., <code>src/components</code>).</p>
+            </div>
+          </li>
+          <li>
+            <div class="check-icon">&check;</div>
+            <div class="check-text">
+              <h4>Ensure the repo is accessible</h4>
+              <p>The repository must be public, or you must have configured <code>gh auth login</code> so Claude Code can access private repos via the GitHub CLI.</p>
+            </div>
+          </li>
+        </ul>
+
+        <div class="phase-heading"><span class="phase-tag">Step 1</span> Prepare your token file</div>
+        <ul class="checklist">
+          <li>
+            <div class="check-icon">&check;</div>
+            <div class="check-text">
+              <h4>Create local design tokens</h4>
+              <p>The agent reads component patterns from the repo and generates code that references your local token file. Create the token file in your project before starting the cycle.</p>
+            </div>
+          </li>
+        </ul>
+
+        <div class="callout">
+          <strong>Then run the CLI.</strong> Run <code>npx @royvillasana/sdd-de</code>, select <strong>GitHub Repository</strong>, and enter your repo URL, branch, and component directory. The agent reads source files and generates specs based on the existing component patterns.
+        </div>
+      </div>
+
+      <!-- ── ZIP File ───────────────────────────────────── -->
+      <div id="tab-zip" class="tab-panel">
+
+        <div class="phase-heading"><span class="phase-tag">Step 0</span> Prepare your ZIP archive</div>
+        <p class="phase-desc">The agent reads component source files from a local ZIP file &mdash; useful for exported design systems or offline handoffs.</p>
+        <ul class="checklist">
+          <li>
+            <div class="check-icon">&check;</div>
+            <div class="check-text">
+              <h4>Have the ZIP file and know the component path</h4>
+              <p>Place the <code>.zip</code> file in or near your project directory. Know the component directory path inside the archive (e.g., <code>src/components</code>). The agent will extract and read the source files.</p>
+            </div>
+          </li>
+          <li>
+            <div class="check-icon">&check;</div>
+            <div class="check-text">
+              <h4>Ensure components are well-structured</h4>
+              <p>Components inside the ZIP should follow standard patterns: one file per component, clear naming, typed props. The agent reads these as the source of truth for generating specs.</p>
+            </div>
+          </li>
+        </ul>
+
+        <div class="callout">
+          <strong>Then run the CLI.</strong> Run <code>npx @royvillasana/sdd-de</code>, select <strong>ZIP File</strong>, and enter the path to your archive and the component directory inside it.
+        </div>
+      </div>
+
+      <!-- ── Google Stitch ──────────────────────────────── -->
+      <div id="tab-stitch" class="tab-panel">
+
+        <div class="phase-heading"><span class="phase-tag">Step 0</span> Choose your Stitch connection method</div>
+        <p class="phase-desc">Google Stitch can connect via live MCP or through an exported ZIP file.</p>
+        <ul class="checklist">
+          <li>
+            <div class="check-icon">&check;</div>
+            <div class="check-text">
+              <h4>Option A: Stitch MCP (recommended)</h4>
+              <p>Get your API key from <code>stitch.withgoogle.com &rarr; Settings</code>. The agent connects live to read screen code, images, and design tokens. You can optionally provide a project ID or list projects at runtime.</p>
+            </div>
+          </li>
+          <li>
+            <div class="check-icon">&check;</div>
+            <div class="check-text">
+              <h4>Option B: Exported ZIP</h4>
+              <p>Export your Stitch project from the dashboard as a ZIP file containing <code>design.md</code> and screen PNGs. Place the ZIP in your project directory. The agent reads the design markdown and images as the spec source.</p>
+            </div>
+          </li>
+        </ul>
+
+        <div class="phase-heading"><span class="phase-tag">Step 1</span> Map Stitch tokens to your project</div>
+        <ul class="checklist">
+          <li>
+            <div class="check-icon">&check;</div>
+            <div class="check-text">
+              <h4>Create a local token file</h4>
+              <p>The agent maps every Stitch design value to a CSS custom property in your token file. Create the token file before starting &mdash; the CLI suggests the right path for your framework.</p>
+            </div>
+          </li>
+        </ul>
+
+        <div class="callout">
+          <strong>Then run the CLI.</strong> Run <code>npx @royvillasana/sdd-de</code>, select <strong>Google Stitch</strong>, and choose MCP (enter API key) or ZIP (enter file path). The agent reads your Stitch designs and generates token-mapped component specs.
+        </div>
+      </div>
+
+    </div><!-- .tabs -->
+  </div>
+</section>
+
+<!-- ── Workflow ─────────────────────────────────────────── -->
+<section id="workflow">
+  <div class="container">
+    <div class="section-label">Workflow</div>
+    <h2 class="section-title">Two epics, one 7-step cycle</h2>
+    <p class="section-desc">Every component and every page follows the same disciplined cycle. The spec is the input to the AI &mdash; when it's complete, implementation becomes mechanical.</p>
+
+    <!-- ── Epic 1 detail ──────────────────────────────────── -->
+    <div class="phase-heading"><span class="phase-tag">Epic 1</span> Component Library</div>
+    <p class="phase-desc">Build every UI building block before composing any page. Work from the smallest atoms up to complex organisms. Each component goes through the full 7-step cycle individually.</p>
+
+    <div class="epic-container">
+      <div class="epic-card">
+        <h3>What you build</h3>
+        <p class="epic-sub">Follow atomic design order &mdash; each level depends on the one before it.</p>
+        <ul class="epic-list">
+          <li><strong>Tokens</strong> &mdash; sync color, spacing, typography, radius, and shadow variables from Figma to your token file</li>
+          <li><strong>Atoms</strong> &mdash; Button, Input, Badge, Icon, Avatar, Label, Checkbox, Radio, Toggle, Tooltip</li>
+          <li><strong>Molecules</strong> &mdash; SearchBar (Input + Button), Card (Image + Text + Button), FormField (Label + Input + Error)</li>
+          <li><strong>Organisms</strong> &mdash; Header (Nav + Logo + CTA), Sidebar (Nav + Links), DataTable (Header + Rows + Pagination)</li>
+        </ul>
+      </div>
+      <div class="epic-card">
+        <h3>How you do it</h3>
+        <p class="epic-sub">For each component, run the 7-step cycle:</p>
+        <ul class="epic-list">
+          <li><strong>/enrich-brief</strong> &mdash; describe the component and paste its Figma frame URL</li>
+          <li><strong>/generate-artifacts</strong> &mdash; the AI generates 3 spec files from your Figma frame</li>
+          <li><strong>Branch + implement</strong> &mdash; one spec task at a time, using design tokens</li>
+          <li><strong>/visual-verify</strong> &mdash; the AI compares your code to the Figma spec</li>
+          <li><strong>/adversarial-review</strong> &mdash; red-team for edge cases, accessibility, token compliance</li>
+          <li><strong>/sync-tokens + /commit</strong> &mdash; sync tokens and open PR</li>
+          <li><strong>Repeat</strong> &mdash; move to the next component</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>When Epic 1 is complete:</strong> run <code>/storybook</code>. This installs Storybook, generates stories for every component (variants, states, accessibility tests), and launches a dev server at <code>http://localhost:6006</code> so you can browse and interact with your entire component library before composing pages.
+    </div>
+
+    <!-- ── Epic 2 detail ──────────────────────────────────── -->
+    <div class="phase-heading"><span class="phase-tag">Epic 2</span> Page Composition</div>
+    <p class="phase-desc">Compose the components you built in Epic 1 into complete pages, layouts, and product features. Only start a page once every component it needs exists in the library.</p>
+
+    <div class="epic-container">
+      <div class="epic-card">
+        <h3>What you build</h3>
+        <p class="epic-sub">Start with templates, then fill them with real content.</p>
+        <ul class="epic-list">
+          <li><strong>Templates</strong> &mdash; two-column layout, full-bleed hero, dashboard shell, settings layout</li>
+          <li><strong>Pages</strong> &mdash; Homepage, Login, Signup, Dashboard, Settings, Profile, 404</li>
+          <li><strong>Features</strong> &mdash; Checkout flow, Onboarding wizard, Search results, Notification center</li>
+        </ul>
+      </div>
+      <div class="epic-card">
+        <h3>What you need ready</h3>
+        <p class="epic-sub">Before starting each page:</p>
+        <ul class="epic-list">
+          <li><strong>Figma page frames</strong> &mdash; at 375px, 768px, and 1440px breakpoints</li>
+          <li><strong>Component instances</strong> &mdash; pages must use instances of your Epic 1 components, not detached copies</li>
+          <li><strong>Epic 1 complete</strong> &mdash; every atom, molecule, and organism the page uses must be built and committed</li>
+          <li><strong>Content ready</strong> &mdash; real copy, images, and data for the page (not lorem ipsum)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Same 7-step cycle.</strong> Each page follows the exact same workflow: <code>/enrich-brief</code> with the Figma page URL &rarr; <code>/generate-artifacts</code> &rarr; branch &rarr; implement &rarr; <code>/visual-verify</code> &rarr; <code>/adversarial-review</code> &rarr; <code>/commit</code>. The AI imports your Epic 1 components and composes them according to the Figma page layout.
+    </div>
+
+    <!-- ── 7 Step Cycle ───────────────────────────────────── -->
+    <h3 style="font-size: 20px; font-weight: 700; margin: 48px 0 24px;">The 7-Step Cycle</h3>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3><code>/enrich-brief</code></h3>
+          <p>Transform a vague brief, Figma URL, or user story into an enriched story with acceptance criteria.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3><code>/generate-artifacts</code></h3>
+          <p>Generate Component Spec, Interaction Spec, and Page Spec from the enriched story.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3><code>git checkout -b</code></h3>
+          <p>Branch before any implementation. One branch per component or page.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>Implement</h3>
+          <p>One spec task at a time. Mark <code>[ ]</code> &rarr; <code>[x]</code> when done. Style-encapsulated, token-referenced, accessible.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h3><code>/visual-verify</code></h3>
+          <p>Compare live implementation to the design spec. Zero discrepancies required to proceed.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <h3><code>/adversarial-review</code></h3>
+          <p>Red-team the implementation. Resolve all Blocker findings before committing.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">7</div>
+        <div class="step-content">
+          <h3><code>/sync-tokens</code> &rarr; <code>/commit</code></h3>
+          <p>Sync design tokens, then open a PR with the Component Spec as the description.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── Skills ──────────────────────────────────────────── -->
+<section id="skills">
+  <div class="container">
+    <div class="section-label">Skills</div>
+    <h2 class="section-title">9 slash commands, one consistent workflow</h2>
+    <p class="section-desc">Type any command inside Claude Code, Cursor, or your AI agent. The agent reads the SKILL.md and executes the full procedure.</p>
+
+    <table>
+      <thead>
+        <tr><th>Command</th><th>What it does</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>/setup</td><td>Configure project &mdash; framework, language, design source, styling</td></tr>
+        <tr><td>/enrich-brief</td><td>Transform brief into spec-ready enriched story with acceptance criteria</td></tr>
+        <tr><td>/generate-artifacts</td><td>Generate Component Spec + Interaction Spec + Page Spec</td></tr>
+        <tr><td>/visual-verify</td><td>Visual QA against the design spec &mdash; zero discrepancies required</td></tr>
+        <tr><td>/adversarial-review</td><td>Red-team implementation before committing</td></tr>
+        <tr><td>/sync-tokens</td><td>Sync design tokens between design source and code</td></tr>
+        <tr><td>/commit</td><td>Stage, commit, and open PR with Component Spec as description</td></tr>
+        <tr><td>/storybook</td><td>Install Storybook, generate stories for all components, launch dev server</td></tr>
+        <tr><td>/sync-agent-symlinks</td><td>Audit and repair broken editor symlinks</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── Design Sources ──────────────────────────────────── -->
+<section>
+  <div class="container">
+    <div class="section-label">Design Sources</div>
+    <h2 class="section-title">Works with your design system</h2>
+    <p class="section-desc">Choose where your components and specs come from during setup. Every skill adapts to your source.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="vertical-align:-3px;margin-right:6px"><path d="M15.852 8.981h-4.588V0h4.588c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.491-4.49 4.491zM12.735 7.51h3.117c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-3.117V7.51zm0 1.471H8.148c-2.476 0-4.49-2.014-4.49-4.49S5.672 0 8.148 0h4.588v8.981zm-4.587-7.51c-1.665 0-3.019 1.355-3.019 3.019s1.354 3.02 3.019 3.02h3.117V1.471H8.148zm4.587 15.019H8.148c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h4.588v8.98zM8.148 8.981c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h3.117V8.981H8.148zM8.172 24c-2.489 0-4.515-2.014-4.515-4.49s2.014-4.49 4.49-4.49h4.588v4.441c0 2.503-2.047 4.539-4.563 4.539z"/></svg>Figma</h3>
+        <p>Reads frames, variables, and component specs via the Figma MCP. Live connection to your design files.</p>
+      </div>
+      <div class="feature-card">
+        <h3><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="vertical-align:-3px;margin-right:6px"><path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.565-2.438L1.5 0zm17.09 4.413L5.41 4.41l.213 2.622 10.125.002-.255 2.716h-6.64l.24 2.573h6.182l-.366 3.523-2.91.804-2.956-.81-.188-2.11h-2.61l.29 3.855L12 19.288l5.373-1.53L18.59 4.414z"/></svg>Component Library</h3>
+        <p>shadcn/ui, Material UI, Radix, Ant Design, Chakra UI, Mantine, Headless UI, or any library.</p>
+      </div>
+      <div class="feature-card">
+        <h3><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="vertical-align:-3px;margin-right:6px"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub Repository</h3>
+        <p>Reads component source files directly from any GitHub repo. Specify branch and component directory.</p>
+      </div>
+      <div class="feature-card">
+        <h3><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="vertical-align:-3px;margin-right:6px"><path d="M3.5 0A1.5 1.5 0 002 1.5v21A1.5 1.5 0 003.5 24h17a1.5 1.5 0 001.5-1.5v-21A1.5 1.5 0 0020.5 0h-17zm7 1h3v2h-3V1zm0 2h3v2h-3V3zm-3 2h3v2h-3V5zm3 2h3v2h-3V7zm-3 2h3v2h-3V9zm3 2h3v2h-3v-2zm-3 2h3v2h-3v-2zm1 4h4a1 1 0 011 1v3H8.5v-3a1 1 0 011-1z"/></svg>ZIP File</h3>
+        <p>Reads component source files from a local ZIP archive. Works with any exported design system.</p>
+      </div>
+      <div class="feature-card">
+        <h3><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="vertical-align:-3px;margin-right:6px"><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/></svg>Google Stitch</h3>
+        <p>Google's AI design tool. Connects via Stitch MCP or reads an exported ZIP with design.md.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Frameworks ──────────────────────────────────────── -->
+<section id="frameworks">
+  <div class="container">
+    <div class="section-label">Frameworks</div>
+    <h2 class="section-title">Framework-agnostic, styling-aware</h2>
+    <p class="section-desc">SDD-DE adapts to your stack. Components follow each framework's best practices for styling, file structure, and conventions.</p>
+
+    <div class="fw-grid">
+      <span class="fw-tag"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M14.23 12.004a2.236 2.236 0 0 1-2.235 2.236 2.236 2.236 0 0 1-2.236-2.236 2.236 2.236 0 0 1 2.235-2.236 2.236 2.236 0 0 1 2.236 2.236zm2.648-10.69c-1.346 0-3.107.96-4.888 2.622-1.78-1.653-3.542-2.602-4.887-2.602-.41 0-.783.093-1.106.278-1.375.793-1.683 3.264-.973 6.365C1.98 8.917 0 10.42 0 12.004c0 1.59 1.99 3.097 5.043 4.03-.704 3.113-.39 5.588.988 6.38.32.187.69.275 1.102.275 1.345 0 3.107-.96 4.888-2.624 1.78 1.654 3.542 2.603 4.887 2.603.41 0 .783-.09 1.106-.275 1.374-.792 1.683-3.263.973-6.365C22.02 15.096 24 13.59 24 12.004c0-1.59-1.99-3.097-5.043-4.032.704-3.11.39-5.587-.988-6.38-.318-.184-.688-.277-1.092-.278z"/></svg> React</span>
+      <span class="fw-tag"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M18.665 21.978C16.758 23.255 14.465 24 12 24 5.377 24 0 18.623 0 12S5.377 0 12 0s12 5.377 12 12c0 3.583-1.574 6.801-4.067 9.001L9.219 7.2H7.2v9.596h1.615V9.251l9.85 12.727Zm-3.332-8.533 1.6 2.061V7.2h-1.6v6.245Z"/></svg> Next.js</span>
+      <span class="fw-tag"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M24,1.61H14.06L12,5.16,9.94,1.61H0L12,22.39ZM12,14.08,5.16,2.23H9.59L12,6.41l2.41-4.18h4.43Z"/></svg> Vue 3</span>
+      <span class="fw-tag"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M13.4642 19.8295h8.9218c.2834 0 .5618-.0723.8072-.2098a1.5899 1.5899 0 0 0 .5908-.5732 1.5293 1.5293 0 0 0 .216-.783 1.529 1.529 0 0 0-.2167-.7828L17.7916 7.4142a1.5904 1.5904 0 0 0-.5907-.573 1.6524 1.6524 0 0 0-.807-.2099c-.2833 0-.5616.0724-.807.2098a1.5904 1.5904 0 0 0-.5907.5731L13.4642 9.99l-2.9954-5.0366a1.5913 1.5913 0 0 0-.591-.573 1.6533 1.6533 0 0 0-.8071-.2098c-.2834 0-.5617.0723-.8072.2097a1.5913 1.5913 0 0 0-.591.573L.2168 17.4808A1.5292 1.5292 0 0 0 0 18.2635c-.0001.2749.0744.545.216.783a1.59 1.59 0 0 0 .5908.5732c.2454.1375.5238.2098.8072.2098h5.6003c2.219 0 3.8554-.9454 4.9813-2.7899l2.7337-4.5922L16.3935 9.99l4.3944 7.382h-5.8586ZM7.123 17.3694l-3.9083-.0009 5.8586-9.8421 2.9232 4.921-1.9572 3.2892c-.7478 1.1967-1.5972 1.6328-2.9163 1.6328z"/></svg> Nuxt 3</span>
+      <span class="fw-tag"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M10.354 21.125a4.44 4.44 0 0 1-4.765-1.767 4.109 4.109 0 0 1-.703-3.107 3.898 3.898 0 0 1 .134-.522l.105-.321.287.21a7.21 7.21 0 0 0 2.186 1.092l.208.063-.02.208a1.253 1.253 0 0 0 .226.83 1.337 1.337 0 0 0 1.435.533 1.231 1.231 0 0 0 .343-.15l5.59-3.562a1.164 1.164 0 0 0 .524-.778 1.242 1.242 0 0 0-.211-.937 1.338 1.338 0 0 0-1.435-.533 1.23 1.23 0 0 0-.343.15l-2.133 1.36a4.078 4.078 0 0 1-1.135.499 4.44 4.44 0 0 1-4.765-1.766 4.108 4.108 0 0 1-.702-3.108 3.855 3.855 0 0 1 1.742-2.582l5.589-3.563a4.072 4.072 0 0 1 1.135-.499 4.44 4.44 0 0 1 4.765 1.767 4.109 4.109 0 0 1 .703 3.107 3.943 3.943 0 0 1-.134.522l-.105.321-.286-.21a7.204 7.204 0 0 0-2.187-1.093l-.208-.063.02-.207a1.255 1.255 0 0 0-.226-.831 1.337 1.337 0 0 0-1.435-.532 1.231 1.231 0 0 0-.343.15L8.62 9.368a1.162 1.162 0 0 0-.524.778 1.24 1.24 0 0 0 .211.937 1.338 1.338 0 0 0 1.435.533 1.235 1.235 0 0 0 .344-.151l2.132-1.36a4.067 4.067 0 0 1 1.135-.498 4.44 4.44 0 0 1 4.765 1.766 4.108 4.108 0 0 1 .702 3.108 3.857 3.857 0 0 1-1.742 2.583l-5.589 3.562a4.072 4.072 0 0 1-1.135.499z"/></svg> Svelte</span>
+      <span class="fw-tag"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M10.354 21.125a4.44 4.44 0 0 1-4.765-1.767 4.109 4.109 0 0 1-.703-3.107 3.898 3.898 0 0 1 .134-.522l.105-.321.287.21a7.21 7.21 0 0 0 2.186 1.092l.208.063-.02.208a1.253 1.253 0 0 0 .226.83 1.337 1.337 0 0 0 1.435.533 1.231 1.231 0 0 0 .343-.15l5.59-3.562a1.164 1.164 0 0 0 .524-.778 1.242 1.242 0 0 0-.211-.937 1.338 1.338 0 0 0-1.435-.533 1.23 1.23 0 0 0-.343.15l-2.133 1.36a4.078 4.078 0 0 1-1.135.499 4.44 4.44 0 0 1-4.765-1.766 4.108 4.108 0 0 1-.702-3.108 3.855 3.855 0 0 1 1.742-2.582l5.589-3.563a4.072 4.072 0 0 1 1.135-.499 4.44 4.44 0 0 1 4.765 1.767 4.109 4.109 0 0 1 .703 3.107 3.943 3.943 0 0 1-.134.522l-.105.321-.286-.21a7.204 7.204 0 0 0-2.187-1.093l-.208-.063.02-.207a1.255 1.255 0 0 0-.226-.831 1.337 1.337 0 0 0-1.435-.532 1.231 1.231 0 0 0-.343.15L8.62 9.368a1.162 1.162 0 0 0-.524.778 1.24 1.24 0 0 0 .211.937 1.338 1.338 0 0 0 1.435.533 1.235 1.235 0 0 0 .344-.151l2.132-1.36a4.067 4.067 0 0 1 1.135-.498 4.44 4.44 0 0 1 4.765 1.766 4.108 4.108 0 0 1 .702 3.108 3.857 3.857 0 0 1-1.742 2.583l-5.589 3.562a4.072 4.072 0 0 1-1.135.499z"/></svg> SvelteKit</span>
+      <span class="fw-tag"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M16.712 17.711H7.288l-1.204 2.916L12 24l5.916-3.373-1.204-2.916ZM14.692 0l7.832 16.855.814-12.856L14.692 0ZM9.308 0 .662 3.999l.814 12.856L9.308 0Zm-.405 13.93h6.198L12 6.396 8.903 13.93Z"/></svg> Angular</span>
+      <span class="fw-tag"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8.358 20.162c-1.186-1.07-1.532-3.316-1.038-4.944.856 1.026 2.043 1.352 3.272 1.535 1.897.283 3.76.177 5.522-.678.202-.098.388-.229.608-.36.166.473.209.95.151 1.437-.14 1.185-.738 2.1-1.688 2.794-.38.277-.782.525-1.175.787-1.205.804-1.531 1.747-1.078 3.119l.044.148a3.158 3.158 0 0 1-1.407-1.188 3.31 3.31 0 0 1-.544-1.815c-.004-.32-.004-.642-.048-.958-.106-.769-.472-1.113-1.161-1.133-.707-.02-1.267.411-1.415 1.09-.012.053-.028.104-.045.165h.002zm-5.961-4.445s3.24-1.575 6.49-1.575l2.451-7.565c.092-.366.36-.614.662-.614.302 0 .57.248.662.614l2.45 7.565c3.85 0 6.491 1.575 6.491 1.575L16.088.727C15.93.285 15.663 0 15.303 0H8.697c-.36 0-.615.285-.784.727l-5.516 14.99z"/></svg> Astro</span>
+      <span class="fw-tag"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067z"/></svg> Vanilla</span>
+    </div>
+
+    <h3 style="font-size: 18px; font-weight: 700; margin: 40px 0 16px;">Styling approaches</h3>
+    <table>
+      <thead>
+        <tr><th>Approach</th><th>Encapsulation pattern</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12.001,4.8c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.624 C13.666,10.618,15.027,12,18.001,12c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.624 C16.337,6.182,14.976,4.8,12.001,4.8z M6.001,12c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.624 c1.177,1.194,2.538,2.576,5.512,2.576c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.624 C10.337,13.382,8.976,12,6.001,12z"/></svg> Tailwind CSS</td><td>Wrap utilities inside components via <code>cva</code>/<code>clsx</code>. Consumers pass variant props, never class names.</td></tr>
+        <tr><td><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M16.214 6.762l-.075.391c-.116.741-.074.953.244 1.228l.307.254-.318 1.418c-.19.846-.423 1.555-.571 1.788-.127.201-.275.497-.307.656-.053.19-.233.381-.508.55-.243.138-.72.508-1.058.805-.27.243-.456.392-.557.456l-.33.261c-.106.17-.166.307-.189.411-.023.107-.01.178.024.23.033.05.09.085.168.107a.954.954 0 00.282.023 3 3 0 00.632-.112c.07-.019.125-.037.173-.053.074-.091.245-.263.548-.562.804-.793 1.111-1.227.794-1.11-.117.042-.064-.064.137-.276.424-.413.667-1.037 1.175-2.994.402-1.545.402-1.567.698-1.567.139 0 .532.024.532.024V6.762h-.902z"/></svg> Styled Components</td><td>Module-scope styled wrappers. Data attributes for variants. CSS custom properties for dynamic values.</td></tr>
+        <tr><td><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.565-2.438L1.5 0zm17.09 4.413L5.41 4.41l.213 2.622 10.125.002-.255 2.716h-6.64l.24 2.573h6.182l-.366 3.523-2.91.804-2.956-.81-.188-2.11h-2.61l.29 3.855L12 19.288l5.373-1.53L18.59 4.414z"/></svg> CSS Modules</td><td>One <code>.module.css</code> per component. Use <code>composes</code> for shared patterns.</td></tr>
+        <tr><td><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 0c6.627 0 12 5.373 12 12s-5.373 12-12 12S0 18.627 0 12 5.373 0 12 0zM9.615 15.998c.175.645.156 1.248-.024 1.792l-.065.18c-.024.061-.052.12-.078.176-.14.29-.326.56-.555.81-.698.759-1.672 1.047-2.09.805-.45-.262-.226-1.335.584-2.19.871-.918 2.12-1.509 2.12-1.509v-.003l.108-.061z"/></svg> SCSS / Sass</td><td>BEM modifiers nested inside one root class. Max 3 levels.</td></tr>
+        <tr><td><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M24,1.61H14.06L12,5.16,9.94,1.61H0L12,22.39ZM12,14.08,5.16,2.23H9.59L12,6.41l2.41-4.18h4.43Z"/></svg> Vue Scoped</td><td><code>&lt;style scoped&gt;</code> with class selectors. CSS custom properties for child theming.</td></tr>
+        <tr><td><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M10.354 21.125a4.44 4.44 0 0 1-4.765-1.767 4.109 4.109 0 0 1-.703-3.107 3.898 3.898 0 0 1 .134-.522l.105-.321.287.21a7.21 7.21 0 0 0 2.186 1.092l.208.063-.02.208a1.253 1.253 0 0 0 .226.83 1.337 1.337 0 0 0 1.435.533z"/></svg> Svelte</td><td>Auto-scoped <code>&lt;style&gt;</code>. CSS custom properties for child theming.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── Principles ──────────────────────────────────────── -->
+<section>
+  <div class="container">
+    <div class="section-label">Principles</div>
+    <h2 class="section-title">Write the spec. Then write the code.</h2>
+    <p class="section-desc" style="margin-bottom: 40px;">The spec is not a deliverable &mdash; it is the input to the AI. When your spec is complete, implementation becomes mechanical. Visual QA becomes pass/fail.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>Spec-first, always</h3>
+        <p>All three spec artifacts must exist before any code is written. No implementation from briefs alone.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Token-referenced output</h3>
+        <p>Every color, spacing, radius, and font value references a design token. No hardcoded hex or pixels.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Style-encapsulated</h3>
+        <p>Components own their styles through props and variants. Consumers never pass raw utility classes.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Pixel-accurate</h3>
+        <p>Compare live implementation to spec after every change. Discrepancies block the verify step.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Accessible by default</h3>
+        <p>Semantic HTML and ARIA are part of the spec. WCAG AA compliance. Focus rings. Contrast ratios.</p>
+      </div>
+      <div class="feature-card">
+        <h3>One task at a time</h3>
+        <p>Execute one spec task per session. Mark it complete before moving to the next. Never batch.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ──────────────────────────────────────────────── -->
+<section style="text-align: center; padding: 100px 0;">
+  <div class="container">
+    <h2 class="section-title">Start building with SDD-DE</h2>
+    <p class="section-desc" style="margin: 0 auto 32px;">One command. No global install. Works with any frontend project.</p>
+    <div class="hero-install" onclick="navigator.clipboard.writeText('npx @royvillasana/sdd-de')">
+      <span class="prompt">$</span>
+      <span>npx @royvillasana/sdd-de</span>
+      <span class="copy-hint">click to copy</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ──────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <p>SDD-DE &mdash; MIT License &mdash; <a href="https://github.com/royvillasana/SDD-DE">GitHub</a> &mdash; <a href="https://www.npmjs.com/package/@royvillasana/sdd-de">npm</a></p>
+  </div>
+</footer>
+
+<script>
+function switchTab(e, panelId) {
+  const tabs = e.target.closest('.tabs');
+  tabs.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  tabs.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  e.target.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+}
+</script>
+</body>
+</html>
