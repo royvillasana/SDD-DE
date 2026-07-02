@@ -56,6 +56,7 @@ Read these documents before implementing any component or page:
 - [Page Standards](.sdd-de/docs/page-standards.md) — layout composition, responsive breakpoints, landmark structure
 - [Framework Configuration](.sdd-de/docs/framework-config.md) — framework-specific patterns and file conventions
 - [Design Token Model](.sdd-de/docs/design-token-model.md) — color, spacing, typography, radius, shadow systems
+- [Styling Best Practices](.sdd-de/docs/styling-best-practices.md) — per-framework styling patterns and encapsulation rules
 - [Documentation Standards](.sdd-de/docs/documentation-standards.md) — spec format and maintenance rules
 - [SDD Mandatory Steps](.sdd-de/docs/sdd-mandatory-steps.md) — required checklist for every SDD cycle
 

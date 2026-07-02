@@ -138,6 +138,7 @@ your-project/
         ├── component-standards.md
         ├── page-standards.md
         ├── framework-config.md      ← code examples for all 9 frameworks
+        ├── styling-best-practices.md ← per-framework styling patterns
         ├── design-token-model.md
         ├── documentation-standards.md
         ├── sdd-mandatory-steps.md

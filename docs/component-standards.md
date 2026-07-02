@@ -31,6 +31,27 @@ See `docs/framework-config.md` for framework-specific file extensions and naming
     └── hero-section.[ext]
 ```
 
+## Style Encapsulation
+
+**Components own their styles.** Consumers interact through props and variants — never
+through raw class names, utility classes, or style overrides.
+
+```
+✗ BAD:  <Button className="bg-blue-500 text-white px-4 py-2 rounded" />
+✓ GOOD: <Button variant="primary" size="md" />
+```
+
+Read `docs/styling-best-practices.md` for framework-specific patterns. The rules apply
+regardless of styling approach:
+
+- **Tailwind**: wrap utility classes inside the component using `cva` or `clsx`. Consumers pass variant props, never class names.
+- **Styled Components / Emotion**: define styled wrappers at module scope. Use data attributes for variants, CSS custom properties for dynamic values.
+- **CSS Modules**: one `.module.css` per component. Use `composes` for shared patterns.
+- **SCSS**: one root class with BEM modifiers. Max 3 levels of nesting.
+- **Vue**: always use `<style scoped>`. Use class selectors, never element selectors.
+- **Svelte**: styles are auto-scoped. Use CSS custom properties for child theming.
+- **Angular**: use ViewEncapsulation. Style via `:host` and co-located `.scss`.
+
 ## Variant Rules
 
 - Define variants explicitly in the component — no ad-hoc style overrides at usage sites
