@@ -6,13 +6,30 @@ Works with **Claude Code**, **Cursor**, **GitHub Copilot**, and any AI agent tha
 
 ---
 
-## Install
+## Quick Start
+
+### 1. Install into your project
 
 ```bash
+cd your-project
 npx @royvillasana/sdd-de
 ```
 
-The CLI asks 8 questions, then installs the full toolkit into `.sdd-de/` and writes `CLAUDE.md` to your project root. No global install required.
+The CLI asks a few questions about your stack (framework, language, design source, styling), then installs the full toolkit into `.sdd-de/` and writes `CLAUDE.md` to your project root. No global install required.
+
+### 2. Open your AI coding agent
+
+Open **Claude Code**, **Cursor**, or any AI agent in the same project directory. The agent reads `CLAUDE.md` automatically and gains access to all SDD-DE skills.
+
+### 3. Start the workflow
+
+Type the first skill command in your agent:
+
+```
+/enrich-brief
+```
+
+Describe what you want to build. The agent will walk you through the full 7-step cycle.
 
 ---
 
@@ -111,6 +128,7 @@ your-project/
         ├── framework-config.md      ← code examples for all 9 frameworks
         ├── design-token-model.md
         ├── documentation-standards.md
+        ├── sdd-mandatory-steps.md
         ├── component-spec-template.md
         ├── interaction-spec-template.md
         └── page-spec-template.md
@@ -120,7 +138,7 @@ your-project/
 
 ## Skills Reference
 
-Type any skill command inside Claude Code to execute it:
+Type any skill command inside Claude Code (or your AI agent) to execute it:
 
 | Command | Purpose |
 |---|---|
@@ -132,6 +150,54 @@ Type any skill command inside Claude Code to execute it:
 | `/sync-tokens` | Sync design tokens between your design source and the project token file |
 | `/commit` | Stage, commit, and open a PR with the Component Spec as the PR description |
 | `/sync-agent-symlinks` | Audit and repair broken symlinks in `.claude/skills/` and `.cursor/skills/` |
+
+---
+
+## Usage Examples
+
+### Build a Button component from a Figma design
+
+```
+/enrich-brief
+> Build a primary Button component from this Figma frame: https://figma.com/design/...
+```
+
+The agent enriches your brief, generates specs, and walks you through implementation with visual verification at every step.
+
+### Build a Login page from a component library
+
+```
+/enrich-brief
+> Build a Login page using shadcn/ui components: email input, password input, submit button, "forgot password" link
+```
+
+### Re-run setup to change your stack
+
+```
+/setup
+```
+
+---
+
+## Requirements
+
+- **Node.js 18+** (for the CLI installer)
+- **An AI coding agent** that reads Markdown instructions (Claude Code, Cursor, Copilot, etc.)
+
+---
+
+## Publishing (for maintainers)
+
+```bash
+# Bump version
+npm version patch   # or minor / major
+
+# Publish to npm
+npm publish
+
+# Users install with
+npx @royvillasana/sdd-de
+```
 
 ---
 
@@ -157,10 +223,10 @@ Type any skill command inside Claude Code to execute it:
 
 > "Write the spec. Then write the code. Never the other way around."
 
-The spec is not a deliverable — it is the input to the AI. When your spec is complete, implementation becomes mechanical. Visual QA becomes pass/fail. The PR description writes itself.
+The spec is not a deliverable -- it is the input to the AI. When your spec is complete, implementation becomes mechanical. Visual QA becomes pass/fail. The PR description writes itself.
 
 ---
 
 ## License
 
-MIT — adapted from [LIDR-academy/lidr-specboot](https://github.com/LIDR-academy/lidr-specboot)
+MIT

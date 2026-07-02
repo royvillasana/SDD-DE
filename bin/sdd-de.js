@@ -39,7 +39,7 @@ async function init() {
   const { intro, outro, select, text, note, isCancel, cancel, spinner: spin } = clack;
 
   // ── Header ────────────────────────────────────────────────────────────────
-  printParrot();
+  printBanner();
   intro(`SDD-DE  v${pkg.version}  —  Spec-Driven Development for Design Engineers`);
   console.log('');
 
@@ -564,37 +564,27 @@ function copyDir(src, dst) {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-function printParrot() {
+function printBanner() {
   const isTTY = process.stdout.isTTY;
-  const r = isTTY ? '\x1b[91m' : '';  // bright red   — head & body
-  const y = isTTY ? '\x1b[93m' : '';  // bright yellow — beak & crest
-  const g = isTTY ? '\x1b[92m' : '';  // bright green  — wings
-  const b = isTTY ? '\x1b[94m' : '';  // bright blue   — tail
-  const w = isTTY ? '\x1b[97m' : '';  // bright white  — eyes
+  const c = isTTY ? '\x1b[96m' : '';  // cyan — main letters
+  const d = isTTY ? '\x1b[36m' : '';  // dim cyan — shadow/accent
   const x = isTTY ? '\x1b[0m'  : '';  // reset
 
-  console.log(
-    '\n' +
-    `         ${y}/\\/\\${x}\n` +
-    `          ${y}||||${x}\n` +
-    `${r}           ___${x}\n` +
-    `${r}         _/   \\_${x}\n` +
-    `${r}        / ${w}(o)${r}${w}(o)${r} \\${x}\n` +
-    `${r}       |    ${y}>=${r}    |${x}\n` +
-    `${r}       |   ${y}\\__/${r}   |${x}\n` +
-    `${r}        \\_______/${x}\n` +
-    `${r}           |||${x}\n` +
-    `${g}         __|_|__${x}\n` +
-    `${g}        /   |   \\${x}\n` +
-    `${b}       /    |    \\${x}\n` +
-    `${b}      /_____|_____\\${x}\n`
-  );
+  console.log(`
+${c}  ███████╗██████╗ ██████╗        ██████╗ ███████╗${x}
+${c}  ██╔════╝██╔══██╗██╔══██╗       ██╔══██╗██╔════╝${x}
+${c}  ███████╗██║  ██║██║  ██║${d}═══${c}   ██║  ██║█████╗  ${x}
+${c}  ╚════██║██║  ██║██║  ██║       ██║  ██║██╔══╝  ${x}
+${c}  ███████║██████╔╝██████╔╝${d}═══${c}   ██████╔╝███████╗${x}
+${c}  ╚══════╝╚═════╝ ╚═════╝        ╚═════╝ ╚══════╝${x}
+${d}  Spec-Driven Development for Design Engineers${x}
+`);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 
 function printHelp() {
-  printParrot();
+  printBanner();
   console.log(`sdd-de v${pkg.version}
 
 Usage:
