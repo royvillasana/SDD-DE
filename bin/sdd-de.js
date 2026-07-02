@@ -18,11 +18,18 @@ if (arg === '--help' || arg === '-h') {
   process.exit(0);
 }
 
-// Any other argument (or no argument) → run init
-init().catch(err => {
-  console.error('\n  Error:', err.message);
-  process.exit(1);
-});
+if (arg === 'update' || arg === '--update') {
+  update().catch(err => {
+    console.error('\n  Error:', err.message);
+    process.exit(1);
+  });
+} else {
+  // Any other argument (or no argument) → run init
+  init().catch(err => {
+    console.error('\n  Error:', err.message);
+    process.exit(1);
+  });
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -446,6 +453,117 @@ async function init() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+
+async function update() {
+  let clack;
+  try {
+    clack = await import('@clack/prompts');
+  } catch {
+    console.error('\n  @clack/prompts not found. Run: npm install @clack/prompts\n');
+    process.exit(1);
+  }
+
+  const { intro, outro, note, spinner: spin, confirm, isCancel, cancel } = clack;
+
+  printBanner();
+  intro(`SDD-DE  v${pkg.version}  —  Update`);
+  console.log('');
+
+  const cwd     = process.cwd();
+  const pkgDir  = path.join(__dirname, '..');
+  const sddeDir = path.join(cwd, '.sdd-de');
+
+  // Check if SDD-DE is installed
+  if (!fs.existsSync(sddeDir)) {
+    console.error('  No .sdd-de/ directory found. Run `npx @royvillasana/sdd-de` first to install.\n');
+    process.exit(1);
+  }
+
+  // Check if project.yaml exists
+  const projectYamlPath = path.join(sddeDir, 'project.yaml');
+  const hasProjectYaml = fs.existsSync(projectYamlPath);
+
+  note(
+    [
+      'This will update to v' + pkg.version + ':',
+      '',
+      '  ✓ Skills      — overwrite .sdd-de/ai-specs/skills/ with latest',
+      '  ✓ Docs        — overwrite .sdd-de/docs/ with latest',
+      '  ✓ CLAUDE.md   — update CLAUDE.md, AGENTS.md, GEMINI.md, codex.md',
+      '  ✓ Symlinks    — refresh .claude/skills/ and .cursor/skills/',
+      '',
+      hasProjectYaml
+        ? '  ★ project.yaml will be PRESERVED (your config is safe)'
+        : '  ⚠ No project.yaml found — run /setup after updating',
+    ].join('\n'),
+    'Update plan',
+  );
+
+  const proceed = await confirm({
+    message: 'Continue with update?',
+  });
+  if (isCancel(proceed) || !proceed) {
+    cancel('Update cancelled.');
+    process.exit(0);
+  }
+
+  console.log('');
+  const s = spin();
+  s.start('Updating SDD-DE toolkit…');
+
+  try {
+    // Skills — overwrite
+    copyDir(path.join(pkgDir, 'ai-specs', 'skills'), path.join(sddeDir, 'ai-specs', 'skills'));
+
+    // Docs — overwrite
+    copyDir(path.join(pkgDir, 'docs'), path.join(sddeDir, 'docs'));
+
+    // CLAUDE.md + multi-agent companions — always overwrite on update
+    const claudeSrc = path.join(pkgDir, 'CLAUDE.md');
+    for (const name of ['CLAUDE.md', 'AGENTS.md', 'GEMINI.md', 'codex.md']) {
+      fs.copyFileSync(claudeSrc, path.join(cwd, name));
+    }
+
+    // Refresh symlinks
+    createSymlinks(
+      path.join(sddeDir, 'ai-specs', 'skills'),
+      path.join(cwd, '.claude', 'skills'),
+      '../../.sdd-de/ai-specs/skills',
+    );
+    const cursorDir = path.join(cwd, '.cursor');
+    if (fs.existsSync(cursorDir)) {
+      createSymlinks(
+        path.join(sddeDir, 'ai-specs', 'skills'),
+        path.join(cursorDir, 'skills'),
+        '../../.sdd-de/ai-specs/skills',
+      );
+    }
+  } catch (err) {
+    s.stop('Update failed');
+    throw err;
+  }
+
+  s.stop('SDD-DE updated to v' + pkg.version);
+
+  note(
+    [
+      'Updated:',
+      '  • Skills (8 slash commands + /storybook)',
+      '  • Documentation & spec templates',
+      '  • CLAUDE.md / AGENTS.md / GEMINI.md / codex.md',
+      '  • Editor symlinks',
+      '',
+      'Preserved:',
+      '  • .sdd-de/project.yaml (your project config)',
+      '  • All spec files in specs/',
+    ].join('\n'),
+    'Summary',
+  );
+
+  outro('You\'re on the latest version. Continue your workflow with: /enrich-brief');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -589,7 +707,9 @@ function printHelp() {
   console.log(`sdd-de v${pkg.version}
 
 Usage:
-  npx sdd-de           Install SDD-DE and configure your project
+  npx @royvillasana/sdd-de            Install SDD-DE and configure your project
+  npx @royvillasana/sdd-de update     Update skills, docs, and CLAUDE.md to latest
+                                      (preserves your project.yaml config)
 
 ──────────────────────────────────────────────────────────────
  How it works — Two Epics, One 7-Step Cycle
@@ -643,6 +763,9 @@ Usage:
 
 Frameworks supported:
   react · next · vue · nuxt · svelte · sveltekit · angular · astro · vanilla
+
+Commands:
+  update               Update an existing installation to the latest version
 
 Options:
   -v, --version        Print version number

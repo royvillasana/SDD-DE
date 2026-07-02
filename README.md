@@ -17,6 +17,14 @@ npx @royvillasana/sdd-de
 
 The CLI asks a few questions about your stack (framework, language, design source, styling), then installs the full toolkit into `.sdd-de/` and writes `CLAUDE.md` to your project root. No global install required.
 
+### Already installed? Update to the latest version
+
+```bash
+npx @royvillasana/sdd-de@latest update
+```
+
+This updates all skills, docs, and agent config files while **preserving your `project.yaml` configuration**.
+
 ### 2. Open your AI coding agent
 
 Open **Claude Code**, **Cursor**, or any AI agent in the same project directory. The agent reads `CLAUDE.md` automatically and gains access to all SDD-DE skills.
@@ -181,6 +189,14 @@ The agent enriches your brief, generates specs, and walks you through implementa
 ```
 /setup
 ```
+
+### Update an existing installation
+
+```bash
+npx @royvillasana/sdd-de@latest update
+```
+
+Updates skills, docs, and CLAUDE.md to the latest version. Your `project.yaml` config and all spec files are preserved.
 
 ---
 
