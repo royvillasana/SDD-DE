@@ -622,6 +622,16 @@ After writing the file, display this summary:
   /commit             push PR with spec as description
 
 ──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
 
-Start with: /enrich-brief
+ Next step → /enrich-brief
+
+ You'll bring a brief, a Figma URL, or a user story and Claude
+ will transform it into a spec-ready enriched story — complete
+ with acceptance criteria, all states, required design tokens,
+ and edge cases. This is the input to the 7-step cycle.
+
+ Run it now: /enrich-brief
+──────────────────────────────────────────────
 ```

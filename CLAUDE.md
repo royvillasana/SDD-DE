@@ -15,6 +15,9 @@ provides skills, spec templates, and standards for a structured design-to-code w
   to the design spec. Unresolved discrepancies block the Verify step.
 - **Accessible by default**: Semantic HTML and ARIA attributes are not optional —
   they are part of the spec.
+- **Always disclose the next step**: After completing any step or skill, tell the user
+  what the next step is, what command to run, and what will happen. Never leave the user
+  uncertain about where they are in the cycle or what to do next.
 
 ## Project Configuration
 

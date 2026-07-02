@@ -67,13 +67,25 @@ Token collection: [figma_token_collection]
 
 ### Announce
 ```
-3 artifacts generated:
-  specs/[feature-name]/[component]-component-spec.md
-  specs/[feature-name]/[component]-interaction-spec.md
-  specs/[feature-name]/[page]-page-spec.md
+──────────────────────────────────────────────
+ ✓ 3 spec artifacts generated
+   specs/[feature-name]/[component]-component-spec.md
+   specs/[feature-name]/[component]-interaction-spec.md
+   specs/[feature-name]/[page]-page-spec.md
+   Design source: Figma → [frame URL]
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
 
-Design source: Figma → [frame URL]
-Ready to implement. Start with the first unchecked task in the Component Spec.
+ Next step → Create a branch, then implement
+
+   git checkout -b feature/[name]-spec
+
+ Open the Component Spec and work through each task
+ one at a time, marking [ ] → [x] as you complete them.
+ Do not move to the next task until the current one is done.
+ When all tasks are checked, run: /visual-verify
+──────────────────────────────────────────────
 ```
 
 ---
@@ -98,13 +110,25 @@ Customization:  [brief summary of what to override]
 
 ### Announce
 ```
-3 artifacts generated:
-  specs/[feature-name]/[component]-component-spec.md
-  specs/[feature-name]/[component]-interaction-spec.md
-  specs/[feature-name]/[page]-page-spec.md
+──────────────────────────────────────────────
+ ✓ 3 spec artifacts generated
+   specs/[feature-name]/[component]-component-spec.md
+   specs/[feature-name]/[component]-interaction-spec.md
+   specs/[feature-name]/[page]-page-spec.md
+   Design source: Library → [library name]
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
 
-Design source: Library → [library name]
-Ready to implement. Start with the first unchecked task in the Component Spec.
+ Next step → Create a branch, then implement
+
+   git checkout -b feature/[name]-spec
+
+ Open the Component Spec and work through each task
+ one at a time, marking [ ] → [x] as you complete them.
+ Do not move to the next task until the current one is done.
+ When all tasks are checked, run: /visual-verify
+──────────────────────────────────────────────
 ```
 
 ---
@@ -131,13 +155,25 @@ Available props/variants: [extracted from enriched story]
 
 ### Announce
 ```
-3 artifacts generated:
-  specs/[feature-name]/[component]-component-spec.md
-  specs/[feature-name]/[component]-interaction-spec.md
-  specs/[feature-name]/[page]-page-spec.md
+──────────────────────────────────────────────
+ ✓ 3 spec artifacts generated
+   specs/[feature-name]/[component]-component-spec.md
+   specs/[feature-name]/[component]-interaction-spec.md
+   specs/[feature-name]/[page]-page-spec.md
+   Design source: GitHub → [github_repo_url] ([github_branch]/[github_component_dir])
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
 
-Design source: GitHub → [github_repo_url] ([github_branch]/[github_component_dir])
-Ready to implement. Start with the first unchecked task in the Component Spec.
+ Next step → Create a branch, then implement
+
+   git checkout -b feature/[name]-spec
+
+ Open the Component Spec and work through each task
+ one at a time, marking [ ] → [x] as you complete them.
+ Do not move to the next task until the current one is done.
+ When all tasks are checked, run: /visual-verify
+──────────────────────────────────────────────
 ```
 
 ---
@@ -162,13 +198,25 @@ Available props/variants: [extracted from enriched story]
 
 ### Announce
 ```
-3 artifacts generated:
-  specs/[feature-name]/[component]-component-spec.md
-  specs/[feature-name]/[component]-interaction-spec.md
-  specs/[feature-name]/[page]-page-spec.md
+──────────────────────────────────────────────
+ ✓ 3 spec artifacts generated
+   specs/[feature-name]/[component]-component-spec.md
+   specs/[feature-name]/[component]-interaction-spec.md
+   specs/[feature-name]/[page]-page-spec.md
+   Design source: ZIP → [zip_file_path] ([zip_component_dir])
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
 
-Design source: ZIP → [zip_file_path] ([zip_component_dir])
-Ready to implement. Start with the first unchecked task in the Component Spec.
+ Next step → Create a branch, then implement
+
+   git checkout -b feature/[name]-spec
+
+ Open the Component Spec and work through each task
+ one at a time, marking [ ] → [x] as you complete them.
+ Do not move to the next task until the current one is done.
+ When all tasks are checked, run: /visual-verify
+──────────────────────────────────────────────
 ```
 
 ---
@@ -201,14 +249,26 @@ Stitch flow — the token table IS the design handoff.
 
 ### Announce
 ```
-3 artifacts generated:
-  specs/[feature-name]/[component]-component-spec.md
-  specs/[feature-name]/[component]-interaction-spec.md
-  specs/[feature-name]/[page]-page-spec.md
+──────────────────────────────────────────────
+ ✓ 3 spec artifacts generated
+   specs/[feature-name]/[component]-component-spec.md
+   specs/[feature-name]/[component]-interaction-spec.md
+   specs/[feature-name]/[page]-page-spec.md
+   Design source: Google Stitch ([mcp | zip export])
+   Token mapping table included in Component Spec.
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
 
-Design source: Google Stitch ([mcp | zip export])
-Token mapping table included in Component Spec.
-Ready to implement. Start with the first unchecked task in the Component Spec.
+ Next step → Create a branch, then implement
+
+   git checkout -b feature/[name]-spec
+
+ Open the Component Spec and work through each task
+ one at a time, marking [ ] → [x] as you complete them.
+ Do not move to the next task until the current one is done.
+ When all tasks are checked, run: /visual-verify
+──────────────────────────────────────────────
 ```
 
 ---

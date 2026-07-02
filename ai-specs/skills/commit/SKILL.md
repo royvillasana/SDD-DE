@@ -60,7 +60,30 @@ gh pr create \
   --label "design-engineering"
 ```
 
-6. **Announce**: "PR created. Link: [PR URL]"
+6. **Announce**:
+
+```
+──────────────────────────────────────────────
+ ✓ PR opened — 7-step cycle complete
+   [PR URL]
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
+
+ You have completed one full SDD cycle.
+
+ If you are still in Epic 1 (Component Library):
+ → Start the next component with: /enrich-brief
+   Continue until all atoms, molecules, and organisms
+   your pages depend on are built.
+
+ If Epic 1 is complete and you are starting Epic 2 (Page Composition):
+ → Start the first page with: /enrich-brief
+   Compose the components you built into full pages and features.
+
+ Either way, the next step is always: /enrich-brief
+──────────────────────────────────────────────
+```
 
 ## PR Checklist (verify before creating)
 

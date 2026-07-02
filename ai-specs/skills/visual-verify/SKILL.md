@@ -69,6 +69,27 @@ TOKEN AUDIT (DevTools → Computed — zero tolerance)
    - For each: state whether Figma or code is authoritative, and the fix applied
 6. **Gate**: Zero unresolved discrepancies → proceed to `/adversarial-review`
 7. **If discrepancies exist**: fix each one, re-run the checklist item, mark resolved
+8. **Announce**:
+
+```
+──────────────────────────────────────────────
+ ✓ Visual QA passed — zero unresolved discrepancies
+   specs/[feature-name]/visual-verify-report.md saved
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
+
+ Next step → /adversarial-review
+
+ Claude will red-team the implementation independently,
+ challenging every assumption to find what visual QA can miss:
+ silent omissions, untested states, hardcoded token values,
+ and accessibility gaps. All Blocker findings must be resolved
+ before the PR can be opened.
+
+ Run it now: /adversarial-review
+──────────────────────────────────────────────
+```
 
 ---
 
@@ -115,6 +136,27 @@ TOKEN AUDIT (zero tolerance)
 5. **Document results** in `specs/[feature-name]/visual-verify-report.md`
 6. **Gate**: Zero unresolved discrepancies → proceed to `/adversarial-review`
 7. **If discrepancies exist**: fix, re-run, mark resolved
+8. **Announce**:
+
+```
+──────────────────────────────────────────────
+ ✓ Visual QA passed — zero unresolved discrepancies
+   specs/[feature-name]/visual-verify-report.md saved
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
+
+ Next step → /adversarial-review
+
+ Claude will red-team the implementation independently,
+ challenging every assumption to find what visual QA can miss:
+ silent omissions, untested states, hardcoded token values,
+ and accessibility gaps. All Blocker findings must be resolved
+ before the PR can be opened.
+
+ Run it now: /adversarial-review
+──────────────────────────────────────────────
+```
 
 ---
 
@@ -159,6 +201,27 @@ TOKEN AUDIT (zero tolerance)
 
 4. **Document results** in `specs/[feature-name]/visual-verify-report.md`
 5. **Gate**: Zero unresolved discrepancies → proceed to `/adversarial-review`
+6. **Announce**:
+
+```
+──────────────────────────────────────────────
+ ✓ Visual QA passed — zero unresolved discrepancies
+   specs/[feature-name]/visual-verify-report.md saved
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
+
+ Next step → /adversarial-review
+
+ Claude will red-team the implementation independently,
+ challenging every assumption to find what visual QA can miss:
+ silent omissions, untested states, hardcoded token values,
+ and accessibility gaps. All Blocker findings must be resolved
+ before the PR can be opened.
+
+ Run it now: /adversarial-review
+──────────────────────────────────────────────
+```
 
 ---
 
@@ -173,6 +236,27 @@ Same process as Branch C (GitHub). The source of truth is the component source f
 3. **Run the same checklist as Branch C** — the ZIP is treated identically to a GitHub repo source
 4. **Document results** in `specs/[feature-name]/visual-verify-report.md`
 5. **Gate**: Zero unresolved discrepancies → proceed to `/adversarial-review`
+6. **Announce**:
+
+```
+──────────────────────────────────────────────
+ ✓ Visual QA passed — zero unresolved discrepancies
+   specs/[feature-name]/visual-verify-report.md saved
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
+
+ Next step → /adversarial-review
+
+ Claude will red-team the implementation independently,
+ challenging every assumption to find what visual QA can miss:
+ silent omissions, untested states, hardcoded token values,
+ and accessibility gaps. All Blocker findings must be resolved
+ before the PR can be opened.
+
+ Run it now: /adversarial-review
+──────────────────────────────────────────────
+```
 
 ---
 
@@ -219,3 +303,24 @@ ACCESSIBILITY
 
 6. **Document results** in `specs/[feature-name]/visual-verify-report.md`
 7. **Gate**: Zero unresolved discrepancies → proceed to `/adversarial-review`
+8. **Announce**:
+
+```
+──────────────────────────────────────────────
+ ✓ Visual QA passed — zero unresolved discrepancies
+   specs/[feature-name]/visual-verify-report.md saved
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
+
+ Next step → /adversarial-review
+
+ Claude will red-team the implementation independently,
+ challenging every assumption to find what visual QA can miss:
+ silent omissions, untested states, hardcoded token values,
+ and accessibility gaps. All Blocker findings must be resolved
+ before the PR can be opened.
+
+ Run it now: /adversarial-review
+──────────────────────────────────────────────
+```

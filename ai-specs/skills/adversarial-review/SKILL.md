@@ -116,4 +116,27 @@ Date: [YYYY-MM-DD]
 
 ## Output
 
-Announce: "Adversarial review complete. Verdict: [PASS / FAIL / PASS-WITH-GAPS]. Report saved to `specs/[feature-name]/reports/[date]-adversarial-review.md`."
+```
+──────────────────────────────────────────────
+ ✓ Adversarial review complete
+   Verdict: [PASS | FAIL | PASS-WITH-GAPS]
+   specs/[feature-name]/reports/[date]-adversarial-review.md saved
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
+
+ If verdict is PASS or PASS-WITH-GAPS:
+ Next step → /sync-tokens
+
+ Claude will audit all token references in the component,
+ check for hardcoded values that should use token variables,
+ and sync any missing tokens between your design source and
+ the project token file. After sync, run /commit.
+
+ Run it now: /sync-tokens
+
+ If verdict is FAIL:
+ Resolve all Blocker findings listed in the report, then
+ re-run: /adversarial-review
+──────────────────────────────────────────────
+```

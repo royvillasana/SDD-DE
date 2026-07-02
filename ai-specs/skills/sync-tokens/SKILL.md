@@ -51,7 +51,28 @@ Using the Figma MCP, list all variables in the [figma_token_collection] collecti
 
 7. **Update `docs/design-token-model.md`** if new token categories were introduced.
 
-8. **Announce**: "Token sync complete. [N] tokens added to Figma. [N] tokens added to [token_file]. design.md updated."
+8. **Announce**:
+
+```
+──────────────────────────────────────────────
+ ✓ Token sync complete
+   [N] tokens added to Figma
+   [N] tokens added to [token_file]
+   design.md updated
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
+
+ Next step → /commit
+
+ Claude will stage the component files and spec artifacts,
+ create a commit, and open a pull request with the Component
+ Spec as the PR description. Make sure your branch is up to
+ date with main before running.
+
+ Run it now: /commit
+──────────────────────────────────────────────
+```
 
 ---
 
@@ -87,7 +108,28 @@ grep -rn '[0-9]\+px' [component-dir]/[component-name]
 
 6. **Update `docs/design-token-model.md`** if new token categories were introduced.
 
-7. **Announce**: "Token sync complete. [N] tokens added to [token_file]. No Figma sync required (library flow). design.md updated."
+7. **Announce**:
+
+```
+──────────────────────────────────────────────
+ ✓ Token sync complete
+   [N] tokens added to [token_file]
+   No Figma sync required (library flow)
+   design.md updated
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
+
+ Next step → /commit
+
+ Claude will stage the component files and spec artifacts,
+ create a commit, and open a pull request with the Component
+ Spec as the PR description. Make sure your branch is up to
+ date with main before running.
+
+ Run it now: /commit
+──────────────────────────────────────────────
+```
 
 ---
 
@@ -104,7 +146,28 @@ After the token audit, also check:
 - Any values copied verbatim from the GitHub repo's source files that are hardcoded → replace with token variables
 - Document in `design.md`: "Replaced hardcoded value `[value]` from source repo with `--[token-name]`"
 
-**Announce**: "Token sync complete. [N] tokens added to [token_file]. Source: GitHub repo. design.md updated."
+**Announce**:
+
+```
+──────────────────────────────────────────────
+ ✓ Token sync complete
+   [N] tokens added to [token_file]
+   Source: GitHub repo
+   design.md updated
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
+
+ Next step → /commit
+
+ Claude will stage the component files and spec artifacts,
+ create a commit, and open a pull request with the Component
+ Spec as the PR description. Make sure your branch is up to
+ date with main before running.
+
+ Run it now: /commit
+──────────────────────────────────────────────
+```
 
 ---
 
@@ -114,7 +177,28 @@ Same process as Branch C (GitHub). Treat the ZIP source identically.
 
 Follow all steps from Branch C exactly.
 
-**Announce**: "Token sync complete. [N] tokens added to [token_file]. Source: ZIP archive. design.md updated."
+**Announce**:
+
+```
+──────────────────────────────────────────────
+ ✓ Token sync complete
+   [N] tokens added to [token_file]
+   Source: ZIP archive
+   design.md updated
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
+
+ Next step → /commit
+
+ Claude will stage the component files and spec artifacts,
+ create a commit, and open a pull request with the Component
+ Spec as the PR description. Make sure your branch is up to
+ date with main before running.
+
+ Run it now: /commit
+──────────────────────────────────────────────
+```
 
 ---
 
@@ -152,4 +236,24 @@ value in `design.md` to a project token variable — no hardcoding.
 
 7. **Update `docs/design-token-model.md`** if new token categories were introduced.
 
-8. **Announce**: "Token sync complete. [N] Stitch values mapped to project tokens in [token_file]. design.md updated."
+8. **Announce**:
+
+```
+──────────────────────────────────────────────
+ ✓ Token sync complete
+   [N] Stitch values mapped to project tokens in [token_file]
+   design.md updated
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
+
+ Next step → /commit
+
+ Claude will stage the component files and spec artifacts,
+ create a commit, and open a pull request with the Component
+ Spec as the PR description. Make sure your branch is up to
+ date with main before running.
+
+ Run it now: /commit
+──────────────────────────────────────────────
+```

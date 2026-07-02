@@ -66,7 +66,28 @@ As a [user type], I want to [action] so that [outcome].
 ```
 
 6. **Save** to `specs/[feature-name]/enriched-story.md`
-7. **Announce**: "Enriched story saved. Source: Figma. Ready to run /generate-artifacts."
+7. **Announce**:
+
+```
+──────────────────────────────────────────────
+ ✓ Enriched story saved
+   specs/[feature-name]/enriched-story.md
+   Source: Figma
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
+
+ Next step → /generate-artifacts
+
+ Claude will read the enriched story and generate all 3 spec
+ artifacts: Component Spec, Interaction Spec, and Page Spec.
+ These are the documents that drive implementation — review
+ the enriched story now and confirm it looks correct before
+ running the next step.
+
+ Run it now: /generate-artifacts
+──────────────────────────────────────────────
+```
 
 ---
 
@@ -127,7 +148,28 @@ As a [user type], I want to [action] so that [outcome].
 ```
 
 6. **Save** to `specs/[feature-name]/enriched-story.md`
-7. **Announce**: "Enriched story saved. Source: [library]. Ready to run /generate-artifacts."
+7. **Announce**:
+
+```
+──────────────────────────────────────────────
+ ✓ Enriched story saved
+   specs/[feature-name]/enriched-story.md
+   Source: [library name]
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
+
+ Next step → /generate-artifacts
+
+ Claude will read the enriched story and generate all 3 spec
+ artifacts: Component Spec, Interaction Spec, and Page Spec.
+ These are the documents that drive implementation — review
+ the enriched story now and confirm it looks correct before
+ running the next step.
+
+ Run it now: /generate-artifacts
+──────────────────────────────────────────────
+```
 
 ---
 
@@ -191,7 +233,28 @@ As a [user type], I want to [action] so that [outcome].
 ```
 
 8. **Save** to `specs/[feature-name]/enriched-story.md`
-9. **Announce**: "Enriched story saved. Source: GitHub (`[repo]`). Ready to run /generate-artifacts."
+9. **Announce**:
+
+```
+──────────────────────────────────────────────
+ ✓ Enriched story saved
+   specs/[feature-name]/enriched-story.md
+   Source: GitHub ([repo])
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
+
+ Next step → /generate-artifacts
+
+ Claude will read the enriched story and generate all 3 spec
+ artifacts: Component Spec, Interaction Spec, and Page Spec.
+ These are the documents that drive implementation — review
+ the enriched story now and confirm it looks correct before
+ running the next step.
+
+ Run it now: /generate-artifacts
+──────────────────────────────────────────────
+```
 
 ---
 
@@ -254,7 +317,28 @@ As a [user type], I want to [action] so that [outcome].
 ```
 
 8. **Save** to `specs/[feature-name]/enriched-story.md`
-9. **Announce**: "Enriched story saved. Source: ZIP (`[zip_file_path]`). Ready to run /generate-artifacts."
+9. **Announce**:
+
+```
+──────────────────────────────────────────────
+ ✓ Enriched story saved
+   specs/[feature-name]/enriched-story.md
+   Source: ZIP ([zip_file_path])
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
+
+ Next step → /generate-artifacts
+
+ Claude will read the enriched story and generate all 3 spec
+ artifacts: Component Spec, Interaction Spec, and Page Spec.
+ These are the documents that drive implementation — review
+ the enriched story now and confirm it looks correct before
+ running the next step.
+
+ Run it now: /generate-artifacts
+──────────────────────────────────────────────
+```
 
 ---
 
@@ -327,7 +411,28 @@ As a [user type], I want to [action] so that [outcome].
 ```
 
 8. **Save** to `specs/[feature-name]/enriched-story.md`
-9. **Announce**: "Enriched story saved. Source: Google Stitch MCP (screen: [screen name]). Ready to run /generate-artifacts."
+9. **Announce**:
+
+```
+──────────────────────────────────────────────
+ ✓ Enriched story saved
+   specs/[feature-name]/enriched-story.md
+   Source: Google Stitch MCP (screen: [screen name])
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
+
+ Next step → /generate-artifacts
+
+ Claude will read the enriched story and generate all 3 spec
+ artifacts: Component Spec, Interaction Spec, and Page Spec.
+ These are the documents that drive implementation — review
+ the enriched story now and confirm it looks correct before
+ running the next step.
+
+ Run it now: /generate-artifacts
+──────────────────────────────────────────────
+```
 
 ---
 
@@ -348,4 +453,25 @@ As a [user type], I want to [action] so that [outcome].
 5. **Ask targeted questions** (max 3)
 6. **Write the enriched story** (same template as Sub-flow E1, but reference `design.md` instead of MCP output)
 7. **Save** to `specs/[feature-name]/enriched-story.md`
-8. **Announce**: "Enriched story saved. Source: Google Stitch ZIP (`[stitch_zip_path]`). Ready to run /generate-artifacts."
+8. **Announce**:
+
+```
+──────────────────────────────────────────────
+ ✓ Enriched story saved
+   specs/[feature-name]/enriched-story.md
+   Source: Google Stitch ZIP ([stitch_zip_path])
+──────────────────────────────────────────────
+ What happens next
+──────────────────────────────────────────────
+
+ Next step → /generate-artifacts
+
+ Claude will read the enriched story and generate all 3 spec
+ artifacts: Component Spec, Interaction Spec, and Page Spec.
+ These are the documents that drive implementation — review
+ the enriched story now and confirm it looks correct before
+ running the next step.
+
+ Run it now: /generate-artifacts
+──────────────────────────────────────────────
+```
