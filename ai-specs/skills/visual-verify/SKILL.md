@@ -1,54 +1,221 @@
 # Skill: visual-verify
 
-Run a structured visual QA comparing the live implementation to the Figma spec.
+Run a structured visual QA comparing the live implementation to the design spec.
 
 ## When to invoke
 
 User says: "verify", "visual QA", "/visual-verify", or after all Apply tasks are checked.
 
+## Before starting
+
+Read `.sdd-de/project.yaml` to determine `design_source`:
+`figma` | `library` | `github` | `zip` | `stitch`
+
+The verification process adapts based on the source of truth.
+For `github` and `zip`, the source of truth is the component source files.
+For `stitch`, the source of truth is the Stitch screen image + `design.md`.
+
 ## Prerequisites
 
 - All tasks in the Component Spec are checked (`- [x]`)
-- Dev server is running (`npm run dev`)
-- Figma frame URL is in the Component Spec
+- Dev server is running
+- Figma frame URL is in the Component Spec (Figma flow) OR library component docs are accessible (library flow)
 
-## Steps
+---
+
+## Branch A — Figma Flow  (design_source: figma)
+
+Use this branch when `design_source: figma`.
+
+### Steps
 
 1. **Read** `specs/[feature-name]/[component]-component-spec.md`
 2. **Open the live component** at the correct URL and viewport
-3. **Run the visual checklist** (report pass/fail for each):
+3. **Open the Figma frame** in Dev Mode (URL from Component Spec)
+4. **Run the visual checklist** (report pass ✓ or fail ✗ for each):
 
 ```
 VIEWPORT: 375px
-[ ] All variants present: primary, secondary, ghost, destructive
+[ ] All variants present and correct (compare side-by-side with Figma)
 [ ] All states present: default, hover, focus, active, disabled, loading, error
-[ ] Colors match tokens (check computed styles in DevTools)
-[ ] Spacing matches tokens
-[ ] Font size / weight / line-height match tokens
-[ ] Border radius matches tokens
+[ ] Colors match Figma Variables → CSS tokens (check DevTools Computed)
+[ ] Spacing matches design tokens (padding, margin, gap)
+[ ] Font size / weight / line-height match design tokens
+[ ] Border radius matches design tokens
+[ ] Shadows match design tokens
 
 VIEWPORT: 768px
-[ ] Layout changes are correct per responsive spec
+[ ] Layout changes are correct per Figma tablet frame
 
 VIEWPORT: 1440px
-[ ] Layout changes are correct per responsive spec
+[ ] Layout changes are correct per Figma desktop frame
 
 ACCESSIBILITY
-[ ] Correct element (button, a, div with role)
+[ ] Correct HTML element (button, a, input, etc.)
 [ ] aria-disabled on disabled state
 [ ] aria-busy on loading state
-[ ] Focus ring visible at 2:1+ contrast
-[ ] Axe audit: zero errors
+[ ] Focus ring visible at 2:1+ contrast ratio
+[ ] axe accessibility audit: zero errors
 
-TOKEN AUDIT (DevTools → Computed)
-[ ] Zero hardcoded hex values
-[ ] Zero hardcoded pixel values (except border-width, outline-width)
-[ ] Every color is a CSS custom property reference
-[ ] Every spacing value is a CSS custom property reference
+TOKEN AUDIT (DevTools → Computed — zero tolerance)
+[ ] Zero hardcoded hex values in component
+[ ] Zero hardcoded pixel values (except 1px borders, outline-width)
+[ ] Every color references a CSS token variable
+[ ] Every spacing value references a CSS token variable
 ```
 
-4. **Document results** in `specs/[feature-name]/visual-verify-report.md`:
+5. **Document results** in `specs/[feature-name]/visual-verify-report.md`:
    - List every discrepancy
    - For each: state whether Figma or code is authoritative, and the fix applied
-5. **Gate**: If zero unresolved discrepancies → proceed to /sync-tokens
-6. **If discrepancies exist**: fix each one, re-run the checklist item, mark resolved
+6. **Gate**: Zero unresolved discrepancies → proceed to `/adversarial-review`
+7. **If discrepancies exist**: fix each one, re-run the checklist item, mark resolved
+
+---
+
+## Branch B — Component Library Flow  (design_source: library)
+
+Use this branch when `design_source: library`.
+
+### Steps
+
+1. **Read** `specs/[feature-name]/[component]-component-spec.md`
+2. **Open the live component** at the correct URL and viewport
+3. **Reference**: library component documentation (not Figma)
+4. **Run the visual checklist**:
+
+```
+VIEWPORT: 375px
+[ ] Base library component renders without errors
+[ ] All custom variants are present (beyond library defaults)
+[ ] Brand tokens applied: color, spacing, radius, typography (check DevTools)
+[ ] Library-native states work: hover, focus, disabled, loading, error
+[ ] No library defaults leak through (e.g. wrong color, wrong border-radius)
+
+VIEWPORT: 768px
+[ ] Layout changes correct per spec
+
+VIEWPORT: 1440px
+[ ] Layout changes correct per spec
+
+LIBRARY OVERRIDE AUDIT
+[ ] Library default styles properly overridden (no unintended defaults visible)
+[ ] Token variables applied — no raw values from library theme object
+
+ACCESSIBILITY
+[ ] Library component's native accessibility is intact (not broken by overrides)
+[ ] axe accessibility audit: zero errors
+[ ] Focus management works correctly
+
+TOKEN AUDIT (zero tolerance)
+[ ] Zero hardcoded hex values in customization layer
+[ ] Zero hardcoded pixel values (except 1px borders)
+[ ] Every brand override uses a CSS token variable
+```
+
+5. **Document results** in `specs/[feature-name]/visual-verify-report.md`
+6. **Gate**: Zero unresolved discrepancies → proceed to `/adversarial-review`
+7. **If discrepancies exist**: fix, re-run, mark resolved
+
+---
+
+## Branch C — GitHub Repository Flow  (design_source: github)
+
+The source of truth is the component source files from the GitHub repo.
+There is no Figma frame to compare against — compare the live implementation to the Component Spec
+(which was generated from the repo's component API).
+
+### Steps
+
+1. **Read** `specs/[feature-name]/[component]-component-spec.md`
+2. **Open the live component** at the correct URL and viewport
+3. **Run the visual checklist**:
+
+```
+VIEWPORT: 375px
+[ ] All variants from the spec are present and visually correct
+[ ] All props exposed in the source component are implemented or explicitly excluded
+[ ] Brand tokens applied correctly: color, spacing, radius, typography
+[ ] All states work: hover, focus, disabled, loading, error
+[ ] No raw values from the source repo leak through (token overrides in effect)
+
+VIEWPORT: 768px
+[ ] Layout changes correct per spec
+
+VIEWPORT: 1440px
+[ ] Layout changes correct per spec
+
+PROP/API COMPLIANCE
+[ ] All prop types from the source component are respected
+[ ] No breaking changes introduced during adaptation
+
+ACCESSIBILITY
+[ ] Source component's native accessibility is intact
+[ ] axe accessibility audit: zero errors
+
+TOKEN AUDIT (zero tolerance)
+[ ] Zero hardcoded values in the adaptation/customization layer
+[ ] Every brand override uses a CSS token variable
+```
+
+4. **Document results** in `specs/[feature-name]/visual-verify-report.md`
+5. **Gate**: Zero unresolved discrepancies → proceed to `/adversarial-review`
+
+---
+
+## Branch D — ZIP File Flow  (design_source: zip)
+
+Same process as Branch C (GitHub). The source of truth is the component source files extracted from the ZIP.
+
+### Steps
+
+1. **Read** `specs/[feature-name]/[component]-component-spec.md`
+2. **Open the live component** at the correct URL and viewport
+3. **Run the same checklist as Branch C** — the ZIP is treated identically to a GitHub repo source
+4. **Document results** in `specs/[feature-name]/visual-verify-report.md`
+5. **Gate**: Zero unresolved discrepancies → proceed to `/adversarial-review`
+
+---
+
+## Branch E — Google Stitch Flow  (design_source: stitch)
+
+The source of truth is the Stitch screen image plus the `design.md` design system spec.
+Compare the live implementation against these visually and token-by-token.
+
+### Steps
+
+1. **Read** `specs/[feature-name]/[component]-component-spec.md`
+2. **Open the live component** at the correct URL and viewport
+3. **Get the reference image**:
+   - **MCP** (`stitch_connection: mcp`): call `fetch_screen_image` to get the current Stitch screen screenshot
+   - **ZIP** (`stitch_connection: zip`): read `screen.png` from the extracted ZIP
+4. **Get the design system spec**: read `design.md` (from ZIP or from `extract_design_context` via MCP)
+5. **Run the visual checklist**:
+
+```
+VIEWPORT: 375px
+[ ] Live component matches Stitch screen.png — layout, spacing, proportions
+[ ] All variants visible in Stitch screen are implemented
+[ ] Brand colors match design.md color values → mapped to project token variables
+[ ] Typography matches design.md — size, weight, line-height → mapped to tokens
+[ ] Spacing matches design.md scale → mapped to token variables
+[ ] Border radius matches design.md component rules → mapped to tokens
+[ ] All states: hover, focus, disabled, loading, error
+
+VIEWPORT: 768px
+[ ] Layout changes correct per spec
+
+VIEWPORT: 1440px
+[ ] Layout changes correct per spec
+
+STITCH TOKEN AUDIT
+[ ] All values from design.md are mapped to project token variables (not hardcoded)
+[ ] No Stitch HTML/CSS default values leak into the implementation without tokenization
+[ ] Every color, spacing, and typography value uses a project token variable
+
+ACCESSIBILITY
+[ ] axe accessibility audit: zero errors
+[ ] Focus management works correctly
+```
+
+6. **Document results** in `specs/[feature-name]/visual-verify-report.md`
+7. **Gate**: Zero unresolved discrepancies → proceed to `/adversarial-review`

@@ -14,27 +14,31 @@ All components follow the Atomic Design pattern:
 
 ## File Structure
 
+Component organization follows the same hierarchy regardless of framework.
+See `docs/framework-config.md` for framework-specific file extensions and naming conventions.
+
 ```
-src/
-├── components/
-│   ├── ui/            ← Atoms (shadcn/ui + custom)
-│   │   ├── button.tsx
-│   │   ├── input.tsx
-│   │   └── badge.tsx
-│   ├── modules/       ← Molecules
-│   │   ├── search-bar.tsx
-│   │   └── form-field.tsx
-│   └── sections/      ← Organisms
-│       ├── site-nav.tsx
-│       └── hero-section.tsx
+[component_dir]/           ← value from .sdd-de/project.yaml
+├── ui/                    ← Atoms
+│   ├── button.[ext]
+│   ├── input.[ext]
+│   └── badge.[ext]
+├── modules/               ← Molecules
+│   ├── search-bar.[ext]
+│   └── form-field.[ext]
+└── sections/              ← Organisms
+    ├── site-nav.[ext]
+    └── hero-section.[ext]
 ```
 
 ## Variant Rules
 
-- Use `cva` (class-variance-authority) for variant management
-- Every component with visual variants must define them explicitly — no ad-hoc className overrides at usage sites
-- Variant props use union types: `variant: "primary" | "secondary" | "ghost"`
+- Define variants explicitly in the component — no ad-hoc style overrides at usage sites
+- Variant props/attributes use union types or string literals: `variant: "primary" | "secondary" | "ghost"`
 - Size props use union types: `size: "sm" | "md" | "lg"`
+- For typed languages (TypeScript, etc.): use discriminated unions for variant definitions
+- For CSS-only variants: use data attributes (`data-variant="primary"`) or BEM modifiers (`.btn--primary`)
+- Never rely on className/class overrides at the usage site to change a component's variant
 
 ## State Requirements
 
@@ -50,11 +54,23 @@ Every interactive component must implement all applicable states:
 | `error` | Inputs, forms |
 | `empty` | Lists, tables, cards that display data |
 
+States must be implemented in the component — never delegated to the parent or handled with global styles.
+
+## Component API Rules
+
+- Props/inputs/attributes must be typed — TypeScript interface, PropTypes, Angular `@Input`, Svelte `export let`, or JSDoc
+- Required props have no defaults; optional props always have defaults
+- Event handler naming: `onClick`, `onSubmit`, `onChange` for React; `@click`, `@submit` for Vue/Angular; `on:click` for Svelte
+- No component reads from global state directly — pass data via props/inputs
+- Components are self-contained: all styles, tokens, and logic needed to render correctly are within the component
+
 ## Accessibility Baseline
 
 - Semantic HTML first: `<button>` for actions, `<a>` for navigation, `<input>` for data entry
-- Every icon-only element has `aria-label`
+- Every icon-only interactive element has `aria-label`
 - Every form input has a visible `<label>` (not placeholder-only)
-- Color is never the only way information is conveyed (use icon + color, or text + color)
-- Focus ring: never `outline: none` without a custom focus style
-- Contrast: 4.5:1 for normal text, 3:1 for large text and UI components (WCAG AA)
+- Color is never the only way information is conveyed — pair color with icon or text
+- Focus ring: never `outline: none` without a custom visible focus style
+- Contrast: 4.5:1 minimum for normal text, 3:1 for large text and UI components (WCAG AA)
+- Disabled elements: use `aria-disabled="true"` for non-native disabled; use `disabled` attribute for native form elements
+- Loading elements: use `aria-busy="true"` while loading; announce completion with `aria-live` if needed

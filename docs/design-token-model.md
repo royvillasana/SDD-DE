@@ -1,6 +1,8 @@
 # Design Token Model
 
-This document defines the design token system for SDD-DE projects. All tokens are defined in Figma Variables and mirrored as CSS custom properties in `globals.css`.
+This document defines the design token system for SDD-DE projects. All tokens are defined in Figma Variables and mirrored in the project token file (see `.sdd-de/project.yaml → token_file`).
+
+The examples below use CSS custom properties — the universal web standard supported by all modern browsers and frameworks. See `docs/framework-config.md` for SCSS variable equivalents and framework-specific token file locations.
 
 ---
 
@@ -66,8 +68,8 @@ Base unit: 4px
 
 ```css
 /* Font families */
---font-sans:  "Geist", ui-sans-serif, system-ui, sans-serif;
---font-mono:  "Geist Mono", ui-monospace, monospace;
+--font-sans:    "Geist", ui-sans-serif, system-ui, sans-serif;
+--font-mono:    "Geist Mono", ui-monospace, monospace;
 --font-display: "Instrument Serif", Georgia, serif;
 
 /* Font sizes */
@@ -89,10 +91,10 @@ Base unit: 4px
 --line-height-relaxed: 1.65;
 
 /* Font weights */
---font-weight-regular:   400;
---font-weight-medium:    500;
---font-weight-semibold:  600;
---font-weight-bold:      700;
+--font-weight-regular:  400;
+--font-weight-medium:   500;
+--font-weight-semibold: 600;
+--font-weight-bold:     700;
 ```
 
 ### Radius Tokens
@@ -110,10 +112,10 @@ Base unit: 4px
 ### Shadow Tokens
 
 ```css
---shadow-sm:  0 1px 2px 0 rgb(0 0 0 / 0.05);
---shadow-md:  0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
---shadow-lg:  0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
---shadow-xl:  0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+--shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+--shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+--shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 ```
 
 ---
@@ -132,7 +134,7 @@ Examples:
 
 ---
 
-## Figma Variables → CSS Mapping
+## Figma Variables → Token Variable Mapping
 
 | Figma Variable | CSS Custom Property |
 |---|---|
@@ -143,4 +145,77 @@ Examples:
 | `typography/size/lg` | `--font-size-lg` |
 | `radius/md` | `--radius-md` |
 
-When the Figma MCP reads a frame and finds a Figma Variable, Claude Code will use the corresponding CSS custom property automatically — as long as the variable naming follows this convention.
+When the Figma MCP reads a frame and finds a Figma Variable, use the corresponding project token variable automatically — as long as variable naming follows this convention.
+
+---
+
+## Token Implementation by Styling Approach
+
+### CSS Custom Properties (universal)
+
+```css
+/* token_file: src/styles/tokens.css (or equivalent) */
+:root {
+  --color-brand-primary: #F4A500;
+  --spacing-4: 16px;
+}
+
+/* Usage in component */
+.btn {
+  background: var(--color-brand-primary);
+  padding: var(--spacing-4);
+}
+```
+
+### SCSS Variables
+
+```scss
+/* token_file: src/styles/tokens.scss */
+$color-brand-primary: #F4A500;
+$spacing-4: 16px;
+
+/* Usage in component */
+.btn {
+  background: $color-brand-primary;
+  padding: $spacing-4;
+}
+```
+
+### Tailwind CSS
+
+```js
+// tailwind.config.js
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        'brand-primary': 'var(--color-brand-primary)',
+      },
+    },
+  },
+};
+```
+
+```html
+<!-- Reference via CSS variable inside Tailwind utility -->
+<button class="bg-[var(--color-brand-primary)] p-[var(--spacing-4)]">
+```
+
+---
+
+## Token Audit Rule
+
+After every implementation, verify:
+- Zero hardcoded hex values in component files
+- Zero hardcoded pixel values (except `1px` borders and `outline-width`)
+- Every color references a token variable
+- Every spacing value references a token variable
+
+Run grep to verify:
+```bash
+# Find hardcoded hex values (must return empty)
+grep -rn '#[0-9a-fA-F]\{3,8\}' [component-file]
+
+# Find hardcoded pixel values outside borders/outlines
+grep -rn '[0-9]\+px' [component-file]
+```
