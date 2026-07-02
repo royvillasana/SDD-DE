@@ -39,7 +39,7 @@ async function init() {
   const { intro, outro, select, text, note, isCancel, cancel, spinner: spin } = clack;
 
   // ── Header ────────────────────────────────────────────────────────────────
-  console.log('');
+  printParrot();
   intro(`SDD-DE  v${pkg.version}  —  Spec-Driven Development for Design Engineers`);
   console.log('');
 
@@ -564,9 +564,38 @@ function copyDir(src, dst) {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
+function printParrot() {
+  const isTTY = process.stdout.isTTY;
+  const r = isTTY ? '\x1b[91m' : '';  // bright red   — head & body
+  const y = isTTY ? '\x1b[93m' : '';  // bright yellow — beak & crest
+  const g = isTTY ? '\x1b[92m' : '';  // bright green  — wings
+  const b = isTTY ? '\x1b[94m' : '';  // bright blue   — tail
+  const w = isTTY ? '\x1b[97m' : '';  // bright white  — eyes
+  const x = isTTY ? '\x1b[0m'  : '';  // reset
+
+  console.log(
+    '\n' +
+    `         ${y}/\\/\\${x}\n` +
+    `          ${y}||||${x}\n` +
+    `${r}           ___${x}\n` +
+    `${r}         _/   \\_${x}\n` +
+    `${r}        / ${w}(o)${r}${w}(o)${r} \\${x}\n` +
+    `${r}       |    ${y}>=${r}    |${x}\n` +
+    `${r}       |   ${y}\\__/${r}   |${x}\n` +
+    `${r}        \\_______/${x}\n` +
+    `${r}           |||${x}\n` +
+    `${g}         __|_|__${x}\n` +
+    `${g}        /   |   \\${x}\n` +
+    `${b}       /    |    \\${x}\n` +
+    `${b}      /_____|_____\\${x}\n`
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 function printHelp() {
-  console.log(`
-sdd-de v${pkg.version}
+  printParrot();
+  console.log(`sdd-de v${pkg.version}
 
 Usage:
   npx sdd-de           Install SDD-DE and configure your project
