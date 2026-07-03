@@ -13,6 +13,27 @@ Read `.sdd-de/project.yaml` to determine `design_source`:
 
 The enrichment process branches based on where design specs come from.
 
+### Screen Creation Gate Check
+
+If the brief describes a **screen, page, or layout** (not a single component), verify
+these prerequisites before proceeding:
+
+1. **`/storybook` has been run** — check if `.storybook/` directory exists
+2. **`/design-doc` has been run** — check if `DESIGN.md` exists at project root
+
+If either is missing, stop and tell the user:
+```
+⚠️ Screen Creation requires /storybook and /design-doc to be completed first.
+Missing: [/storybook | /design-doc | both]
+Run them now before starting this screen.
+```
+
+Then **scan the screen design** and compare against existing components in `[component_dir]`.
+List every UI element the screen needs and flag any that don't exist as built components.
+If components are missing, show the Component Gap Detection block (see CLAUDE.md → Screen
+Creation) and offer to build them. Do not proceed with screen enrichment until all needed
+components exist, Storybook is updated, and DESIGN.md is current.
+
 ---
 
 ## Branch A — Figma Flow  (design_source: figma)

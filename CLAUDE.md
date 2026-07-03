@@ -178,8 +178,6 @@ You can run `/storybook` and `/design-doc` at any time to update documentation a
 ### Screen Creation
 
 Compose components into complete screens, layouts, and product features.
-We recommend building the components a screen needs before composing it, but you
-can switch back to Design System Component Creation at any time to build missing pieces.
 
 | Level | Examples |
 |---|---|
@@ -188,6 +186,60 @@ can switch back to Design System Component Creation at any time to build missing
 | **Features** | Checkout flow, Onboarding wizard, Search results |
 
 Run the **7-step cycle** once per screen or feature.
+
+#### Prerequisites before starting Screen Creation
+
+Before creating ANY screen, these must be completed:
+
+1. **`/storybook` has been run** — all existing components have stories and are browsable
+2. **`/design-doc` has been run** — DESIGN.md exists and passes `npx @google/design.md lint`
+
+These are mandatory. Do not begin Screen Creation without them.
+
+#### Component Gap Detection — MANDATORY
+
+When the user requests a screen, **before starting the 7-step cycle**, scan the screen's
+design (Figma frame, brief, or description) and inventory every distinct UI element it
+contains. Compare this inventory against the components that already exist in `[component_dir]`.
+
+If components are missing, **do not proceed with screen creation**. Instead:
+
+```
+🔵 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️ Component Gap Detected
+
+  You want to build: Landing Screen
+  Components needed but NOT yet built:
+
+  ⬜ NavBar         — top navigation with logo, links, CTA
+  ⬜ HeroSection    — full-width hero with heading, subtext, CTA buttons
+  ⬜ FeatureCard    — icon + title + description card
+  ⬜ TestimonialCard — avatar + quote + name
+  ⬜ FooterSection  — links, social icons, copyright
+
+  Components you HAVE:
+  ✅ Button
+  ✅ Avatar
+  ✅ Input
+
+  → You need to build 5 more components before this screen.
+
+  Would you like me to build these components for you?
+  I'll create each one from your Figma file using the 7-step cycle,
+  then update Storybook and DESIGN.md before starting the screen.
+🔵 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+If the user confirms, build each missing component through the full 7-step cycle
+(Design System Component Creation), then re-run `/storybook` and `/design-doc` to
+update the documentation. Only then proceed to Screen Creation.
+
+If the user says "build them for me", proceed component by component:
+1. Run `/enrich-brief` for the first missing component
+2. Complete the full 7-step cycle for it
+3. Move to the next missing component
+4. After all are built, run `/storybook` and `/design-doc`
+5. Then start the screen's 7-step cycle
 
 ---
 

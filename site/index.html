@@ -947,7 +947,11 @@
     </div>
 
     <div class="callout">
-      <strong>Same 7-step cycle.</strong> Each page follows the exact same workflow: <code>/enrich-brief</code> with the Figma page URL &rarr; <code>/generate-artifacts</code> &rarr; branch &rarr; implement &rarr; <code>/visual-verify</code> &rarr; <code>/adversarial-review</code> &rarr; <code>/commit</code>. The AI imports your design system components and composes them according to the Figma page layout.
+      <strong>Mandatory before any screen:</strong> <code>/storybook</code> and <code>/design-doc</code> must be completed. When you request a screen, the AI scans the design for every UI element and checks if it exists as a built component. If components are missing, it lists them and offers to build them for you &mdash; each through the full 7-step cycle &mdash; before starting the screen.
+    </div>
+
+    <div class="callout">
+      <strong>Same 7-step cycle.</strong> Each screen follows the exact same workflow: <code>/enrich-brief</code> with the Figma frame URL &rarr; <code>/generate-artifacts</code> &rarr; branch &rarr; implement &rarr; <code>/visual-verify</code> &rarr; <code>/adversarial-review</code> &rarr; <code>/commit</code>. The AI imports your design system components and composes them according to the Figma layout.
     </div>
 
     <!-- ── 7 Step Cycle ───────────────────────────────────── -->
