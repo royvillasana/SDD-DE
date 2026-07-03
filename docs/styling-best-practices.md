@@ -17,220 +17,240 @@ raw class names or style overrides.
 ```
 ✗ BAD:  <Button className="bg-blue-500 text-white px-4 py-2 rounded-md" />
 ✓ GOOD: <Button variant="primary" />
+✓ GOOD: <Button variant="primary" className="mt-4" />  (layout override is OK)
 ```
 
-The component file contains all styling logic. The consumer never sees CSS, utility
-classes, or style objects — only semantic props.
+The component file contains all styling logic. The consumer never sees variant
+internals — only semantic props. Consumers CAN pass `className` for layout
+overrides (margin, positioning), which gets merged last via `cn()`.
 
 ---
 
-## The Nesting Rule — Max 2 Visible Classes Per Element
+## Component Variant Architecture — CVA + cn()
 
-**No element in a component's rendered HTML should have more than 2 class names visible
-in the markup.** All base styles must be extracted to a CSS class. The only classes in
-the HTML are:
+Every component uses **Class Variance Authority (CVA)** for variant definitions and a
+**`cn()` utility** to merge class names safely. This is the universal pattern regardless
+of styling approach.
 
-1. The **base class** (e.g., `.btn`) — contains ALL shared structural styles
-2. The **variant class** (e.g., `.btn-primary`) — contains ONLY the visual overrides
+### Required dependencies
 
-This applies to every styling approach. The goal is readable HTML where you can
-instantly see what an element IS (base) and which VARIANT it uses, without wading
-through 30+ utility classes.
-
-```html
-✗ BAD (30+ classes, unreadable):
-<a class="inline-flex items-center justify-center whitespace-nowrap rounded-full
-   font-semibold leading-none cursor-pointer border-[length:var(--btn-border-width)]
-   transition-[color,background-color,border-color,box-shadow] bg-primary
-   text-on-primary border-transparent shadow-[var(--btn-primary-shadow)]
-   hover:bg-primary/90 focus-visible:outline-2 h-11 px-6 text-base
-   gap-2 w-full md:w-auto">Get Started</a>
-
-✓ GOOD (2 classes, instantly readable):
-<button class="btn btn-primary">Get Started</button>
-
-✓ GOOD with size variant (3 classes max):
-<button class="btn btn-primary btn-lg">Get Started</button>
+```bash
+npm install class-variance-authority clsx
+# If using Tailwind, also install:
+npm install tailwind-merge
 ```
 
-### How to extract base styles
+### The `cn()` utility
 
-Define the base class in your token file or a component CSS file. The base class
-contains everything that's true for ALL variants: layout, spacing, radius, typography,
-transitions, focus ring, cursor. The variant class overrides ONLY colors and shadows.
+Create `lib/utils.ts` (or equivalent path for your framework):
 
-```css
-/* In your token file or component CSS */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-2);
-  white-space: nowrap;
-  border-radius: var(--radius-full);
-  padding: var(--btn-padding-y) var(--btn-padding-x);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  line-height: 1;
-  cursor: pointer;
-  border: var(--btn-border-width) solid transparent;
-  transition: color 0.15s, background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
-  width: 100%;
+```ts
+// lib/utils.ts — WITH Tailwind
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
 }
-
-@media (min-width: 768px) {
-  .btn { width: auto; }
-}
-
-.btn:focus-visible {
-  outline: 2px solid var(--color-ring);
-  outline-offset: 2px;
-}
-
-.btn:disabled,
-.btn[aria-disabled="true"] {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-/* Variants — ONLY visual overrides */
-.btn-primary {
-  background: var(--color-primary);
-  color: var(--color-primary-foreground);
-  box-shadow: var(--btn-primary-shadow);
-}
-.btn-primary:hover { background: var(--color-primary-hover); }
-
-.btn-secondary {
-  background: var(--color-secondary);
-  color: var(--color-secondary-foreground);
-}
-.btn-secondary:hover { background: var(--color-secondary-hover); }
-
-.btn-tertiary {
-  background: transparent;
-  color: var(--color-foreground);
-}
-.btn-tertiary:hover { background: var(--color-muted); }
-
-.btn-outline {
-  background: transparent;
-  color: var(--color-foreground);
-  border-color: var(--color-border);
-}
-.btn-outline:hover {
-  background: var(--color-muted);
-  border-color: var(--color-foreground);
-}
-
-/* Sizes */
-.btn-sm { padding: var(--spacing-1) var(--spacing-3); font-size: var(--font-size-sm); }
-.btn-lg { padding: var(--spacing-3) var(--spacing-6); font-size: var(--font-size-lg); }
 ```
 
-### The component file is minimal
+```ts
+// lib/utils.ts — WITHOUT Tailwind (CSS Modules, SCSS, plain CSS)
+import { clsx, type ClassValue } from 'clsx';
 
-With base styles in CSS, the component file has almost no styling logic:
+export function cn(...inputs: ClassValue[]) {
+  return clsx(inputs);
+}
+```
+
+### Variant definitions — separate colocated file
+
+For each component, define variants in a **separate file** from the component itself.
+This makes variant definitions portable, testable, and framework-agnostic.
+
+```
+[component_dir]/
+├── ui/
+│   ├── button/
+│   │   ├── button.variants.ts    ← CVA definition (portable, no JSX)
+│   │   ├── Button.tsx            ← React component (consumes variants)
+│   │   └── Button.stories.tsx    ← Storybook stories
+│   ├── input/
+│   │   ├── input.variants.ts
+│   │   ├── Input.tsx
+│   │   └── Input.stories.tsx
+```
+
+### CVA definition example
+
+Variant names and values MUST mirror the design source 1:1. If Figma defines
+`Variant = Primary | Secondary | Ghost | Destructive` and `Size = SM | MD | LG`,
+the CVA definition must match exactly.
+
+```ts
+// button.variants.ts
+import { cva, type VariantProps } from 'class-variance-authority';
+
+export const buttonVariants = cva(
+  // Base styles — shared by ALL variants
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  {
+    variants: {
+      variant: {
+        primary:     'bg-[--color-primary] text-[--color-primary-foreground] hover:bg-[--color-primary-hover] shadow-sm',
+        secondary:   'bg-[--color-secondary] text-[--color-secondary-foreground] hover:bg-[--color-secondary-hover]',
+        tertiary:    'bg-transparent text-[--color-foreground] hover:bg-[--color-muted]',
+        outline:     'border border-[--color-border] bg-transparent text-[--color-foreground] hover:bg-[--color-muted]',
+        destructive: 'bg-[--color-destructive] text-[--color-destructive-foreground] hover:bg-[--color-destructive]/90',
+        ghost:       'text-[--color-foreground] hover:bg-[--color-muted]',
+        link:        'text-[--color-primary] underline-offset-4 hover:underline',
+      },
+      size: {
+        sm: 'h-8 px-3 text-sm',
+        md: 'h-10 px-4 text-sm',
+        lg: 'h-12 px-6 text-base',
+        icon: 'h-10 w-10',
+      },
+    },
+    defaultVariants: {
+      variant: 'primary',
+      size: 'md',
+    },
+  }
+);
+
+export type ButtonVariants = VariantProps<typeof buttonVariants>;
+```
+
+**Without Tailwind** (plain CSS / CSS Modules), the CVA strings are CSS class names
+instead of utility classes:
+
+```ts
+// button.variants.ts — plain CSS version
+import { cva, type VariantProps } from 'class-variance-authority';
+
+export const buttonVariants = cva('btn', {
+  variants: {
+    variant: {
+      primary:     'btn-primary',
+      secondary:   'btn-secondary',
+      tertiary:    'btn-tertiary',
+      outline:     'btn-outline',
+      destructive: 'btn-destructive',
+    },
+    size: {
+      sm: 'btn-sm',
+      md: '',
+      lg: 'btn-lg',
+    },
+  },
+  defaultVariants: {
+    variant: 'primary',
+    size: 'md',
+  },
+});
+
+export type ButtonVariants = VariantProps<typeof buttonVariants>;
+```
+
+### Component implementation
+
+The component consumes the CVA definition, supports `forwardRef`, spreads native
+HTML attributes, and merges `className` **last** via `cn()` so consumers can apply
+layout overrides.
 
 ```tsx
-// Button.tsx — clean, readable, maintainable
-interface ButtonProps {
-  variant?: 'primary' | 'secondary' | 'tertiary' | 'outline';
-  size?: 'sm' | 'md' | 'lg';
-  disabled?: boolean;
-  children: React.ReactNode;
+// Button.tsx
+import * as React from 'react';
+import { cn } from '@/lib/utils';
+import { buttonVariants, type ButtonVariants } from './button.variants';
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    ButtonVariants {
+  asChild?: boolean;
 }
 
-export function Button({ variant = 'primary', size = 'md', disabled, children }: ButtonProps) {
-  const sizeClass = size !== 'md' ? ` btn-${size}` : '';
-  return (
-    <button
-      className={`btn btn-${variant}${sizeClass}`}
-      disabled={disabled}
-      aria-disabled={disabled || undefined}
-    >
-      {children}
-    </button>
-  );
-}
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, disabled, children, ...props }, ref) => {
+    return (
+      <button
+        className={cn(buttonVariants({ variant, size }), className)}
+        ref={ref}
+        disabled={disabled}
+        aria-disabled={disabled || undefined}
+        {...props}
+      >
+        {children}
+      </button>
+    );
+  }
+);
+Button.displayName = 'Button';
+
+export { Button };
 ```
+
+### Key rules
+
+1. **`className` is always last** in `cn()` — this lets consumers override layout
+   (margin, position) without fighting the component's internal styles
+2. **`forwardRef` is required** — all components must forward refs for composition
+3. **Native HTML attributes are spread** via `...props` — components are transparent
+   wrappers, not opaque boxes
+4. **No inline `style={{}}` for design-system values** — inline styles are only
+   allowed for runtime-computed values (e.g., dynamic widths, scroll positions)
+5. **Variant types are exported** from the `.variants.ts` file via `VariantProps`
+6. **`defaultVariants` must match the design source** — if Figma's default button
+   state is "Primary / MD", the CVA defaults must be `{ variant: 'primary', size: 'md' }`
 
 ---
 
 ## Tailwind CSS
 
-### The Problem
+### Configuration
 
-Tailwind's utility-first approach can produce 30+ classes per element, making HTML
-unreadable and unmaintainable. Arbitrary value syntax like `border-[length:var(--x)]`
-makes it worse.
+Extend `tailwind.config` to reference CSS custom properties so utilities use
+design tokens instead of hardcoded values:
 
-### The Solution — CSS Base + Tailwind Overrides
-
-Extract all shared styles to a CSS base class using `@layer components`. The HTML
-only shows the base class and variant class — never raw utilities.
-
-```css
-/* globals.css or tokens.css */
-@layer components {
-  .btn {
-    @apply inline-flex items-center justify-center whitespace-nowrap
-           rounded-full font-semibold leading-none cursor-pointer
-           transition-colors w-full md:w-auto;
-    padding: var(--btn-padding-y) var(--btn-padding-x);
-    border: var(--btn-border-width) solid transparent;
-    font-size: var(--font-size-base);
-    gap: var(--spacing-2);
-  }
-
-  .btn:focus-visible {
-    @apply outline-2 outline-offset-2;
-    outline-color: var(--color-ring);
-  }
-
-  .btn:disabled { @apply opacity-50 pointer-events-none; }
-
-  .btn-primary {
-    background: var(--color-primary);
-    color: var(--color-primary-foreground);
-    box-shadow: var(--btn-primary-shadow);
-  }
-  .btn-primary:hover { background: var(--color-primary-hover); }
-
-  .btn-secondary {
-    background: var(--color-secondary);
-    color: var(--color-secondary-foreground);
-  }
-  .btn-secondary:hover { background: var(--color-secondary-hover); }
-
-  .btn-tertiary { background: transparent; color: var(--color-foreground); }
-  .btn-tertiary:hover { background: var(--color-muted); }
-
-  .btn-outline {
-    background: transparent;
-    color: var(--color-foreground);
-    border-color: var(--color-border);
-  }
-  .btn-outline:hover { background: var(--color-muted); border-color: var(--color-foreground); }
-
-  .btn-sm { padding: var(--spacing-1) var(--spacing-3); font-size: var(--font-size-sm); }
-  .btn-lg { padding: var(--spacing-3) var(--spacing-6); font-size: var(--font-size-lg); }
-}
+```js
+// tailwind.config.js
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        primary:     { DEFAULT: 'var(--color-primary)', foreground: 'var(--color-primary-foreground)', hover: 'var(--color-primary-hover)' },
+        secondary:   { DEFAULT: 'var(--color-secondary)', foreground: 'var(--color-secondary-foreground)' },
+        destructive: { DEFAULT: 'var(--color-destructive)', foreground: 'var(--color-destructive-foreground)' },
+        muted:       { DEFAULT: 'var(--color-muted)', foreground: 'var(--color-muted-foreground)' },
+        border:      'var(--color-border)',
+        ring:        'var(--color-ring)',
+        background:  'var(--color-background)',
+        foreground:  'var(--color-foreground)',
+      },
+      borderRadius: {
+        sm: 'var(--radius-sm)',
+        md: 'var(--radius-md)',
+        lg: 'var(--radius-lg)',
+        full: 'var(--radius-full)',
+      },
+      spacing: {
+        // Map token scale to Tailwind spacing
+      },
+    },
+  },
+};
 ```
 
-```tsx
-// Button.tsx — 2 classes, not 30
-export function Button({ variant = 'primary', size = 'md', disabled, children }) {
-  const sizeClass = size !== 'md' ? ` btn-${size}` : '';
-  return (
-    <button className={`btn btn-${variant}${sizeClass}`} disabled={disabled}>
-      {children}
-    </button>
-  );
-}
-```
+### Rules (Tailwind path)
 
-### When standalone `@apply` Is Acceptable
+1. CVA variant strings use Tailwind utilities — the class composition handles merging
+2. `tailwind-merge` (via `cn()`) resolves class conflicts automatically
+3. Every color, spacing, and radius in `tailwind.config` references a CSS custom property
+4. No hardcoded hex values or magic pixel numbers in component utility classes
+5. Consumers pass `className` for layout overrides only (margin, grid placement)
+
+### When `@layer components` Is Acceptable
 
 For **single HTML elements** repeated across files where a full component feels
 heavy (e.g., a consistent link style), define a custom class:
@@ -677,13 +697,17 @@ export class ButtonComponent {
 
 ## Summary — Decision Table
 
-| Styling Approach | Where Styles Live | Variant Pattern | Anti-Pattern |
+All approaches use **CVA for variant definitions** in a colocated `.variants.ts` file
+and **`cn()` for class merging**. The styling approach only determines what strings
+go inside the CVA definition.
+
+| Styling Approach | CVA strings contain | cn() uses | Anti-Pattern |
 |---|---|---|---|
-| **Tailwind** | Inside component via `cva`/`clsx` | Props → class map | Utility classes at usage site |
-| **Styled Components** | Module-scope styled wrappers | Data attributes | Prop interpolation for variants; defining in render |
-| **Emotion** | Module-scope styled wrappers | Data attributes | Same as Styled Components |
-| **CSS Modules** | `.module.css` next to component | `composes` + class lookup | Element selectors; circular composes |
-| **SCSS** | `.scss` next to component | BEM modifiers (`&--variant`) | Nesting > 3 levels; `@extend` across files |
-| **Vue Scoped** | `<style scoped>` in SFC | Class binding + BEM | Element selectors; unscoped styles |
-| **Svelte** | `<style>` in SFC (auto-scoped) | Class binding + BEM | `:global()` for child internals |
-| **Angular** | `.scss` in component decorator | Class binding + BEM | `::ng-deep`; global stylesheets |
+| **Tailwind** | Tailwind utility classes | `clsx` + `twMerge` | Hardcoded hex; no `cn()` merge; inline 30+ classes at usage site |
+| **Styled Components** | Data attribute selectors | `clsx` | Prop interpolation for variants; defining in render |
+| **Emotion** | Data attribute selectors | `clsx` | Same as Styled Components |
+| **CSS Modules** | CSS module class names | `clsx` | Element selectors; circular composes |
+| **SCSS** | BEM class names (`btn--primary`) | `clsx` | Nesting > 3 levels; `@extend` across files |
+| **Vue Scoped** | Scoped class names | `clsx` | Element selectors; unscoped styles |
+| **Svelte** | Scoped class names | `clsx` | `:global()` for child internals |
+| **Angular** | Component class names | `clsx` | `::ng-deep`; global stylesheets |

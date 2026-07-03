@@ -173,7 +173,7 @@ your-project/
 - **Spec-first** — all three spec artifacts must exist before code
 - **One task at a time** — mark complete before moving on
 - **Token-referenced** — every value references a design token, no hardcoded hex
-- **Style-encapsulated** — components own their styles via props and variants, never raw utility classes at usage sites
+- **CVA + cn()** — every component uses Class Variance Authority for variants (in a separate `.variants.ts` file), `cn()` for class merging, and `forwardRef` for ref forwarding
 - **Pixel-accurate** — compare live to spec after every implementation
 - **Accessible** — semantic HTML and ARIA are part of the spec
 - **Always-on progress tracking** — after every response, the AI shows your position in the cycle, completed steps, and the exact next action. Derailments are flagged with corrective steps

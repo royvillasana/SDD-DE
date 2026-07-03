@@ -140,3 +140,20 @@ Date: [YYYY-MM-DD]
  re-run: /adversarial-review
 ──────────────────────────────────────────────
 ```
+
+## Architecture Validation Checklist
+
+In addition to visual and behavioral checks, verify these architecture rules:
+
+- [ ] **Design source correctly detected** — extraction method matches `design_source` in `project.yaml`
+- [ ] **Tokens resolve to CSS custom properties** — no hardcoded hex values or magic pixel numbers
+- [ ] **CVA variants file exists** — separate `.variants.ts` file colocated with the component
+- [ ] **CVA variants mirror design source 1:1** — variant names/values match Figma properties or inferred variants
+- [ ] **`defaultVariants` match design source default** — e.g., Figma's default button state
+- [ ] **Component uses `forwardRef`** — ref forwarding enabled
+- [ ] **Component spreads native HTML attributes** — `...props` is spread on the root element
+- [ ] **`className` merges last via `cn()`** — consumer overrides are respected
+- [ ] **`VariantProps` types exported** — component props are fully typed from CVA
+- [ ] **No inline `style={{}}` for design-system values** — inline styles only for runtime-computed values (dynamic widths, scroll positions)
+
+If any item fails, flag it as a **Blocker** in the adversarial review report.

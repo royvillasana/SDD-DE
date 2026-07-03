@@ -47,7 +47,7 @@ export function Button({ variant = 'primary', disabled, children, onClick }: But
 }
 ```
 
-**Variant management**: conditional classNames or `cva` (class-variance-authority).
+**Variant management**: CVA in a colocated `.variants.ts` file + `cn()` utility for class merging.
 **Token file**: `src/styles/tokens.css` or `src/index.css`.
 
 ---

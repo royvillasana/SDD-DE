@@ -15,9 +15,10 @@ provides skills, spec templates, and standards for a structured design-to-code w
   to the design spec. Unresolved discrepancies block the Verify step.
 - **Accessible by default**: Semantic HTML and ARIA attributes are not optional —
   they are part of the spec.
-- **Max 2 classes per element**: No element should have more than 2 class names in the
-  HTML — a base class (`.btn`) and a variant (`.btn-primary`). All structural styles go
-  in CSS. Never scatter 30+ utility classes in markup. See `docs/styling-best-practices.md`.
+- **CVA + cn() for all components**: Every component uses Class Variance Authority (CVA)
+  for variants in a separate `.variants.ts` file, a `cn()` utility for class merging, and
+  `forwardRef` for ref forwarding. Consumers pass `className` last for layout overrides.
+  No inline `style={{}}` for design-system values. See `docs/styling-best-practices.md`.
 - **Always disclose the next step**: After completing any step or skill, tell the user
   what the next step is, what command to run, and what will happen. Never leave the user
   uncertain about where they are in the cycle or what to do next.

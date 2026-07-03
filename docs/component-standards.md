@@ -31,40 +31,44 @@ See `docs/framework-config.md` for framework-specific file extensions and naming
     └── hero-section.[ext]
 ```
 
-## Style Encapsulation
+## Style Encapsulation — CVA + cn()
 
-**Components own their styles.** Consumers interact through props and variants — never
-through raw class names, utility classes, or style overrides.
+**Components own their styles.** Consumers interact through props and variants.
+Consumers CAN pass `className` for layout overrides (margin, position), which
+merges last via `cn()`.
 
 ```
 ✗ BAD:  <Button className="bg-blue-500 text-white px-4 py-2 rounded" />
 ✓ GOOD: <Button variant="primary" size="md" />
+✓ GOOD: <Button variant="primary" className="mt-4" />  (layout override OK)
 ```
 
-Read `docs/styling-best-practices.md` for framework-specific patterns.
+### Required architecture
 
-### Max 2 Classes Rule
+Every component follows this structure:
 
-No element in the rendered HTML should have more than **2 class names**: a base class
-(`.btn`) and a variant class (`.btn-primary`). A size modifier (`.btn-lg`) makes 3 max.
-All structural styles (layout, spacing, radius, typography, transitions, focus ring) go
-in the base CSS class. Variants override **only colors and shadows**.
+1. **Variants file** (`button.variants.ts`) — CVA definition, separate from the component.
+   Variant names/values mirror the design source 1:1.
+2. **Component file** (`Button.tsx`) — consumes variants, supports `forwardRef`,
+   spreads native HTML attributes, merges `className` last via `cn()`.
+3. **cn() utility** (`lib/utils.ts`) — `clsx` + `tailwind-merge` (Tailwind) or `clsx` alone.
 
-```html
-✗ BAD:   class="inline-flex items-center justify-center whitespace-nowrap rounded-full
-               font-semibold bg-primary text-white px-6 py-3 ..."  (30+ classes)
-✓ GOOD:  class="btn btn-primary"  (2 classes)
+```
+✗ BAD:   Variants defined inline inside the component
+✓ GOOD:  button.variants.ts (portable) + Button.tsx (consumes it)
 ```
 
-### Per-framework summary
+### Component implementation rules
 
-- **Tailwind**: extract base to `@layer components` CSS class. HTML shows `.btn .btn-primary`, never raw utilities.
-- **Styled Components / Emotion**: define styled wrappers at module scope. Use data attributes for variants.
-- **CSS Modules**: one `.module.css` per component. Use `composes` for shared patterns.
-- **SCSS**: one root class with BEM modifiers (`&--primary`). Max 3 levels of nesting.
-- **Vue**: always use `<style scoped>`. Use class selectors, never element selectors.
-- **Svelte**: styles are auto-scoped. Use CSS custom properties for child theming.
-- **Angular**: use ViewEncapsulation. Style via `:host` and co-located `.scss`.
+- `forwardRef` is required on all components
+- `className` is always the LAST argument in `cn()` so consumers can override layout
+- Native HTML attributes are spread via `...props`
+- No inline `style={{}}` for design-system values (colors, spacing, radius, shadows)
+- Variant types are exported via `VariantProps<typeof componentVariants>`
+- `defaultVariants` must match the default state in the design source
+
+Read `docs/styling-best-practices.md` for the full CVA pattern, `cn()` setup,
+and per-framework styling examples.
 
 ## Variant Rules
 
