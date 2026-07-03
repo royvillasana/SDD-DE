@@ -47,7 +47,7 @@ export function Button({ variant = 'primary', disabled, children, onClick }: But
 }
 ```
 
-**Variant management**: conditional classNames or `cva` (class-variance-authority).
+**Variant management**: CSS base class + variant class (e.g., `btn btn-${variant}`).
 **Token file**: `src/styles/tokens.css` or `src/index.css`.
 
 ---

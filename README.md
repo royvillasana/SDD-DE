@@ -173,7 +173,7 @@ your-project/
 - **Spec-first** — all three spec artifacts must exist before code
 - **One task at a time** — mark complete before moving on
 - **Token-referenced** — every value references a design token, no hardcoded hex
-- **Style-encapsulated** — components own their styles via props and variants, never raw utility classes at usage sites
+- **Style-encapsulated (Epic 1)** — Epic 1 components use CSS base classes with max 2 classes per element. Epic 2 pages can use Tailwind or any CSS approach freely
 - **Pixel-accurate** — compare live to spec after every implementation
 - **Accessible** — semantic HTML and ARIA are part of the spec
 - **Always-on progress tracking** — after every response, the AI shows your position in the cycle, completed steps, and the exact next action. Derailments are flagged with corrective steps
