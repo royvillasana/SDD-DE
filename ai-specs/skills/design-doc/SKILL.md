@@ -144,14 +144,20 @@ components:
     typography: "{typography.[token]}"
     rounded: "{rounded.[token]}"
     padding: "{spacing.[token]}"
-    # Map each component to its token references
+    source: "[component_dir]/ui/[component-name]/[ComponentName].tsx"
+    variants: "[component_dir]/ui/[component-name]/[component-name].variants.ts"
+    storybook: "http://localhost:6006/?path=/docs/atoms-[componentname]"
+    # Map each component to its token references AND source files
   # One entry per component built in Epic 1
 ---
 ```
 
 #### Markdown Prose
 
-After the YAML frontmatter, write these sections:
+After the YAML frontmatter, write these sections. **Every component annotation MUST
+reference the actual source files, variant definitions, and Storybook stories that
+already exist in the project.** The DESIGN.md is not a standalone spec — it is a
+living index that points to real, implemented code.
 
 ```markdown
 ## Brand & Style
@@ -185,23 +191,60 @@ For example: buttons and inputs use md, cards use lg, avatars use full.]
 
 ## Components
 
-### Atoms
+Every component entry below references the **actual files in the project**.
+Use these references when composing pages in Epic 2 — import the component,
+check its variants in the `.variants.ts` file, and preview it in Storybook.
 
-[For each atom built in Epic 1: name, one-line purpose, key variants, which
-tokens it uses. Reference the Component Spec for full details.]
+### Atoms
 
 #### [ComponentName]
 
-[Purpose]. Variants: [list]. Uses: `{colors.primary}`, `{typography.label-sm}`,
-`{rounded.md}`, `{spacing.sm}`.
+[One-line purpose of this component.]
+
+| | |
+|---|---|
+| **Component** | `[component_dir]/ui/[component-name]/[ComponentName].tsx` |
+| **Variants** | `[component_dir]/ui/[component-name]/[component-name].variants.ts` |
+| **Storybook** | `http://localhost:6006/?path=/docs/atoms-[componentname]` |
+| **Spec** | `specs/[feature-name]/[component]-component-spec.md` |
+
+**Import:**
+```tsx
+import { [ComponentName] } from '@/components/ui/[component-name]/[ComponentName]';
+```
+
+**Variants** (from `[component-name].variants.ts`):
+- `variant`: [list actual variant values from the CVA file, e.g., primary | secondary | tertiary | outline | destructive | ghost]
+- `size`: [list actual size values, e.g., sm | md | lg | icon]
+
+**Default state:** `variant="[default]"` `size="[default]"`
+
+**Usage:**
+```tsx
+<[ComponentName] variant="primary" size="md" />
+<[ComponentName] variant="outline" size="lg" className="mt-4" />
+```
+
+**Tokens used:** `{colors.primary}`, `{typography.label-sm}`, `{rounded.md}`, `{spacing.sm}`
+
+[Repeat this pattern for each atom.]
 
 ### Molecules
 
-[Same pattern for each molecule.]
+[Same pattern — each molecule entry includes Component path, Variants path,
+Storybook URL, Spec path, import statement, variant list, and usage example.
+Also list which atoms it composes.]
+
+#### [MoleculeName]
+
+**Composes:** [ComponentA], [ComponentB]
+
+[Same table and code blocks as atoms.]
 
 ### Organisms
 
-[Same pattern for each organism.]
+[Same pattern — each organism entry includes all references plus which
+molecules/atoms it composes.]
 
 ## Responsive Behavior
 
@@ -279,7 +322,7 @@ To export tokens: `npx @google/design.md export DESIGN.md --format css-vars`
    [N] color tokens documented
    [N] typography scales documented
    [N] spacing tokens documented
-   [N] components documented
+   [N] components documented (with source paths, variant files, Storybook URLs)
    Lint: passed (0 errors)
    Format: @google/design.md v1.0
 ──────────────────────────────────────────────
@@ -315,6 +358,14 @@ Before announcing completion, verify:
 - [ ] Every token from the project's token file is represented in the YAML frontmatter
 - [ ] Every component built in Epic 1 is listed in the `components` key with token references
 - [ ] Token references use the `{path.to.token}` syntax (e.g., `{colors.primary}`)
+- [ ] **Every component entry has real file references** — verify these paths exist:
+  - [ ] Component file path (e.g., `src/components/ui/button/Button.tsx`) — `ls` the file
+  - [ ] Variants file path (e.g., `src/components/ui/button/button.variants.ts`) — `ls` the file
+  - [ ] Storybook URL path (e.g., `?path=/docs/atoms-button`) — matches a real story
+  - [ ] Spec file path (e.g., `specs/button/button-component-spec.md`) — `ls` the file
+  - [ ] Import statement works (e.g., `import { Button } from '@/components/ui/button/Button'`)
+- [ ] **Every component entry has a usage example** with actual variant values from the `.variants.ts` file
+- [ ] **Molecules/organisms list which atoms they compose** with import paths
 - [ ] Markdown prose sections describe design intent with specifics, not generic descriptions
 - [ ] `npx @google/design.md lint DESIGN.md` passes with zero errors
 - [ ] Token export matches the project's existing token file
