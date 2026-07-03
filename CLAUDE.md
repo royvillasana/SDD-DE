@@ -46,6 +46,7 @@ and follow the corresponding `SKILL.md` automatically before responding.
 | `/sync-tokens` | `.sdd-de/ai-specs/skills/sync-tokens/SKILL.md` | Sync design tokens between Figma and code |
 | `/commit` | `.sdd-de/ai-specs/skills/commit/SKILL.md` | Commit with spec as PR description |
 | `/storybook` | `.sdd-de/ai-specs/skills/storybook/SKILL.md` | Install Storybook, generate stories for all components, launch dev server |
+| `/design-doc` | `.sdd-de/ai-specs/skills/design-doc/SKILL.md` | Generate DESIGN.md from Epic 1 components, validate with @google/design.md |
 | `/sync-agent-symlinks` | `.sdd-de/ai-specs/skills/sync-agent-symlinks/SKILL.md` | Repair broken symlinks across editor directories |
 
 ## Standards
@@ -67,6 +68,18 @@ Fill these templates when writing specs manually:
 - [Component Spec Template](.sdd-de/docs/component-spec-template.md)
 - [Interaction Spec Template](.sdd-de/docs/interaction-spec-template.md)
 - [Page Spec Template](.sdd-de/docs/page-spec-template.md)
+
+## Design System Document
+
+After Epic 1 is complete, run **`/design-doc`** to generate a `DESIGN.md` file at the project
+root using the `@google/design.md` format (YAML frontmatter + Markdown prose). This file
+captures the complete design system: all tokens, all components, design intent, and usage guidelines.
+
+**Read `DESIGN.md` before starting any Epic 2 work.** It provides the full context of the
+component library so you can compose pages accurately.
+
+To validate: `npx @google/design.md lint DESIGN.md`
+To export tokens: `npx @google/design.md export DESIGN.md --format css-vars`
 
 ## How the Workflow Is Organized
 
@@ -92,9 +105,11 @@ Follow atomic design order: tokens first, then atoms, then molecules, then organ
 
 Run the **7-step cycle** once per component. Do not start Epic 2 until the atoms your pages depend on are built.
 
-When all components are built, run **`/storybook`** to install Storybook, generate stories
-for every component, and launch a local dev server at `http://localhost:6006` so you can
-browse and interact with the full component library before composing pages.
+When all components are built:
+1. Run **`/storybook`** to install Storybook, generate stories for every component, and launch a dev server at `http://localhost:6006`.
+2. Run **`/design-doc`** to generate a `DESIGN.md` file that captures the entire design system in the `@google/design.md` format and validates it with `npx @google/design.md lint`.
+
+Do not start Epic 2 until both `/storybook` and `/design-doc` have been run.
 
 ---
 

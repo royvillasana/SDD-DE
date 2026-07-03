@@ -74,7 +74,7 @@ Build UI building blocks before composing pages. Follow atomic design order:
 | **Molecules** | SearchBar, Card, FormField |
 | **Organisms** | Header, Sidebar, DataTable |
 
-When all components are built, run `/storybook` to generate stories and launch a dev server at `http://localhost:6006`.
+When all components are built, run `/storybook` to generate stories and launch a dev server, then `/design-doc` to generate a validated `DESIGN.md` using `@google/design.md`.
 
 ### Epic 2 — Page Composition
 
@@ -134,6 +134,7 @@ react · next · vue · nuxt · svelte · sveltekit · angular · astro · vanil
 | `/sync-tokens` | Sync design tokens between source and code |
 | `/commit` | PR with Component Spec as description |
 | `/storybook` | Generate Storybook stories, launch dev server |
+| `/design-doc` | Generate DESIGN.md, validate with @google/design.md lint |
 | `/sync-agent-symlinks` | Repair editor symlinks |
 
 ---
@@ -155,6 +156,7 @@ your-project/
     │   ├── sync-tokens/
     │   ├── commit/
     │   ├── storybook/
+    │   ├── design-doc/
     │   └── sync-agent-symlinks/
     └── docs/                         ← standards & templates
         ├── component-standards.md

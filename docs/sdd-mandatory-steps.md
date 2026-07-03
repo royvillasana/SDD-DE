@@ -112,3 +112,25 @@ PR checklist:
 - [ ] Tool: `/commit` skill
 
 **Gate**: PR is opened. No direct pushes to `main`.
+
+---
+
+## Epic 1 Completion Gate — MANDATORY
+
+After the last component is committed and before starting any Epic 2 work:
+
+### Run `/storybook`
+
+Generate stories for every component and launch the Storybook dev server. Verify all components render correctly with their variants and states.
+
+### Run `/design-doc`
+
+Generate `DESIGN.md` at the project root using the `@google/design.md` format.
+
+1. The AI agent reads all components and the token file
+2. The AI agent composes DESIGN.md with YAML frontmatter (`colors`, `typography`, `rounded`, `spacing`, `components`) and Markdown prose (design intent, component usage)
+3. Run `npx @google/design.md lint DESIGN.md` — must pass with zero errors
+4. Run `npx @google/design.md export DESIGN.md --format css-vars` — verify token consistency
+5. CLAUDE.md is updated to reference DESIGN.md for Epic 2
+
+**Gate**: DESIGN.md exists, passes lint, and CLAUDE.md references it. Do not start Epic 2 without this.

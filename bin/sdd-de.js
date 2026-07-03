@@ -401,6 +401,23 @@ async function init() {
   s.stop('SDD-DE installed');
 
   // ─────────────────────────────────────────────────────────────────────────
+  // Install @google/design.md CLI
+  // ─────────────────────────────────────────────────────────────────────────
+  const s2 = spin();
+  s2.start('Installing @google/design.md CLI…');
+  try {
+    const pm = detectPackageManager(cwd);
+    const cmd = pm === 'pnpm' ? 'pnpm add -D @google/design.md'
+              : pm === 'yarn'  ? 'yarn add -D @google/design.md'
+              : pm === 'bun'   ? 'bun add -D @google/design.md'
+              :                  'npm install -D @google/design.md';
+    require('child_process').execSync(cmd, { cwd, stdio: 'pipe' });
+    s2.stop('@google/design.md installed');
+  } catch {
+    s2.stop('@google/design.md install skipped — install manually: npm install -D @google/design.md');
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
   // Summary
   // ─────────────────────────────────────────────────────────────────────────
   const designLabel =
@@ -430,6 +447,7 @@ async function init() {
       '  Build tokens → atoms → molecules → organisms.',
       '  Run the 7-step cycle once per component.',
       '  When done → /storybook to generate stories + launch dev server.',
+      '  Then → /design-doc to generate DESIGN.md for Epic 2.',
       '',
       'Epic 2 — Page Composition',
       '  Compose Epic 1 components into pages and features.',
@@ -545,10 +563,31 @@ async function update() {
 
   s.stop('SDD-DE updated to v' + pkg.version);
 
+  // Ensure @google/design.md is installed
+  try {
+    const userPkg = JSON.parse(fs.readFileSync(path.join(cwd, 'package.json'), 'utf8'));
+    const hasDesignMd = userPkg.devDependencies?.['@google/design.md'] || userPkg.dependencies?.['@google/design.md'];
+    if (!hasDesignMd) {
+      const s2 = spin();
+      s2.start('Installing @google/design.md CLI…');
+      try {
+        const pm = detectPackageManager(cwd);
+        const cmd = pm === 'pnpm' ? 'pnpm add -D @google/design.md'
+                  : pm === 'yarn'  ? 'yarn add -D @google/design.md'
+                  : pm === 'bun'   ? 'bun add -D @google/design.md'
+                  :                  'npm install -D @google/design.md';
+        require('child_process').execSync(cmd, { cwd, stdio: 'pipe' });
+        s2.stop('@google/design.md installed');
+      } catch {
+        s2.stop('@google/design.md install skipped — install manually: npm install -D @google/design.md');
+      }
+    }
+  } catch { /* no package.json — skip */ }
+
   note(
     [
       'Updated:',
-      '  • Skills (8 slash commands + /storybook)',
+      '  • Skills (10 slash commands including /storybook and /design-doc)',
       '  • Documentation & spec templates',
       '  • CLAUDE.md / AGENTS.md / GEMINI.md / codex.md',
       '  • Editor symlinks',
@@ -566,6 +605,13 @@ async function update() {
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
+
+function detectPackageManager(cwd) {
+  if (fs.existsSync(path.join(cwd, 'pnpm-lock.yaml'))) return 'pnpm';
+  if (fs.existsSync(path.join(cwd, 'yarn.lock')))      return 'yarn';
+  if (fs.existsSync(path.join(cwd, 'bun.lockb')))      return 'bun';
+  return 'npm';
+}
 
 function cancelSetup(cancel) {
   cancel('Setup cancelled.');
@@ -720,6 +766,7 @@ Usage:
     Order: Tokens → Atoms → Molecules → Organisms
     Run the 7-step cycle once per component.
     When done → /storybook to generate stories and launch dev server.
+    Then → /design-doc to generate DESIGN.md for Epic 2.
 
   Epic 2 — Page Composition
     Compose Epic 1 components into pages, layouts, and features.
@@ -745,7 +792,7 @@ Usage:
   .sdd-de/ai-specs/skills/       slash commands for Claude Code / Cursor
     /setup               /enrich-brief        /generate-artifacts
     /visual-verify       /adversarial-review  /sync-tokens  /commit
-    /storybook
+    /storybook           /design-doc
   .sdd-de/docs/                  spec templates + standards
   CLAUDE.md / AGENTS.md / GEMINI.md / codex.md
   .claude/skills/                symlinks → .sdd-de/ai-specs/skills/

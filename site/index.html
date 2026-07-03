@@ -917,7 +917,7 @@
     </div>
 
     <div class="callout">
-      <strong>When Epic 1 is complete:</strong> run <code>/storybook</code>. This installs Storybook, generates stories for every component (variants, states, accessibility tests), and launches a dev server at <code>http://localhost:6006</code> so you can browse and interact with your entire component library before composing pages.
+      <strong>When Epic 1 is complete:</strong> run <code>/storybook</code> to generate stories and launch a dev server, then run <code>/design-doc</code> to generate a <code>DESIGN.md</code> file. The AI agent composes it from your tokens and components, then validates it with <code>npx @google/design.md lint</code>. This gives the agent full context for Epic 2.
     </div>
 
     <!-- ── Epic 2 detail ──────────────────────────────────── -->
@@ -1011,7 +1011,7 @@
 <section id="skills">
   <div class="container">
     <div class="section-label">Skills</div>
-    <h2 class="section-title">9 slash commands, one consistent workflow</h2>
+    <h2 class="section-title">10 slash commands, one consistent workflow</h2>
     <p class="section-desc">Type any command inside Claude Code, Cursor, or your AI agent. The agent reads the SKILL.md and executes the full procedure.</p>
 
     <table>
@@ -1027,6 +1027,7 @@
         <tr><td>/sync-tokens</td><td>Sync design tokens between design source and code</td></tr>
         <tr><td>/commit</td><td>Stage, commit, and open PR with Component Spec as description</td></tr>
         <tr><td>/storybook</td><td>Install Storybook, generate stories for all components, launch dev server</td></tr>
+        <tr><td>/design-doc</td><td>Generate DESIGN.md from Epic 1 components &mdash; validated with <code>npx @google/design.md lint</code></td></tr>
         <tr><td>/sync-agent-symlinks</td><td>Audit and repair broken editor symlinks</td></tr>
       </tbody>
     </table>
