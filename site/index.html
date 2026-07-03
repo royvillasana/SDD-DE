@@ -1134,7 +1134,28 @@
         <h3>One task at a time</h3>
         <p>Execute one spec task per session. Mark it complete before moving to the next. Never batch.</p>
       </div>
+      <div class="feature-card">
+        <h3>Always-on progress tracking</h3>
+        <p>After every response, the AI shows where you are in the cycle, what's done, and what's next. If it derails, it flags it and tells you how to get back on track.</p>
+      </div>
     </div>
+
+    <h3 style="font-size: 18px; font-weight: 700; margin: 48px 0 16px;">You always know where you are</h3>
+    <p class="section-desc" style="margin-bottom: 24px;">At the end of every AI response, you see a progress block like this:</p>
+    <pre style="font-size: 13px; line-height: 1.5; color: var(--text-dim);">───── Progress ─────────────────────────────────────────────
+ Epic 1 &mdash; Button
+
+ [x] 1. /enrich-brief
+ [x] 2. /generate-artifacts
+ [x] 3. Branch created
+ [ ] 4. Implement (task 3 of 7)          &larr; you are here
+ [ ] 5. /visual-verify
+ [ ] 6. /adversarial-review
+ [ ] 7. /sync-tokens &rarr; /commit
+
+ Next step &rarr; Implement task 4: add disabled state with aria-disabled
+ Run: mark task 3 as [x], then continue with task 4
+────────────────────────────────────────────────────────────</pre>
   </div>
 </section>
 

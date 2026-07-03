@@ -18,6 +18,43 @@ provides skills, spec templates, and standards for a structured design-to-code w
 - **Always disclose the next step**: After completing any step or skill, tell the user
   what the next step is, what command to run, and what will happen. Never leave the user
   uncertain about where they are in the cycle or what to do next.
+- **Track progress and self-correct**: At the end of every response, review what was just
+  completed against the full workflow. If the work has derailed from the expected steps,
+  flag it. Always show a progress summary with the current position in the cycle and
+  the remaining steps. Never let the user lose context of where they are.
+
+## Progress Tracking — MANDATORY
+
+At the end of **every response** that completes a task, include a progress block.
+This applies during implementation (step 4), after running any skill, and after
+any work that advances the cycle. The format is:
+
+```
+───── Progress ─────────────────────────────────────────────
+ Epic [1|2] — [Component/Page Name]
+
+ [x] 1. /enrich-brief
+ [x] 2. /generate-artifacts
+ [x] 3. Branch created
+ [ ] 4. Implement (task 3 of 7)          ← you are here
+ [ ] 5. /visual-verify
+ [ ] 6. /adversarial-review
+ [ ] 7. /sync-tokens → /commit
+
+ Next step → [what to do next]
+ Run: [exact command]
+────────────────────────────────────────────────────────────
+```
+
+Rules:
+1. Mark completed steps with `[x]`, pending steps with `[ ]`, and the current step with `← you are here`
+2. If inside step 4 (Implement), show which spec task you are on (e.g., "task 3 of 7")
+3. If the work has gone off-track from the expected sequence, add a warning:
+   `⚠ Derailed: [describe what happened]. To get back on track: [corrective action]`
+4. Between Epic 1 and Epic 2, show the transition steps:
+   `[ ] /storybook`, `[ ] /design-doc`
+5. Never omit this block. Even if the user asks a question unrelated to the cycle,
+   if there is an active cycle in progress, show the current position
 
 ## Project Configuration
 

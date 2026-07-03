@@ -176,6 +176,7 @@ your-project/
 - **Style-encapsulated** — components own their styles via props and variants, never raw utility classes at usage sites
 - **Pixel-accurate** — compare live to spec after every implementation
 - **Accessible** — semantic HTML and ARIA are part of the spec
+- **Always-on progress tracking** — after every response, the AI shows your position in the cycle, completed steps, and the exact next action. Derailments are flagged with corrective steps
 
 ---
 
