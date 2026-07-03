@@ -738,10 +738,13 @@ function printBanner() {
   let art;
   try {
     const artPath = require('path').join(__dirname, '..', 'ascii-art.txt');
-    art = require('fs').readFileSync(artPath, 'utf8')
+    const lines = require('fs').readFileSync(artPath, 'utf8')
       .split('\n')
-      .filter(l => l.trim().length > 0)  // remove blank lines
-      .map(l => '  ' + l.trimEnd())      // indent 2 spaces, trim trailing
+      .filter(l => l.trim().length > 0);
+    // Find the minimum leading whitespace across all lines and strip it
+    const minIndent = Math.min(...lines.map(l => l.match(/^(\s*)/)[1].length));
+    art = lines
+      .map(l => '  ' + l.slice(minIndent).trimEnd())
       .join('\n');
   } catch {
     art = '  SDD-DE';
