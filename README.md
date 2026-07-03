@@ -1,14 +1,8 @@
 <div align="center">
 
-```
-  ░███████ ██████  ██████        ██████  ███████
-  ░██      ██   ██ ██   ██       ██   ██ ██
-  ░███████ ██   ██ ██   ██ ═══   ██   ██ █████
-  ░     ██ ██   ██ ██   ██       ██   ██ ██
-  ░███████ ██████  ██████  ═══   ██████  ███████
-  ░░░░░░░░░░░░░░░░░░░░░░░░
-  Spec-Driven Development for Design Engineers
-```
+# SDD-DE
+
+### Spec-Driven Development for Design Engineers
 
 **A portable, AI-ready methodology toolkit that teaches AI coding agents to ship production-quality UI through disciplined specification before implementation.**
 
@@ -31,8 +25,6 @@ cd your-project
 npx @royvillasana/sdd-de
 ```
 
-https://github.com/user-attachments/assets/demo-setup.mp4
-
 The CLI asks about your stack (framework, language, design source, styling), then installs the full toolkit into `.sdd-de/` and writes `CLAUDE.md` to your project root.
 
 ### 2. Open your AI agent
@@ -46,8 +38,6 @@ Open **Claude Code**, **Cursor**, or any AI agent in the same directory. It read
 ```
 
 Describe what you want to build. The agent walks you through the full 7-step cycle.
-
-https://github.com/user-attachments/assets/demo-workflow.mp4
 
 ### Already installed? Update to latest
 
@@ -65,7 +55,7 @@ SDD-DE structures work into **two phases** — you can switch between them at an
 
 ### Design System Component Creation
 
-Build UI building blocks before composing pages. Follow atomic design order:
+Build UI building blocks. Follow atomic design order:
 
 | Level | Examples |
 |---|---|
@@ -74,21 +64,23 @@ Build UI building blocks before composing pages. Follow atomic design order:
 | **Molecules** | SearchBar, Card, FormField |
 | **Organisms** | Header, Sidebar, DataTable |
 
-When all components are built, run `/storybook` to generate stories and launch a dev server, then `/design-doc` to generate a validated `DESIGN.md` using `@google/design.md`.
+When components are ready, run `/storybook` to generate stories, then `/design-doc` to generate a validated `DESIGN.md` using `@google/design.md`.
 
 ### Screen Creation
 
-Compose components into complete pages and features:
+Compose components into complete screens and features:
 
 | Level | Examples |
 |---|---|
 | **Templates** | Two-column layout, dashboard shell |
-| **Pages** | Homepage, Login, Dashboard, Settings |
+| **Screens** | Homepage, Login, Dashboard, Settings |
 | **Features** | Checkout flow, Onboarding wizard |
+
+Before creating any screen, `/storybook` and `/design-doc` must be completed. The AI detects missing components and offers to build them first.
 
 ### The 7-Step Cycle
 
-Runs once per component (Design System Component Creation) and once per page (Screen Creation):
+Runs once per component and once per screen:
 
 | Step | Command | What happens |
 |---|---|---|
@@ -99,8 +91,6 @@ Runs once per component (Design System Component Creation) and once per page (Sc
 | 5 | `/visual-verify` | Compare live to spec — zero discrepancies |
 | 6 | `/adversarial-review` | Red-team before committing |
 | 7 | `/sync-tokens` → `/commit` | Sync tokens, open PR with spec as description |
-
-https://github.com/user-attachments/assets/demo-verify.mp4
 
 ---
 
@@ -131,7 +121,7 @@ react · next · vue · nuxt · svelte · sveltekit · angular · astro · vanil
 | `/generate-artifacts` | Generate Component + Interaction + Page specs |
 | `/visual-verify` | Visual QA against design spec |
 | `/adversarial-review` | Red-team implementation before commit |
-| `/sync-tokens` | Sync design tokens between source and code |
+| `/sync-tokens` | Validate token completeness, sync between source and code |
 | `/commit` | PR with Component Spec as description |
 | `/storybook` | Generate Storybook stories, launch dev server |
 | `/design-doc` | Generate DESIGN.md, validate with @google/design.md lint |
@@ -147,7 +137,7 @@ your-project/
 ├── .claude/skills/                   ← symlinks to skills
 └── .sdd-de/
     ├── project.yaml                  ← your project config
-    ├── ai-specs/skills/              ← 9 slash commands
+    ├── ai-specs/skills/              ← 10 slash commands
     │   ├── setup/
     │   ├── enrich-brief/
     │   ├── generate-artifacts/
@@ -176,7 +166,7 @@ your-project/
 - **CVA + cn()** — every component uses Class Variance Authority for variants (in a separate `.variants.ts` file), `cn()` for class merging, and `forwardRef` for ref forwarding
 - **Pixel-accurate** — compare live to spec after every implementation
 - **Accessible** — semantic HTML and ARIA are part of the spec
-- **Always-on progress tracking** — after every response, the AI shows your position in the cycle, completed steps, and the exact next action. Derailments are flagged with corrective steps
+- **Always-on progress tracking** — after every response, the AI shows your position in the cycle, completed steps, and the exact next action
 
 ---
 
@@ -188,23 +178,15 @@ your-project/
 Build a primary Button from this Figma frame: https://figma.com/design/...
 ```
 
-**Build a Login page from shadcn/ui:**
+**Build a Login screen from shadcn/ui:**
 ```
 /enrich-brief
-Build a Login page: email input, password input, submit button, "forgot password" link
+Build a Login screen: email input, password input, submit button, "forgot password" link
 ```
 
 **Update existing installation:**
 ```bash
 npx @royvillasana/sdd-de@latest update
-```
-
----
-
-## Publishing (maintainers)
-
-```bash
-npm version patch && npm publish
 ```
 
 ---
