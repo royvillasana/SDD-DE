@@ -731,19 +731,23 @@ function copyDir(src, dst) {
 
 function printBanner() {
   const isTTY = process.stdout.isTTY;
-  const c = isTTY ? '\x1b[96m' : '';  // cyan — main letters
-  const d = isTTY ? '\x1b[36m' : '';  // dim cyan — shadow/accent
+  const c = isTTY ? '\x1b[96m' : '';  // cyan
   const x = isTTY ? '\x1b[0m'  : '';  // reset
 
-  console.log(`
-${d}  ░${c}███████ ██████  ██████        ${c}██████  ███████${x}
-${d}  ░${c}██      ██   ██ ██   ██       ${c}██   ██ ██${x}
-${d}  ░${c}███████ ██   ██ ██   ██ ${d}═══${c}   ██   ██ █████${x}
-${d}  ░${c}     ██ ██   ██ ██   ██       ${c}██   ██ ██${x}
-${d}  ░${c}███████ ██████  ██████  ${d}═══${c}   ██████  ███████${x}
-${d}  ░░░░░░░░░░░░░░░░░░░░░░░░${x}
-${d}  Spec-Driven Development for Design Engineers${x}
-`);
+  // Read the ASCII art from the bundled file, or use inline fallback
+  let art;
+  try {
+    const artPath = require('path').join(__dirname, '..', 'ascii-art.txt');
+    art = require('fs').readFileSync(artPath, 'utf8')
+      .split('\n')
+      .filter(l => l.trim().length > 0)  // remove blank lines
+      .map(l => '  ' + l.trimEnd())      // indent 2 spaces, trim trailing
+      .join('\n');
+  } catch {
+    art = '  SDD-DE';
+  }
+
+  console.log(`\n${c}${art}${x}\n`);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

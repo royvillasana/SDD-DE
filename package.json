@@ -11,6 +11,7 @@
     "bin/",
     "ai-specs/skills/",
     "docs/",
+    "ascii-art.txt",
     "CLAUDE.md"
   ],
   "dependencies": {
