@@ -97,6 +97,43 @@ Base unit: 4px
 --font-weight-bold:     700;
 ```
 
+### Typography Compositions (HTML Element Mapping)
+
+These compositions combine font-size, weight, line-height, and letter-spacing tokens
+into the typographic styles used by HTML elements. Define these as Figma Text Styles
+so the MCP can read them.
+
+```css
+/* Headings */
+h1 { font-size: var(--font-size-4xl); font-weight: var(--font-weight-bold); line-height: var(--line-height-tight); letter-spacing: var(--letter-spacing-tight); }
+h2 { font-size: var(--font-size-3xl); font-weight: var(--font-weight-bold); line-height: var(--line-height-tight); letter-spacing: var(--letter-spacing-tight); }
+h3 { font-size: var(--font-size-2xl); font-weight: var(--font-weight-semibold); line-height: var(--line-height-snug); }
+h4 { font-size: var(--font-size-xl);  font-weight: var(--font-weight-semibold); line-height: var(--line-height-snug); }
+h5 { font-size: var(--font-size-lg);  font-weight: var(--font-weight-medium); line-height: var(--line-height-normal); }
+h6 { font-size: var(--font-size-base); font-weight: var(--font-weight-medium); line-height: var(--line-height-normal); }
+
+/* Body */
+p       { font-size: var(--font-size-base); font-weight: var(--font-weight-regular); line-height: var(--line-height-normal); }
+.lead   { font-size: var(--font-size-lg);   font-weight: var(--font-weight-regular); line-height: var(--line-height-relaxed); }
+small   { font-size: var(--font-size-sm);   font-weight: var(--font-weight-regular); line-height: var(--line-height-normal); }
+
+/* Links */
+a       { font-weight: var(--font-weight-medium); text-decoration: underline; text-underline-offset: 2px; }
+
+/* Labels & Captions */
+label   { font-size: var(--font-size-sm);  font-weight: var(--font-weight-medium); line-height: var(--line-height-normal); }
+.caption { font-size: var(--font-size-xs); font-weight: var(--font-weight-regular); line-height: var(--line-height-normal); }
+
+/* Code */
+code    { font-family: var(--font-mono); font-size: var(--font-size-sm); }
+pre     { font-family: var(--font-mono); font-size: var(--font-size-sm); line-height: var(--line-height-relaxed); }
+
+/* Letter spacing */
+--letter-spacing-tight:  -0.025em;
+--letter-spacing-normal:  0em;
+--letter-spacing-wide:    0.05em;
+```
+
 ### Radius Tokens
 
 ```css

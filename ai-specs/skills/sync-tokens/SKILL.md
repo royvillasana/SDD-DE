@@ -19,7 +19,154 @@ Read `.sdd-de/project.yaml` to determine:
 
 Use this branch when `design_source: figma`.
 
-### Steps
+### Step 0 — Token Completeness Validation (MANDATORY FIRST)
+
+Before syncing individual tokens, validate that the Figma file provides a complete
+design system. Read the Figma Variables collection (`figma_token_collection`) and
+Figma Text Styles via the Figma MCP, then check every category below.
+
+If tokens are missing, **do not proceed** — list what's missing and ask the user to
+add the variables/styles in Figma before continuing.
+
+#### Required Token Categories
+
+**Colors** — Figma Variables in the token collection:
+
+| Required Variable | Purpose | Example |
+|---|---|---|
+| `color/primary` | Primary brand / CTA | `#1A73E8` |
+| `color/primary-hover` | Primary hover state | `#1557B0` |
+| `color/primary-foreground` | Text on primary | `#FFFFFF` |
+| `color/secondary` | Secondary actions | `#6C757D` |
+| `color/secondary-hover` | Secondary hover | `#545B62` |
+| `color/secondary-foreground` | Text on secondary | `#FFFFFF` |
+| `color/background` | Page background | `#FFFFFF` |
+| `color/foreground` | Primary text | `#171717` |
+| `color/muted` | Subtle backgrounds | `#F5F5F5` |
+| `color/muted-foreground` | Secondary text | `#737373` |
+| `color/card` | Card surface | `#FFFFFF` |
+| `color/card-foreground` | Card text | `#171717` |
+| `color/border` | Borders, dividers | `#E5E5E5` |
+| `color/input` | Input borders | `#D4D4D4` |
+| `color/ring` | Focus ring | `#2563EB` |
+| `color/destructive` | Error, delete | `#DC2626` |
+| `color/destructive-foreground` | Text on destructive | `#FFFFFF` |
+| `color/success` | Success states | `#16A34A` |
+| `color/warning` | Warning states | `#D97706` |
+| `color/info` | Informational | `#2563EB` |
+| `color/accent` | Accent highlights | varies |
+| `color/accent-foreground` | Text on accent | varies |
+
+**Typography** — Figma Text Styles OR Variables:
+
+| Required Token | Purpose | Example |
+|---|---|---|
+| `font-family/sans` | Body text, UI | `Inter, system-ui, sans-serif` |
+| `font-family/mono` | Code, terminal | `JetBrains Mono, monospace` |
+| `font-family/display` | Display headings (optional) | `Instrument Serif, serif` |
+| `font-size/xs` | Captions, badges | `11px` / `0.6875rem` |
+| `font-size/sm` | Small text, labels | `13px` / `0.8125rem` |
+| `font-size/base` | Body text | `15px` / `0.9375rem` |
+| `font-size/lg` | Large body, subheads | `18px` / `1.125rem` |
+| `font-size/xl` | Section headings | `20px` / `1.25rem` |
+| `font-size/2xl` | Page headings | `24px` / `1.5rem` |
+| `font-size/3xl` | Hero subheads | `30px` / `1.875rem` |
+| `font-size/4xl` | Hero headings | `36px` / `2.25rem` |
+| `font-size/5xl` | Display text | `48px` / `3rem` |
+| `font-weight/regular` | Body text | `400` |
+| `font-weight/medium` | Emphasis, labels | `500` |
+| `font-weight/semibold` | Subheadings | `600` |
+| `font-weight/bold` | Headings, CTAs | `700` |
+| `line-height/tight` | Headings | `1.2` |
+| `line-height/snug` | Subheadings | `1.35` |
+| `line-height/normal` | Body text | `1.5` |
+| `line-height/relaxed` | Long-form text | `1.65` |
+| `letter-spacing/tight` | Headings | `-0.025em` |
+| `letter-spacing/normal` | Body | `0em` |
+| `letter-spacing/wide` | Labels, caps | `0.05em` |
+
+**Typography Compositions** — these map to HTML elements:
+
+| Composition | Maps to | Font size | Weight | Line height |
+|---|---|---|---|---|
+| `heading/h1` | `<h1>` | `font-size/4xl` | `bold` | `tight` |
+| `heading/h2` | `<h2>` | `font-size/3xl` | `bold` | `tight` |
+| `heading/h3` | `<h3>` | `font-size/2xl` | `semibold` | `snug` |
+| `heading/h4` | `<h4>` | `font-size/xl` | `semibold` | `snug` |
+| `heading/h5` | `<h5>` | `font-size/lg` | `medium` | `normal` |
+| `heading/h6` | `<h6>` | `font-size/base` | `medium` | `normal` |
+| `body/default` | `<p>` | `font-size/base` | `regular` | `normal` |
+| `body/small` | `<small>` | `font-size/sm` | `regular` | `normal` |
+| `body/large` | lead paragraphs | `font-size/lg` | `regular` | `relaxed` |
+| `link/default` | `<a>` | inherits | `medium` | inherits |
+| `label/default` | `<label>`, form labels | `font-size/sm` | `medium` | `normal` |
+| `caption/default` | captions, helper text | `font-size/xs` | `regular` | `normal` |
+| `code/inline` | `<code>` | `font-size/sm` | `regular` (mono) | `normal` |
+| `code/block` | `<pre>` | `font-size/sm` | `regular` (mono) | `relaxed` |
+
+**Spacing** — Figma Variables (used in auto-layout padding and gap):
+
+| Required Variable | Value | Purpose |
+|---|---|---|
+| `spacing/0` | `0px` | None |
+| `spacing/1` | `4px` | Tight inner padding |
+| `spacing/2` | `8px` | Small gap, icon padding |
+| `spacing/3` | `12px` | Input padding, badge |
+| `spacing/4` | `16px` | Default component padding |
+| `spacing/5` | `20px` | Medium padding |
+| `spacing/6` | `24px` | Card padding, section gap |
+| `spacing/8` | `32px` | Large section gap |
+| `spacing/10` | `40px` | Section padding |
+| `spacing/12` | `48px` | Page section spacing |
+| `spacing/16` | `64px` | Major section divider |
+| `spacing/20` | `80px` | Hero padding |
+| `spacing/24` | `96px` | Full section height spacing |
+
+**Border Radius** — Figma Variables (applied to corner radius):
+
+| Required Variable | Value | Purpose |
+|---|---|---|
+| `radius/none` | `0px` | Sharp corners |
+| `radius/sm` | `4px` | Subtle rounding (badges, tags) |
+| `radius/md` | `8px` | Buttons, inputs, cards |
+| `radius/lg` | `12px` | Modals, large cards |
+| `radius/xl` | `16px` | Hero sections, large panels |
+| `radius/2xl` | `24px` | Pill-adjacent rounding |
+| `radius/full` | `9999px` | Pills, avatars, circular |
+
+**Shadow** — Figma Effect Styles:
+
+| Required Style | Value | Purpose |
+|---|---|---|
+| `shadow/sm` | `0 1px 2px rgba(0,0,0,0.05)` | Subtle elevation (inputs) |
+| `shadow/md` | `0 4px 6px rgba(0,0,0,0.1)` | Cards, dropdowns |
+| `shadow/lg` | `0 10px 15px rgba(0,0,0,0.1)` | Modals, popovers |
+| `shadow/xl` | `0 20px 25px rgba(0,0,0,0.1)` | Floating panels |
+
+#### Validation Output
+
+After checking, output a completeness report:
+
+```
+🔵 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Token Completeness — Figma Variables Audit
+
+  Colors:      [N]/22 ✅ or ⚠️ missing: [list]
+  Typography:  [N]/14 tokens + [N]/14 compositions ✅ or ⚠️ missing: [list]
+  Spacing:     [N]/13 ✅ or ⚠️ missing: [list]
+  Radius:      [N]/7  ✅ or ⚠️ missing: [list]
+  Shadows:     [N]/4  ✅ or ⚠️ missing: [list]
+
+  Verdict: ✅ COMPLETE — proceed with sync
+           ⚠️ INCOMPLETE — add missing tokens in Figma before continuing
+🔵 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+If the verdict is INCOMPLETE, stop and tell the user exactly which Figma Variables
+or Text Styles need to be created. Do not proceed with the remaining sync steps until
+the validation passes.
+
+### Steps (after validation passes)
 
 1. **Read `.sdd-de/project.yaml`** — note the `token_file` path and `figma_token_collection`
 
