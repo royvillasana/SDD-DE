@@ -20,7 +20,26 @@ User says: "design doc", "generate DESIGN.md", "/design-doc", or when Epic 1 is 
 
 1. **Read `.sdd-de/project.yaml`** — note `framework`, `language`, `styling`, `component_dir`, `token_file`, and `design_source`.
 
-2. **Read the format specification**:
+2. **Check for token gaps** — if `specs/token-gaps.md` exists, read it. These are tokens that were flagged as missing during `/sync-tokens`. Remind the user:
+
+```
+🔵 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️ Token gaps from Epic 1
+
+  The following tokens were missing during /sync-tokens:
+  [list from specs/token-gaps.md]
+
+  Adding these in Figma now and re-running /sync-tokens will
+  produce a more complete DESIGN.md and better Epic 2 output.
+
+  You can continue without them — they'll be documented as
+  gaps in DESIGN.md.
+🔵 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+If the user adds the missing tokens and re-runs `/sync-tokens`, then re-run `/design-doc` to pick up the complete token set.
+
+3. **Read the format specification**:
 ```bash
 npx @google/design.md spec
 ```

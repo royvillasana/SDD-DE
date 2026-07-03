@@ -157,16 +157,32 @@ After checking, output a completeness report:
   Radius:      [N]/7  ✅ or ⚠️ missing: [list]
   Shadows:     [N]/4  ✅ or ⚠️ missing: [list]
 
-  Verdict: ✅ COMPLETE — proceed with sync
-           ⚠️ INCOMPLETE — add missing tokens in Figma before continuing
+  Verdict: ✅ COMPLETE — all tokens present
+           ⚠️ INCOMPLETE — missing tokens listed above
 🔵 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-If the verdict is INCOMPLETE, stop and tell the user exactly which Figma Variables
-or Text Styles need to be created. Do not proceed with the remaining sync steps until
-the validation passes.
+**Do NOT block the user if tokens are missing.** Instead:
 
-### Steps (after validation passes)
+1. List exactly which tokens are missing so they know what to add in Figma
+2. Remind them that having a complete token set produces better, more consistent code
+3. Continue with the sync steps using whatever tokens are available
+4. Save the missing tokens list to `specs/token-gaps.md` so it persists across sessions
+
+The missing tokens will be surfaced again at two checkpoints:
+- **Before Epic 2 starts** (`/design-doc` will flag them when composing DESIGN.md)
+- **Whenever tokens are updated** — if the user adds the missing tokens later,
+  re-run `/sync-tokens` to pick them up, then update `DESIGN.md` and `CLAUDE.md`
+  to reflect the new tokens
+
+When tokens are added at any point:
+1. Re-run `/sync-tokens` to sync the new tokens to the project token file
+2. Re-run `npx @google/design.md lint DESIGN.md` to validate
+3. Update `DESIGN.md` YAML frontmatter with the new token values
+4. Update `design.md` if implementation decisions changed
+5. Delete `specs/token-gaps.md` once all gaps are filled
+
+### Steps (continue regardless of completeness)
 
 1. **Read `.sdd-de/project.yaml`** — note the `token_file` path and `figma_token_collection`
 
