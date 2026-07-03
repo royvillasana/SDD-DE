@@ -27,34 +27,55 @@ provides skills, spec templates, and standards for a structured design-to-code w
 
 At the end of **every response** that completes a task, include a progress block.
 This applies during implementation (step 4), after running any skill, and after
-any work that advances the cycle. The format is:
+any work that advances the cycle.
+
+### Visual format
+
+The progress block MUST be visually distinct from all other output. Use this exact format
+with colored divider lines so the user can instantly spot it:
 
 ```
-───── Progress ─────────────────────────────────────────────
- Epic [1|2] — [Component/Page Name]
+🔵 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📍 Epic [1|2] — [Component/Page Name]
 
- [x] 1. /enrich-brief
- [x] 2. /generate-artifacts
- [x] 3. Branch created
- [ ] 4. Implement (task 3 of 7)          ← you are here
- [ ] 5. /visual-verify
- [ ] 6. /adversarial-review
- [ ] 7. /sync-tokens → /commit
+  ✅ 1. /enrich-brief
+  ✅ 2. /generate-artifacts
+  ✅ 3. Branch created
+  👉 4. Implement (task 3 of 7)          ← you are here
+  ⬜ 5. /visual-verify
+  ⬜ 6. /adversarial-review
+  ⬜ 7. /sync-tokens → /commit
 
- Next step → [what to do next]
- Run: [exact command]
-────────────────────────────────────────────────────────────
+  ➡️  Next step: [what to do next]
+  💻 Run: [exact command]
+🔵 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-Rules:
-1. Mark completed steps with `[x]`, pending steps with `[ ]`, and the current step with `← you are here`
+### Symbols
+
+| Symbol | Meaning |
+|--------|---------|
+| 🔵 ━━━ | Blue divider lines — top and bottom of the progress block |
+| 📍 | Current epic and component/page name |
+| ✅ | Completed step |
+| 👉 | Current step (with `← you are here`) |
+| ⬜ | Pending step |
+| ➡️ | Next action to take |
+| 💻 | Exact command to run |
+| ⚠️ | Derailment warning (if applicable) |
+
+### Rules
+
+1. Mark completed steps with ✅, pending steps with ⬜, and the current step with 👉 and `← you are here`
 2. If inside step 4 (Implement), show which spec task you are on (e.g., "task 3 of 7")
-3. If the work has gone off-track from the expected sequence, add a warning:
-   `⚠ Derailed: [describe what happened]. To get back on track: [corrective action]`
+3. If the work has gone off-track from the expected sequence, add a warning line:
+   `⚠️ Derailed: [describe what happened]. To get back on track: [corrective action]`
 4. Between Epic 1 and Epic 2, show the transition steps:
-   `[ ] /storybook`, `[ ] /design-doc`
+   `⬜ /storybook`, `⬜ /design-doc`
 5. Never omit this block. Even if the user asks a question unrelated to the cycle,
    if there is an active cycle in progress, show the current position
+6. The blue divider lines (🔵 ━━━) must always be present — they visually separate
+   the progress block from the rest of the output so the user can find it instantly
 
 ## Project Configuration
 
