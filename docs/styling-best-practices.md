@@ -8,27 +8,7 @@ Read `.sdd-de/project.yaml` → `styling` to determine which section applies.
 
 ---
 
-## Epic 1 vs Epic 2 — Styling Scope
-
-These rules apply differently depending on which epic you are in:
-
-| | Epic 1 — Component Library | Epic 2 — Page Composition |
-|---|---|---|
-| **Styling approach** | CSS base classes + token variables | Any approach (Tailwind, utilities, etc.) |
-| **Classes in markup** | Max 2 per element (`.btn .btn-primary`) | Unlimited — use whatever is fastest |
-| **Token references** | Required — no hardcoded values | Required — no hardcoded values |
-| **Encapsulation** | Component owns all its styles internally | Pages compose components freely |
-
-**Why the distinction?** Epic 1 components are the foundation — they must be sustainable,
-framework-portable, and readable by any developer or AI agent. CSS base classes achieve this.
-Epic 2 pages are compositions that consume those components. Page-level layout, spacing,
-and responsive adjustments can use whatever styling approach the user prefers (Tailwind
-utilities, inline styles, CSS classes, etc.) as long as design token variables are used
-for all visual values.
-
----
-
-## Universal Principle — Style Encapsulation (Epic 1)
+## Universal Principle — Style Encapsulation
 
 Every component must encapsulate its visual presentation internally.
 Consumers interact with the component through **props and variants**, never through
@@ -275,7 +255,7 @@ component instead.
 ### Rules
 
 1. All Tailwind utilities live inside the component file — never at the usage site
-2. Map variant props to CSS class names (e.g., `btn-${variant}`)
+2. Use `cva`, `clsx`, or `cn()` to map variant props to class lists
 3. Every color, spacing, and radius value references a CSS custom property (design token)
 4. Consumers only pass variant props: `variant`, `size`, `disabled`, `loading`
 5. For dynamic values from external sources, use inline style CSS custom properties
@@ -699,7 +679,7 @@ export class ButtonComponent {
 
 | Styling Approach | Where Styles Live | Variant Pattern | Anti-Pattern |
 |---|---|---|---|
-| **Tailwind** | `@layer components` CSS base classes | Props → CSS class name | Utility classes in Epic 1 component markup |
+| **Tailwind** | Inside component via `cva`/`clsx` | Props → class map | Utility classes at usage site |
 | **Styled Components** | Module-scope styled wrappers | Data attributes | Prop interpolation for variants; defining in render |
 | **Emotion** | Module-scope styled wrappers | Data attributes | Same as Styled Components |
 | **CSS Modules** | `.module.css` next to component | `composes` + class lookup | Element selectors; circular composes |

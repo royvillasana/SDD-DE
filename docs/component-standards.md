@@ -31,11 +31,7 @@ See `docs/framework-config.md` for framework-specific file extensions and naming
     └── hero-section.[ext]
 ```
 
-## Style Encapsulation (Epic 1 — Component Library)
-
-**These rules apply to Epic 1 component library code only.** During Epic 2 (page
-composition), you are free to use Tailwind utilities or any CSS approach directly in
-page-level code. Token references are still required in both epics.
+## Style Encapsulation
 
 **Components own their styles.** Consumers interact through props and variants — never
 through raw class names, utility classes, or style overrides.
@@ -47,9 +43,9 @@ through raw class names, utility classes, or style overrides.
 
 Read `docs/styling-best-practices.md` for framework-specific patterns.
 
-### Max 2 Classes Rule (Epic 1)
+### Max 2 Classes Rule
 
-No element in an Epic 1 component should have more than **2 class names**: a base class
+No element in the rendered HTML should have more than **2 class names**: a base class
 (`.btn`) and a variant class (`.btn-primary`). A size modifier (`.btn-lg`) makes 3 max.
 All structural styles (layout, spacing, radius, typography, transitions, focus ring) go
 in the base CSS class. Variants override **only colors and shadows**.
@@ -60,18 +56,7 @@ in the base CSS class. Variants override **only colors and shadows**.
 ✓ GOOD:  class="btn btn-primary"  (2 classes)
 ```
 
-### Epic 2 — Free Styling
-
-During page composition, you can use any styling approach for layout, spacing, and
-responsive adjustments:
-- Tailwind utility classes directly in page markup
-- Inline styles for one-off layout values
-- CSS classes for reusable page patterns
-
-The only rule that carries over: **all visual values must reference design tokens** — no
-hardcoded hex colors or pixel values.
-
-### Per-framework summary (Epic 1 components)
+### Per-framework summary
 
 - **Tailwind**: extract base to `@layer components` CSS class. HTML shows `.btn .btn-primary`, never raw utilities.
 - **Styled Components / Emotion**: define styled wrappers at module scope. Use data attributes for variants.

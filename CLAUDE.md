@@ -15,11 +15,9 @@ provides skills, spec templates, and standards for a structured design-to-code w
   to the design spec. Unresolved discrepancies block the Verify step.
 - **Accessible by default**: Semantic HTML and ARIA attributes are not optional —
   they are part of the spec.
-- **Max 2 classes per element (Epic 1 only)**: During Epic 1, no component element should
-  have more than 2 class names — a base class (`.btn`) and a variant (`.btn-primary`).
-  All structural styles go in CSS, not in markup. During Epic 2 (page composition), the
-  user is free to use Tailwind utilities or any CSS approach directly.
-  See `docs/styling-best-practices.md`.
+- **Max 2 classes per element**: No element should have more than 2 class names in the
+  HTML — a base class (`.btn`) and a variant (`.btn-primary`). All structural styles go
+  in CSS. Never scatter 30+ utility classes in markup. See `docs/styling-best-practices.md`.
 - **Always disclose the next step**: After completing any step or skill, tell the user
   what the next step is, what command to run, and what will happen. Never leave the user
   uncertain about where they are in the cycle or what to do next.
