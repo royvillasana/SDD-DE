@@ -170,7 +170,7 @@ After checking, output a completeness report:
 4. Save the missing tokens list to `specs/token-gaps.md` so it persists across sessions
 
 The missing tokens will be surfaced again at two checkpoints:
-- **Before Epic 2 starts** (`/design-doc` will flag them when composing DESIGN.md)
+- **Before Screen Creation starts** (`/design-doc` will flag them when composing DESIGN.md)
 - **Whenever tokens are updated** — if the user adds the missing tokens later,
   re-run `/sync-tokens` to pick them up, then update `DESIGN.md` and `CLAUDE.md`
   to reflect the new tokens

@@ -72,12 +72,12 @@ gh pr create \
 
  You have completed one full SDD cycle.
 
- If you are still in Epic 1 (Component Library):
+ If you are still in Design System Component Creation:
  → Start the next component with: /enrich-brief
    Continue until all atoms, molecules, and organisms
    your pages depend on are built.
 
- If Epic 1 is complete and you are starting Epic 2 (Page Composition):
+ If component creation is complete and you are starting Screen Creation:
  → Start the first page with: /enrich-brief
    Compose the components you built into full pages and features.
 

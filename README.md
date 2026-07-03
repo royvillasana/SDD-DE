@@ -61,9 +61,9 @@ Updates skills, docs, and agent config while **preserving your project.yaml**.
 
 ## How It Works
 
-SDD-DE structures work into **two sequential epics**, each running the same 7-step cycle.
+SDD-DE structures work into **two phases** — you can switch between them at any time. Both use the same 7-step cycle.
 
-### Epic 1 — Component Library
+### Design System Component Creation
 
 Build UI building blocks before composing pages. Follow atomic design order:
 
@@ -76,7 +76,7 @@ Build UI building blocks before composing pages. Follow atomic design order:
 
 When all components are built, run `/storybook` to generate stories and launch a dev server, then `/design-doc` to generate a validated `DESIGN.md` using `@google/design.md`.
 
-### Epic 2 — Page Composition
+### Screen Creation
 
 Compose components into complete pages and features:
 
@@ -88,7 +88,7 @@ Compose components into complete pages and features:
 
 ### The 7-Step Cycle
 
-Runs once per component (Epic 1) and once per page (Epic 2):
+Runs once per component (Design System Component Creation) and once per page (Screen Creation):
 
 | Step | Command | What happens |
 |---|---|---|

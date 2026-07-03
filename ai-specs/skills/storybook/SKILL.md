@@ -1,15 +1,15 @@
 # Skill: storybook
 
-Install Storybook into the project, generate stories for every component built during Epic 1, and launch a local dev server so the user can browse and interact with the component library.
+Install Storybook into the project, generate stories for every component built during component creation, and launch a local dev server so the user can browse and interact with the component library.
 
 ## When to invoke
 
-User says: "storybook", "create stories", "document components", "/storybook", or when Epic 1 is complete and all components have been committed.
+User says: "storybook", "create stories", "document components", "/storybook", or when component creation is complete and all components have been committed.
 
 ## Prerequisites
 
 - `.sdd-de/project.yaml` exists (project is configured)
-- At least one component has been implemented and committed during Epic 1
+- At least one component has been implemented and committed during component creation
 - The component directory (`[component_dir]`) contains built components
 
 ## Steps
@@ -296,7 +296,7 @@ This launches at `http://localhost:6006` by default.
    • Accessibility audit via the a11y addon
 
  When you are satisfied with your component library,
- you are ready to start Epic 2 — Page Composition.
+ you are ready to start Screen Creation.
 
  Next step → /enrich-brief
  Describe the first page you want to compose
@@ -323,7 +323,7 @@ For each component, verify:
 
 ## Updating Stories
 
-When a component is modified during Epic 2 (Page Composition) or later:
+When a component is modified during Screen Creation or later:
 1. Re-read the component file to detect new props or variants
 2. Update the story file to reflect changes
 3. Verify the story renders correctly in Storybook

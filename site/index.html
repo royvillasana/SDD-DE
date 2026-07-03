@@ -717,7 +717,7 @@
         </ul>
 
         <div class="phase-heading"><span class="phase-tag">Step 3</span> Organize your pages</div>
-        <p class="phase-desc">For Epic 2, create page compositions at 3 breakpoints using component instances.</p>
+        <p class="phase-desc">For Screen Creation, create page compositions at 3 breakpoints using component instances.</p>
         <ul class="checklist">
           <li>
             <div class="check-icon">&check;</div>
@@ -883,11 +883,11 @@
 <section id="workflow">
   <div class="container">
     <div class="section-label">Workflow</div>
-    <h2 class="section-title">Two epics, one 7-step cycle</h2>
-    <p class="section-desc">Every component and every page follows the same disciplined cycle. The spec is the input to the AI &mdash; when it's complete, implementation becomes mechanical.</p>
+    <h2 class="section-title">Two phases, one 7-step cycle</h2>
+    <p class="section-desc">Every component and every screen follows the same disciplined cycle. You can switch between phases at any time. The spec is the input to the AI &mdash; when it's complete, implementation becomes mechanical.</p>
 
-    <!-- ── Epic 1 detail ──────────────────────────────────── -->
-    <div class="phase-heading"><span class="phase-tag">Epic 1</span> Component Library</div>
+    <!-- ── Design System Component Creation detail ──────────────────────────────────── -->
+    <div class="phase-heading"><span class="phase-tag">Design System Component Creation</span> Component Library</div>
     <p class="phase-desc">Build every UI building block before composing any page. Work from the smallest atoms up to complex organisms. Each component goes through the full 7-step cycle individually.</p>
 
     <div class="epic-container">
@@ -917,12 +917,12 @@
     </div>
 
     <div class="callout">
-      <strong>When Epic 1 is complete:</strong> run <code>/storybook</code> to generate stories and launch a dev server, then run <code>/design-doc</code> to generate a <code>DESIGN.md</code> file. The AI agent composes it from your tokens and components, then validates it with <code>npx @google/design.md lint</code>. This gives the agent full context for Epic 2.
+      <strong>When component creation is complete:</strong> run <code>/storybook</code> to generate stories and launch a dev server, then run <code>/design-doc</code> to generate a <code>DESIGN.md</code> file. The AI agent composes it from your tokens and components, then validates it with <code>npx @google/design.md lint</code>. This gives the agent full context for Screen Creation.
     </div>
 
-    <!-- ── Epic 2 detail ──────────────────────────────────── -->
-    <div class="phase-heading"><span class="phase-tag">Epic 2</span> Page Composition</div>
-    <p class="phase-desc">Compose the components you built in Epic 1 into complete pages, layouts, and product features. Only start a page once every component it needs exists in the library.</p>
+    <!-- ── Screen Creation detail ──────────────────────────────────── -->
+    <div class="phase-heading"><span class="phase-tag">Screen Creation</span> Page Composition</div>
+    <p class="phase-desc">Compose the components you built during component creation into complete pages, layouts, and product features. Only start a page once every component it needs exists in the library.</p>
 
     <div class="epic-container">
       <div class="epic-card">
@@ -939,15 +939,15 @@
         <p class="epic-sub">Before starting each page:</p>
         <ul class="epic-list">
           <li><strong>Figma page frames</strong> &mdash; at 375px, 768px, and 1440px breakpoints</li>
-          <li><strong>Component instances</strong> &mdash; pages must use instances of your Epic 1 components, not detached copies</li>
-          <li><strong>Epic 1 complete</strong> &mdash; every atom, molecule, and organism the page uses must be built and committed</li>
+          <li><strong>Component instances</strong> &mdash; pages must use instances of your design system components, not detached copies</li>
+          <li><strong>component creation complete</strong> &mdash; every atom, molecule, and organism the page uses must be built and committed</li>
           <li><strong>Content ready</strong> &mdash; real copy, images, and data for the page (not lorem ipsum)</li>
         </ul>
       </div>
     </div>
 
     <div class="callout">
-      <strong>Same 7-step cycle.</strong> Each page follows the exact same workflow: <code>/enrich-brief</code> with the Figma page URL &rarr; <code>/generate-artifacts</code> &rarr; branch &rarr; implement &rarr; <code>/visual-verify</code> &rarr; <code>/adversarial-review</code> &rarr; <code>/commit</code>. The AI imports your Epic 1 components and composes them according to the Figma page layout.
+      <strong>Same 7-step cycle.</strong> Each page follows the exact same workflow: <code>/enrich-brief</code> with the Figma page URL &rarr; <code>/generate-artifacts</code> &rarr; branch &rarr; implement &rarr; <code>/visual-verify</code> &rarr; <code>/adversarial-review</code> &rarr; <code>/commit</code>. The AI imports your design system components and composes them according to the Figma page layout.
     </div>
 
     <!-- ── 7 Step Cycle ───────────────────────────────────── -->
@@ -1027,7 +1027,7 @@
         <tr><td>/sync-tokens</td><td>Validate token completeness (22 colors, 14 typography, 13 spacing, 7 radius, 4 shadow), then sync between design source and code</td></tr>
         <tr><td>/commit</td><td>Stage, commit, and open PR with Component Spec as description</td></tr>
         <tr><td>/storybook</td><td>Install Storybook, generate stories for all components, launch dev server</td></tr>
-        <tr><td>/design-doc</td><td>Generate DESIGN.md from Epic 1 components &mdash; validated with <code>npx @google/design.md lint</code></td></tr>
+        <tr><td>/design-doc</td><td>Generate DESIGN.md from component creation components &mdash; validated with <code>npx @google/design.md lint</code></td></tr>
         <tr><td>/sync-agent-symlinks</td><td>Audit and repair broken editor symlinks</td></tr>
       </tbody>
     </table>
@@ -1143,7 +1143,7 @@
     <h3 style="font-size: 18px; font-weight: 700; margin: 48px 0 16px;">You always know where you are</h3>
     <p class="section-desc" style="margin-bottom: 24px;">At the end of every AI response, you see a progress block like this:</p>
     <pre style="font-size: 13px; line-height: 1.7; color: var(--text-dim); border-left: 3px solid var(--accent); padding-left: 16px;"><span style="color: var(--accent);">🔵 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
-<span style="color: var(--text);">📍 Epic 1 — Button</span>
+<span style="color: var(--text);">📍 Design System Component Creation — Button</span>
 
   ✅ 1. /enrich-brief
   ✅ 2. /generate-artifacts

@@ -40,7 +40,7 @@ with colored divider lines so the user can instantly spot it:
 
 ```
 🔵 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📍 Epic [1|2] — [Component/Page Name]
+📍 [Design System Component Creation | Screen Creation] — [Name]
 
   ✅ 1. /enrich-brief
   ✅ 2. /generate-artifacts
@@ -60,7 +60,7 @@ with colored divider lines so the user can instantly spot it:
 | Symbol | Meaning |
 |--------|---------|
 | 🔵 ━━━ | Blue divider lines — top and bottom of the progress block |
-| 📍 | Current epic and component/page name |
+| 📍 | Current phase and component/screen name |
 | ✅ | Completed step |
 | 👉 | Current step (with `← you are here`) |
 | ⬜ | Pending step |
@@ -74,7 +74,7 @@ with colored divider lines so the user can instantly spot it:
 2. If inside step 4 (Implement), show which spec task you are on (e.g., "task 3 of 7")
 3. If the work has gone off-track from the expected sequence, add a warning line:
    `⚠️ Derailed: [describe what happened]. To get back on track: [corrective action]`
-4. Between Epic 1 and Epic 2, show the transition steps:
+4. When transitioning from component creation to screen creation, show the optional steps:
    `⬜ /storybook`, `⬜ /design-doc`
 5. Never omit this block. Even if the user asks a question unrelated to the cycle,
    if there is an active cycle in progress, show the current position
@@ -108,7 +108,7 @@ and follow the corresponding `SKILL.md` automatically before responding.
 | `/sync-tokens` | `.sdd-de/ai-specs/skills/sync-tokens/SKILL.md` | Sync design tokens between Figma and code |
 | `/commit` | `.sdd-de/ai-specs/skills/commit/SKILL.md` | Commit with spec as PR description |
 | `/storybook` | `.sdd-de/ai-specs/skills/storybook/SKILL.md` | Install Storybook, generate stories for all components, launch dev server |
-| `/design-doc` | `.sdd-de/ai-specs/skills/design-doc/SKILL.md` | Generate DESIGN.md from Epic 1 components, validate with @google/design.md |
+| `/design-doc` | `.sdd-de/ai-specs/skills/design-doc/SKILL.md` | Generate DESIGN.md from components, validate with @google/design.md |
 | `/sync-agent-symlinks` | `.sdd-de/ai-specs/skills/sync-agent-symlinks/SKILL.md` | Repair broken symlinks across editor directories |
 
 ## Standards
@@ -133,30 +133,30 @@ Fill these templates when writing specs manually:
 
 ## Design System Document
 
-After Epic 1 is complete, run **`/design-doc`** to generate a `DESIGN.md` file at the project
+After building components, run **`/design-doc`** to generate a `DESIGN.md` file at the project
 root using the `@google/design.md` format (YAML frontmatter + Markdown prose). This file
 captures the complete design system: all tokens, all components, design intent, and usage guidelines.
 
-**Read `DESIGN.md` before starting any Epic 2 work.** It provides the full context of the
-component library so you can compose pages accurately.
+**Read `DESIGN.md` before starting Screen Creation.** It provides the full context of the
+component library so you can compose screens accurately.
 
 To validate: `npx @google/design.md lint DESIGN.md`
 To export tokens: `npx @google/design.md export DESIGN.md --format css-vars`
 
 ## How the Workflow Is Organized
 
-SDD-DE structures frontend work into **two sequential epics**. Each epic applies the same
+SDD-DE structures frontend work into **two phases**. Each phase applies the same
 7-step cycle to every artifact it produces — whether that artifact is a single component
-or a full page.
+or a full screen. **You can switch between phases at any time.**
 
 Run `/setup` once before anything else to configure the project.
 
 ---
 
-### Epic 1 — Component Library
+### Design System Component Creation
 
-Build the UI building blocks before composing any page.
-Follow atomic design order: tokens first, then atoms, then molecules, then organisms.
+Build the UI building blocks. Follow atomic design order: tokens first, then atoms,
+then molecules, then organisms.
 
 | Level | Examples |
 |---|---|
@@ -165,34 +165,35 @@ Follow atomic design order: tokens first, then atoms, then molecules, then organ
 | **Molecules** | SearchBar (Input + Button), Card (Image + Text + Button) |
 | **Organisms** | Header (Nav + CTA), Form (fields + submit) |
 
-Run the **7-step cycle** once per component. Do not start Epic 2 until the atoms your pages depend on are built.
+Run the **7-step cycle** once per component.
 
-When all components are built:
+When you have components ready to document:
 1. Run **`/storybook`** to install Storybook, generate stories for every component, and launch a dev server at `http://localhost:6006`.
-2. Run **`/design-doc`** to generate a `DESIGN.md` file that captures the entire design system in the `@google/design.md` format and validates it with `npx @google/design.md lint`.
+2. Run **`/design-doc`** to generate a `DESIGN.md` file that captures the design system in the `@google/design.md` format and validates it with `npx @google/design.md lint`.
 
-Do not start Epic 2 until both `/storybook` and `/design-doc` have been run.
+You can run `/storybook` and `/design-doc` at any time to update documentation as you add more components.
 
 ---
 
-### Epic 2 — Page Composition
+### Screen Creation
 
-Compose Epic 1 components into complete pages, layouts, and product features.
-Only start a page once the components it needs exist in the component library.
+Compose components into complete screens, layouts, and product features.
+We recommend building the components a screen needs before composing it, but you
+can switch back to Design System Component Creation at any time to build missing pieces.
 
 | Level | Examples |
 |---|---|
 | **Templates** | Two-column layout, full-bleed hero, dashboard shell |
-| **Pages** | Homepage, Login, Dashboard, Settings |
+| **Screens** | Homepage, Login, Dashboard, Settings |
 | **Features** | Checkout flow, Onboarding wizard, Search results |
 
-Run the **7-step cycle** once per page or feature.
+Run the **7-step cycle** once per screen or feature.
 
 ---
 
 ### The 7-Step Cycle
 
-This cycle repeats for every component (Epic 1) and every page (Epic 2):
+This cycle repeats for every component and every screen:
 
 | Step | Command / Action | What happens |
 |---|---|---|

@@ -1,15 +1,15 @@
 # Skill: design-doc
 
-Generate a DESIGN.md file that captures the full design system built during Epic 1, validate it with the `@google/design.md` CLI, and export tokens. Run this after `/storybook` but before starting Epic 2.
+Generate a DESIGN.md file that captures the full design system built during component creation, validate it with the `@google/design.md` CLI, and export tokens. Run this after `/storybook` but before starting Screen Creation.
 
 ## When to invoke
 
-User says: "design doc", "generate DESIGN.md", "/design-doc", or when Epic 1 is complete and `/storybook` has been run.
+User says: "design doc", "generate DESIGN.md", "/design-doc", or when component creation is complete and `/storybook` has been run.
 
 ## Prerequisites
 
 - `.sdd-de/project.yaml` exists (project is configured)
-- At least one component has been implemented and committed during Epic 1
+- At least one component has been implemented and committed during component creation
 - The component directory (`[component_dir]`) contains built components
 - `/storybook` has been run (Storybook is installed and stories exist)
 - `@google/design.md` is installed (`npx @google/design.md --version` succeeds). If not, install it: `npm install -D @google/design.md`
@@ -24,13 +24,13 @@ User says: "design doc", "generate DESIGN.md", "/design-doc", or when Epic 1 is 
 
 ```
 🔵 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⚠️ Token gaps from Epic 1
+⚠️ Token gaps from component creation
 
   The following tokens were missing during /sync-tokens:
   [list from specs/token-gaps.md]
 
   Adding these in Figma now and re-running /sync-tokens will
-  produce a more complete DESIGN.md and better Epic 2 output.
+  produce a more complete DESIGN.md and better Screen Creation output.
 
   You can continue without them — they'll be documented as
   gaps in DESIGN.md.
@@ -148,7 +148,7 @@ components:
     variants: "[component_dir]/ui/[component-name]/[component-name].variants.ts"
     storybook: "http://localhost:6006/?path=/docs/atoms-[componentname]"
     # Map each component to its token references AND source files
-  # One entry per component built in Epic 1
+  # One entry per component built during component creation
 ---
 ```
 
@@ -192,7 +192,7 @@ For example: buttons and inputs use md, cards use lg, avatars use full.]
 ## Components
 
 Every component entry below references the **actual files in the project**.
-Use these references when composing pages in Epic 2 — import the component,
+Use these references when composing pages in Screen Creation — import the component,
 check its variants in the `.variants.ts` file, and preview it in Storybook.
 
 ### Atoms
@@ -301,11 +301,11 @@ npx @google/design.md diff DESIGN.md.bak DESIGN.md
 ```markdown
 ## Design System Document
 
-After Epic 1 is complete, a `DESIGN.md` file is generated at the project root using the
+After component creation is complete, a `DESIGN.md` file is generated at the project root using the
 `@google/design.md` format. This file captures the complete design system: all tokens,
 all components, design intent, and usage guidelines.
 
-**Read `DESIGN.md` before starting any Epic 2 work.** It provides the full context of
+**Read `DESIGN.md` before starting Screen Creation.** It provides the full context of
 the component library so you can compose pages accurately.
 
 To validate: `npx @google/design.md lint DESIGN.md`
@@ -331,19 +331,19 @@ To export tokens: `npx @google/design.md export DESIGN.md --format css-vars`
 
  Your complete design system is documented in DESIGN.md
  at the project root. The AI agent will read this file
- before starting any Epic 2 page composition work.
+ before starting any Screen Creation work.
 
  DESIGN.md captures:
    • All design tokens (colors, typography, spacing, radius)
-   • Every component built in Epic 1 (variants, props, usage)
+   • Every component built during component creation (variants, props, usage)
    • Design intent and brand rationale
    • Responsive behavior and accessibility requirements
 
- You are ready to start Epic 2 — Page Composition.
+ You are ready to start Screen Creation.
 
  Next step → /enrich-brief
  Describe the first page you want to compose
- using the components you built in Epic 1.
+ using the components you built during component creation.
 
  Run it now: /enrich-brief
 ──────────────────────────────────────────────
@@ -356,7 +356,7 @@ Before announcing completion, verify:
 - [ ] DESIGN.md exists at the project root
 - [ ] YAML frontmatter contains all token categories: `colors`, `typography`, `rounded`, `spacing`, `components`
 - [ ] Every token from the project's token file is represented in the YAML frontmatter
-- [ ] Every component built in Epic 1 is listed in the `components` key with token references
+- [ ] Every component built during component creation is listed in the `components` key with token references
 - [ ] Token references use the `{path.to.token}` syntax (e.g., `{colors.primary}`)
 - [ ] **Every component entry has real file references** — verify these paths exist:
   - [ ] Component file path (e.g., `src/components/ui/button/Button.tsx`) — `ls` the file
@@ -369,11 +369,11 @@ Before announcing completion, verify:
 - [ ] Markdown prose sections describe design intent with specifics, not generic descriptions
 - [ ] `npx @google/design.md lint DESIGN.md` passes with zero errors
 - [ ] Token export matches the project's existing token file
-- [ ] CLAUDE.md references DESIGN.md for Epic 2 context
+- [ ] CLAUDE.md references DESIGN.md for Screen Creation context
 
 ## Updating DESIGN.md
 
-If new components are added after initial generation (e.g., during Epic 2 when a missing atom is discovered):
+If new components are added after initial generation (e.g., during Screen Creation when a missing atom is discovered):
 1. Add the new component to the `components` YAML key
 2. Add any new tokens to the appropriate YAML section
 3. Update the prose section for the component's atomic level

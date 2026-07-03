@@ -115,9 +115,9 @@ PR checklist:
 
 ---
 
-## Epic 1 Completion Gate — MANDATORY
+## Transition Steps — RECOMMENDED
 
-After the last component is committed and before starting any Epic 2 work:
+After the last component is committed and before starting Screen Creation:
 
 ### Run `/storybook`
 
@@ -131,6 +131,6 @@ Generate `DESIGN.md` at the project root using the `@google/design.md` format.
 2. The AI agent composes DESIGN.md with YAML frontmatter (`colors`, `typography`, `rounded`, `spacing`, `components`) and Markdown prose (design intent, component usage)
 3. Run `npx @google/design.md lint DESIGN.md` — must pass with zero errors
 4. Run `npx @google/design.md export DESIGN.md --format css-vars` — verify token consistency
-5. CLAUDE.md is updated to reference DESIGN.md for Epic 2
+5. CLAUDE.md is updated to reference DESIGN.md for Screen Creation
 
-**Gate**: DESIGN.md exists, passes lint, and CLAUDE.md references it. Do not start Epic 2 without this.
+**Gate**: DESIGN.md exists, passes lint, and CLAUDE.md references it. We recommend completing this before Screen Creation, but you can proceed and update later.

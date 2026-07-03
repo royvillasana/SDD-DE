@@ -443,14 +443,14 @@ async function init() {
 
   note(
     [
-      'Epic 1 — Component Library',
+      'Design System Component Creation',
       '  Build tokens → atoms → molecules → organisms.',
       '  Run the 7-step cycle once per component.',
       '  When done → /storybook to generate stories + launch dev server.',
-      '  Then → /design-doc to generate DESIGN.md for Epic 2.',
+      '  Then → /design-doc to generate DESIGN.md for Screen Creation.',
       '',
-      'Epic 2 — Page Composition',
-      '  Compose Epic 1 components into pages and features.',
+      'Screen Creation',
+      '  Compose design system components into pages and features.',
       '  Run the 7-step cycle once per page.',
       '',
       '── The 7-Step Cycle (same for every component and page) ──',
@@ -467,7 +467,7 @@ async function init() {
     'Workflow',
   );
 
-  outro('Open Claude Code in this directory and start Epic 1 with: /enrich-brief');
+  outro('Open Claude Code in this directory and start Design System Component Creation with: /enrich-brief');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -758,18 +758,18 @@ Usage:
                                       (preserves your project.yaml config)
 
 ──────────────────────────────────────────────────────────────
- How it works — Two Epics, One 7-Step Cycle
+ How it works — Two Phases, One 7-Step Cycle
 ──────────────────────────────────────────────────────────────
 
-  Epic 1 — Component Library
+  Design System Component Creation
     Build the UI building blocks before composing any page.
     Order: Tokens → Atoms → Molecules → Organisms
     Run the 7-step cycle once per component.
     When done → /storybook to generate stories and launch dev server.
-    Then → /design-doc to generate DESIGN.md for Epic 2.
+    Then → /design-doc to generate DESIGN.md for Screen Creation.
 
-  Epic 2 — Page Composition
-    Compose Epic 1 components into pages, layouts, and features.
+  Screen Creation
+    Compose design system components into pages, layouts, and features.
     Order: Templates → Pages → Features
     Run the 7-step cycle once per page or feature.
 
