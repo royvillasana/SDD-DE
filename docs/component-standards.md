@@ -41,13 +41,27 @@ through raw class names, utility classes, or style overrides.
 ✓ GOOD: <Button variant="primary" size="md" />
 ```
 
-Read `docs/styling-best-practices.md` for framework-specific patterns. The rules apply
-regardless of styling approach:
+Read `docs/styling-best-practices.md` for framework-specific patterns.
 
-- **Tailwind**: wrap utility classes inside the component using `cva` or `clsx`. Consumers pass variant props, never class names.
-- **Styled Components / Emotion**: define styled wrappers at module scope. Use data attributes for variants, CSS custom properties for dynamic values.
+### Max 2 Classes Rule
+
+No element in the rendered HTML should have more than **2 class names**: a base class
+(`.btn`) and a variant class (`.btn-primary`). A size modifier (`.btn-lg`) makes 3 max.
+All structural styles (layout, spacing, radius, typography, transitions, focus ring) go
+in the base CSS class. Variants override **only colors and shadows**.
+
+```html
+✗ BAD:   class="inline-flex items-center justify-center whitespace-nowrap rounded-full
+               font-semibold bg-primary text-white px-6 py-3 ..."  (30+ classes)
+✓ GOOD:  class="btn btn-primary"  (2 classes)
+```
+
+### Per-framework summary
+
+- **Tailwind**: extract base to `@layer components` CSS class. HTML shows `.btn .btn-primary`, never raw utilities.
+- **Styled Components / Emotion**: define styled wrappers at module scope. Use data attributes for variants.
 - **CSS Modules**: one `.module.css` per component. Use `composes` for shared patterns.
-- **SCSS**: one root class with BEM modifiers. Max 3 levels of nesting.
+- **SCSS**: one root class with BEM modifiers (`&--primary`). Max 3 levels of nesting.
 - **Vue**: always use `<style scoped>`. Use class selectors, never element selectors.
 - **Svelte**: styles are auto-scoped. Use CSS custom properties for child theming.
 - **Angular**: use ViewEncapsulation. Style via `:host` and co-located `.scss`.

@@ -24,60 +24,213 @@ classes, or style objects — only semantic props.
 
 ---
 
-## Tailwind CSS
+## The Nesting Rule — Max 2 Visible Classes Per Element
 
-### The Problem
+**No element in a component's rendered HTML should have more than 2 class names visible
+in the markup.** All base styles must be extracted to a CSS class. The only classes in
+the HTML are:
 
-Tailwind's utility-first approach can scatter dozens of class names across every
-usage site, making components hard to maintain and inconsistent across a codebase.
+1. The **base class** (e.g., `.btn`) — contains ALL shared structural styles
+2. The **variant class** (e.g., `.btn-primary`) — contains ONLY the visual overrides
 
-### The Solution — Component Wrapper Pattern
+This applies to every styling approach. The goal is readable HTML where you can
+instantly see what an element IS (base) and which VARIANT it uses, without wading
+through 30+ utility classes.
 
-Wrap Tailwind utilities inside the component. Expose variants as props. Use a
-class variance utility like `cva` or `clsx` to map variants to class lists.
+```html
+✗ BAD (30+ classes, unreadable):
+<a class="inline-flex items-center justify-center whitespace-nowrap rounded-full
+   font-semibold leading-none cursor-pointer border-[length:var(--btn-border-width)]
+   transition-[color,background-color,border-color,box-shadow] bg-primary
+   text-on-primary border-transparent shadow-[var(--btn-primary-shadow)]
+   hover:bg-primary/90 focus-visible:outline-2 h-11 px-6 text-base
+   gap-2 w-full md:w-auto">Get Started</a>
 
-```tsx
-// ✓ Button.tsx — styles live here, not at the usage site
-import { cva, type VariantProps } from 'class-variance-authority';
+✓ GOOD (2 classes, instantly readable):
+<button class="btn btn-primary">Get Started</button>
 
-const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2',
-  {
-    variants: {
-      variant: {
-        primary:     'bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)]',
-        secondary:   'bg-[var(--color-secondary)] text-[var(--color-text)] hover:bg-[var(--color-secondary-hover)]',
-        ghost:       'bg-transparent hover:bg-[var(--color-surface-hover)]',
-        destructive: 'bg-[var(--color-destructive)] text-white hover:bg-[var(--color-destructive-hover)]',
-      },
-      size: {
-        sm: 'h-8 px-3 text-sm',
-        md: 'h-10 px-4 text-base',
-        lg: 'h-12 px-6 text-lg',
-      },
-    },
-    defaultVariants: {
-      variant: 'primary',
-      size: 'md',
-    },
-  }
-);
+✓ GOOD with size variant (3 classes max):
+<button class="btn btn-primary btn-lg">Get Started</button>
+```
 
-interface ButtonProps extends VariantProps<typeof buttonVariants> {
-  children: React.ReactNode;
-  disabled?: boolean;
+### How to extract base styles
+
+Define the base class in your token file or a component CSS file. The base class
+contains everything that's true for ALL variants: layout, spacing, radius, typography,
+transitions, focus ring, cursor. The variant class overrides ONLY colors and shadows.
+
+```css
+/* In your token file or component CSS */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  white-space: nowrap;
+  border-radius: var(--radius-full);
+  padding: var(--btn-padding-y) var(--btn-padding-x);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+  cursor: pointer;
+  border: var(--btn-border-width) solid transparent;
+  transition: color 0.15s, background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
+  width: 100%;
 }
 
-export function Button({ variant, size, disabled, children }: ButtonProps) {
+@media (min-width: 768px) {
+  .btn { width: auto; }
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Variants — ONLY visual overrides */
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  box-shadow: var(--btn-primary-shadow);
+}
+.btn-primary:hover { background: var(--color-primary-hover); }
+
+.btn-secondary {
+  background: var(--color-secondary);
+  color: var(--color-secondary-foreground);
+}
+.btn-secondary:hover { background: var(--color-secondary-hover); }
+
+.btn-tertiary {
+  background: transparent;
+  color: var(--color-foreground);
+}
+.btn-tertiary:hover { background: var(--color-muted); }
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-foreground);
+  border-color: var(--color-border);
+}
+.btn-outline:hover {
+  background: var(--color-muted);
+  border-color: var(--color-foreground);
+}
+
+/* Sizes */
+.btn-sm { padding: var(--spacing-1) var(--spacing-3); font-size: var(--font-size-sm); }
+.btn-lg { padding: var(--spacing-3) var(--spacing-6); font-size: var(--font-size-lg); }
+```
+
+### The component file is minimal
+
+With base styles in CSS, the component file has almost no styling logic:
+
+```tsx
+// Button.tsx — clean, readable, maintainable
+interface ButtonProps {
+  variant?: 'primary' | 'secondary' | 'tertiary' | 'outline';
+  size?: 'sm' | 'md' | 'lg';
+  disabled?: boolean;
+  children: React.ReactNode;
+}
+
+export function Button({ variant = 'primary', size = 'md', disabled, children }: ButtonProps) {
+  const sizeClass = size !== 'md' ? ` btn-${size}` : '';
   return (
-    <button className={buttonVariants({ variant, size })} disabled={disabled}>
+    <button
+      className={`btn btn-${variant}${sizeClass}`}
+      disabled={disabled}
+      aria-disabled={disabled || undefined}
+    >
       {children}
     </button>
   );
 }
 ```
 
-### When `@layer components` Is Acceptable
+---
+
+## Tailwind CSS
+
+### The Problem
+
+Tailwind's utility-first approach can produce 30+ classes per element, making HTML
+unreadable and unmaintainable. Arbitrary value syntax like `border-[length:var(--x)]`
+makes it worse.
+
+### The Solution — CSS Base + Tailwind Overrides
+
+Extract all shared styles to a CSS base class using `@layer components`. The HTML
+only shows the base class and variant class — never raw utilities.
+
+```css
+/* globals.css or tokens.css */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center whitespace-nowrap
+           rounded-full font-semibold leading-none cursor-pointer
+           transition-colors w-full md:w-auto;
+    padding: var(--btn-padding-y) var(--btn-padding-x);
+    border: var(--btn-border-width) solid transparent;
+    font-size: var(--font-size-base);
+    gap: var(--spacing-2);
+  }
+
+  .btn:focus-visible {
+    @apply outline-2 outline-offset-2;
+    outline-color: var(--color-ring);
+  }
+
+  .btn:disabled { @apply opacity-50 pointer-events-none; }
+
+  .btn-primary {
+    background: var(--color-primary);
+    color: var(--color-primary-foreground);
+    box-shadow: var(--btn-primary-shadow);
+  }
+  .btn-primary:hover { background: var(--color-primary-hover); }
+
+  .btn-secondary {
+    background: var(--color-secondary);
+    color: var(--color-secondary-foreground);
+  }
+  .btn-secondary:hover { background: var(--color-secondary-hover); }
+
+  .btn-tertiary { background: transparent; color: var(--color-foreground); }
+  .btn-tertiary:hover { background: var(--color-muted); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--color-foreground);
+    border-color: var(--color-border);
+  }
+  .btn-outline:hover { background: var(--color-muted); border-color: var(--color-foreground); }
+
+  .btn-sm { padding: var(--spacing-1) var(--spacing-3); font-size: var(--font-size-sm); }
+  .btn-lg { padding: var(--spacing-3) var(--spacing-6); font-size: var(--font-size-lg); }
+}
+```
+
+```tsx
+// Button.tsx — 2 classes, not 30
+export function Button({ variant = 'primary', size = 'md', disabled, children }) {
+  const sizeClass = size !== 'md' ? ` btn-${size}` : '';
+  return (
+    <button className={`btn btn-${variant}${sizeClass}`} disabled={disabled}>
+      {children}
+    </button>
+  );
+}
+```
+
+### When standalone `@apply` Is Acceptable
 
 For **single HTML elements** repeated across files where a full component feels
 heavy (e.g., a consistent link style), define a custom class:
