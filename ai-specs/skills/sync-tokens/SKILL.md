@@ -23,7 +23,20 @@ Use this branch when `design_source: figma`.
 
 Before syncing individual tokens, validate that the Figma file provides a complete
 design system. Read the Figma Variables collection (`figma_token_collection`) and
-Figma Text Styles via the Figma MCP, then check every category below.
+Figma Text Styles, then check every category below.
+
+**Use the verified bulk path — do not improvise tool discovery.** Resolution order
+(stop at the first that works, per `/extract-design-system`):
+
+1. **Desktop Bridge (any plan, complete):** `figma_get_variables { format: "summary" }`
+   to enumerate collections/counts, then `format: "full", resolveAliases: true` for values —
+   one call returns every variable resolved. This is the source of truth for completeness.
+2. **Enterprise Variables REST** — only if an access token is present.
+3. **`get_design_context` sampling** — fallback; reports only tokens used by sampled nodes,
+   so a "missing" verdict here may be a sampling gap, not a real gap. Flag it as such.
+
+**Never** call `get_variable_defs` (needs a live desktop selection) or `search_design_system`
+(returns external-library noise) — both waste tokens and won't return this file's locals.
 
 If tokens are missing, **do not proceed** — list what's missing and ask the user to
 add the variables/styles in Figma before continuing.
@@ -196,10 +209,11 @@ grep -rn "var(--" [component-dir]/[component-name] | sort -u
 grep -rn "\$[a-z-]" [component-dir]/[component-name] | sort -u
 ```
 
-3. **Compare to Figma Variables** via the Figma MCP:
+3. **Compare to Figma Variables** using the bulk path from Step 0:
 ```
-Using the Figma MCP, list all variables in the [figma_token_collection] collection.
+figma_get_variables { format: "full", resolveAliases: true }
 ```
+List every variable in one call — do not enumerate collection-by-collection.
 
 4. **For each token reference without a Figma Variable counterpart**:
    - Create the variable in Figma Variables (correct collection, correct name)

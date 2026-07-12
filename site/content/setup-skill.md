@@ -171,13 +171,6 @@ your design tokens?
 ```
 
 Record as `figma_token_collection`. Default: `Tokens`.
-
-> **Tip — connect the Desktop Bridge for a complete, cheap extraction.** After setup,
-> `/extract-design-system` can pull the *entire* token set and component inventory in two
-> calls (any Figma plan) if the **Figma Console MCP – Desktop Bridge** plugin is running in
-> the Figma **desktop app** with your file open (port 9223). Without it, extraction falls
-> back to per-node sampling, which is slower and only sees the components it samples.
-
 Skip to Question 6 (Styling).
 
 ---
@@ -621,7 +614,6 @@ After writing the file, display this summary:
 ──────────────────────────────────────────────
 
   /setup              run again to reconfigure
-  /extract-design-system  pull the full token set + component inventory (Figma)
   /enrich-brief       transform a brief into a spec-ready story
   /generate-artifacts generate Component, Interaction, and Page specs
   /visual-verify      compare live implementation to design spec
@@ -633,23 +625,12 @@ After writing the file, display this summary:
  What happens next
 ──────────────────────────────────────────────
 
- [If design_source = figma]
- Next step → /extract-design-system
-
- Pull the complete token set and component inventory from your
- Figma file — once — before building. This writes your token file
- and .sdd-de/components.json, so the cycle builds on the real,
- complete design system instead of rediscovering it each run.
-
- Run it now: /extract-design-system
-
- [If design_source = library | github | zip | stitch]
  Next step → /enrich-brief
 
- You'll bring a brief, a URL, or a user story and Claude will
- transform it into a spec-ready enriched story — complete with
- acceptance criteria, all states, required design tokens, and
- edge cases. This is the input to the 7-step cycle.
+ You'll bring a brief, a Figma URL, or a user story and Claude
+ will transform it into a spec-ready enriched story — complete
+ with acceptance criteria, all states, required design tokens,
+ and edge cases. This is the input to the 7-step cycle.
 
  Run it now: /enrich-brief
 ──────────────────────────────────────────────

@@ -64,6 +64,12 @@ Build UI building blocks. Follow atomic design order:
 | **Molecules** | SearchBar, Card, FormField |
 | **Organisms** | Header, Sidebar, DataTable |
 
+For a **Figma** source, run `/extract-design-system` once first — it pulls the complete token set
+and component inventory (`.sdd-de/components.json`) via the Desktop Bridge so the cycle builds on
+the real design system instead of rediscovering it. Then **pilot the richest atom end-to-end**
+before fanning out the rest per tier (see the skill's Routing section) — never run the cycle
+stage-by-stage across all components at once.
+
 When components are ready, run `/storybook` to generate stories, then `/design-doc` to generate a validated `DESIGN.md` using `@google/design.md`.
 
 ### Screen Creation
@@ -117,6 +123,7 @@ react · next · vue · nuxt · svelte · sveltekit · angular · astro · vanil
 | Command | Purpose |
 |---|---|
 | `/setup` | Configure project — framework, language, design source |
+| `/extract-design-system` | Pull the full token set + component inventory (Figma) via the Desktop Bridge |
 | `/enrich-brief` | Transform brief into spec-ready enriched story |
 | `/generate-artifacts` | Generate Component + Interaction + Page specs |
 | `/visual-verify` | Visual QA against design spec |
@@ -137,8 +144,9 @@ your-project/
 ├── .claude/skills/                   ← symlinks to skills
 └── .sdd-de/
     ├── project.yaml                  ← your project config
-    ├── ai-specs/skills/              ← 10 slash commands
+    ├── ai-specs/skills/              ← slash commands
     │   ├── setup/
+    │   ├── extract-design-system/
     │   ├── enrich-brief/
     │   ├── generate-artifacts/
     │   ├── visual-verify/

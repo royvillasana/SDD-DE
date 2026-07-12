@@ -101,6 +101,7 @@ and follow the corresponding `SKILL.md` automatically before responding.
 | Slash Command | SKILL.md Location | Purpose |
 |---|---|---|
 | `/setup` | `.sdd-de/ai-specs/skills/setup/SKILL.md` | Configure the project (framework, language, design source) |
+| `/extract-design-system` | `.sdd-de/ai-specs/skills/extract-design-system/SKILL.md` | Pull the complete token set + component inventory from Figma (once, before the cycle) |
 | `/enrich-brief` | `.sdd-de/ai-specs/skills/enrich-brief/SKILL.md` | Transform a vague brief into a spec-ready story |
 | `/generate-artifacts` | `.sdd-de/ai-specs/skills/generate-artifacts/SKILL.md` | Generate all 3 spec files from the enriched story |
 | `/visual-verify` | `.sdd-de/ai-specs/skills/visual-verify/SKILL.md` | Run structured visual QA against the spec |
@@ -157,6 +158,14 @@ Run `/setup` once before anything else to configure the project.
 
 Build the UI building blocks. Follow atomic design order: tokens first, then atoms,
 then molecules, then organisms.
+
+**For a Figma source, run `/extract-design-system` once after `/setup`, before the cycle.**
+It pulls the complete token set and component inventory (`.sdd-de/components.json`) via the
+Desktop Bridge in a couple of calls — so you build on the real, complete design system instead
+of rediscovering it. Then **pilot the richest atom (e.g. Button) end-to-end through the full
+7-step cycle first** to prove the token set, then fan out the remaining components per tier in
+isolated subagents (atoms → molecules → organisms). Never run the cycle stage-by-stage across
+all components at once.
 
 | Level | Examples |
 |---|---|

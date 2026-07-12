@@ -1,6 +1,6 @@
 # Skill: storybook
 
-Install Storybook into the project, generate stories for every component built during component creation, and launch a local dev server so the user can browse and interact with the component library.
+Install real Storybook into the project (non-interactively) and generate a story for every component built during component creation, so the user can browse and interact with the component library. Do NOT start a blocking dev server and do NOT improvise a custom preview/gallery — VortSpec's Playground serves Storybook; this skill only installs it and writes the stories.
 
 ## When to invoke
 
@@ -24,32 +24,44 @@ User says: "storybook", "create stories", "document components", "/storybook", o
 ls .storybook/main.* 2>/dev/null
 ```
 
-3. **If Storybook is NOT installed**, run the initializer for the detected framework:
+3. **If Storybook is NOT installed**, run the initializer for the detected framework. You are running head-less (no TTY), so the init MUST be non-interactive — always pass `--yes` and set `CI=1` so it never waits on a prompt:
 
 #### Branch A — React / Next.js
 ```bash
-npx storybook@latest init --type react
+CI=1 npx storybook@latest init --type react --yes
 ```
 
 #### Branch B — Vue / Nuxt
 ```bash
-npx storybook@latest init --type vue3
+CI=1 npx storybook@latest init --type vue3 --yes
 ```
 
 #### Branch C — Svelte / SvelteKit
 ```bash
-npx storybook@latest init --type svelte
+CI=1 npx storybook@latest init --type svelte --yes
 ```
 
 #### Branch D — Angular
 ```bash
-npx storybook@latest init --type angular
+CI=1 npx storybook@latest init --type angular --yes
 ```
 
 #### Branch E — Vanilla / Astro
 ```bash
-npx storybook@latest init --type html
+CI=1 npx storybook@latest init --type html --yes
 ```
+
+> **CRITICAL — install REAL Storybook, never a substitute.** Do NOT hand-roll a
+> Vite "showcase/gallery" page, a `src/showcase/` folder, `*.preview.tsx` files,
+> or any custom preview as a stand-in for Storybook. If `storybook init` fails or
+> can't run, STOP and report the exact error — do not improvise an alternative
+> preview. After init, VERIFY it actually took hold before continuing:
+> ```bash
+> ls .storybook/main.* 2>/dev/null && node -e "process.exit(require('./package.json').scripts?.storybook?0:1)"
+> ```
+> Both must succeed (a `.storybook` config exists AND a `storybook` script exists
+> in package.json). If either is missing, the install did not complete — report it
+> and stop; do not generate stories against a non-existent Storybook.
 
 4. **Install additional addons**:
 ```bash
@@ -266,14 +278,19 @@ Each component followed the SDD 7-step cycle:
 
 14. **For each component**, the `tags: ['autodocs']` in the meta object will auto-generate a documentation page from the component's props, JSDoc/TSDoc comments, and story definitions. No separate docs page is needed per component.
 
-### Phase 5 — Launch
+### Phase 5 — Verify (do NOT start a blocking server)
 
-15. **Start Storybook dev server**:
+15. **Verify the setup — never launch a long-running dev server here.** You are
+    running head-less; `npm run storybook` is a foreground process that never
+    exits, so starting it would hang this run. VortSpec's Playground starts and
+    serves Storybook for the user. Instead, confirm the setup is complete and
+    every built component has a story:
 ```bash
-npm run storybook
+ls .storybook/main.* && node -e "process.exit(require('./package.json').scripts?.storybook?0:1)"
+find [component_dir] -name "*.stories.*" | wc -l   # should match the component count
 ```
-
-This launches at `http://localhost:6006` by default.
+    If a story is missing for any built component, generate it now (Phase 3).
+    Storybook opens at `http://localhost:6006` when the user runs the Playground.
 
 16. **Announce**:
 
