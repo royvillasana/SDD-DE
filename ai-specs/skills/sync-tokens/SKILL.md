@@ -21,12 +21,13 @@ Use this branch when `design_source: figma`.
 
 > Two-way sync is available in the Inspector on demand. Beyond this Figma→code
 > reconcile, the Inspector's **"Send to Figma"** pushes code-side token changes
-> (and tokens created via **"New token"**) back into the `figma_token_collection`
-> collection, gated by a create/update preview. It computes the plan locally and
-> delegates the write to figma-cli or a scoped Claude Code run (never calls Figma
-> directly); `var(--x)` references push as Figma aliases, typography/shadow
-> composites are created (shadows decompose into offset/blur/spread/color), and an
-> absent target collection surfaces a fix-it instead of auto-creating it.
+> (and tokens created via **"New token"**) into a dedicated **`VortSpec`** Variables
+> collection that VortSpec owns, gated by a create/update preview. It computes the
+> plan locally and delegates the write to figma-cli or a scoped Claude Code run
+> (never calls Figma directly); `var(--x)` references push as Figma aliases,
+> typography/shadow composites are created (shadows decompose into offset/blur/
+> spread/color), and the **`VortSpec`** collection is created automatically if it
+> doesn't exist — you never have to create or name a collection in Figma first.
 
 ### Step 0 — Token Completeness Validation (MANDATORY FIRST)
 
