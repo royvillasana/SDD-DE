@@ -2,6 +2,8 @@
 
 This document defines the design token system for SDD-DE projects. All tokens are defined in Figma Variables and mirrored in the project token file (see `.sdd-de/project.yaml → token_file`).
 
+> **Two-way sync (on demand).** Figma is the default source of truth: "Sync from Figma" reads the Variables into the token file. The reverse direction — the Inspector's **"Send to Figma"** — pushes code-side token changes (including tokens you create in VortSpec with **"New token"**) back into the `figma_token_collection` collection. It is always explicit: VortSpec computes a plan locally, shows a create/update preview, and only writes to Figma after you confirm. VortSpec never calls Figma directly — figma-cli (preferred) or a scoped Claude Code run using your own Figma MCP applies the push. `var(--x)` references push as Figma variable **aliases** where the target exists; typography/shadow composites are created (shadows decompose into offset/blur/spread/color); an absent collection surfaces a fix-it, never an auto-create.
+
 The examples below use CSS custom properties — the universal web standard supported by all modern browsers and frameworks. See `docs/framework-config.md` for SCSS variable equivalents and framework-specific token file locations.
 
 ---
