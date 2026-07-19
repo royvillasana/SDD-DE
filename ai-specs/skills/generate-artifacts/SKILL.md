@@ -40,6 +40,7 @@ Read `.sdd-de/project.yaml` to determine:
 5. **Generate Page/Feature Spec** using `docs/page-spec-template.md`:
    - Cover layout, breakpoints, component composition, data flow
    - Reference framework-agnostic patterns from `docs/page-standards.md`
+   - Fill the **Preview / Deep Link** section: every screen must be preview-addressable (reachable by URL). Router screens use their route; state-navigated screens deep-link via `?screen=<Name>` and are registered in `.vortspec/screen-preview.json` (see `docs/page-standards.md` → Preview-Addressable Screens, and `docs/framework-config.md` for the per-framework snippet)
    - Apply design-source-specific notes (see branches below)
    - Save to `specs/[feature-name]/[page]-page-spec.md`
 

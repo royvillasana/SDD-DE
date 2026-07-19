@@ -85,6 +85,19 @@ All spacing uses the project's base-4 scale:
 
 ---
 
+### Preview / Deep Link
+
+How is this screen reached by URL (see `docs/page-standards.md` → Preview-Addressable Screens)?
+
+| Field | Value |
+|---|---|
+| Navigation | Router (has a route) / State-navigated (no router) |
+| Deep-link URL | e.g. `/` route, or `?screen=DestinationDetail&item=0` |
+| Selection needed | e.g. a `Listing` — hydrated from `LISTINGS[item]` via `toDestination()` |
+| Manifest entry | `{ "name": "DestinationDetail", "file": "src/screens/DestinationDetail.tsx" }` (state-navigated only) |
+
+---
+
 ### SEO & Meta
 
 ```tsx
@@ -116,6 +129,7 @@ export const metadata = {
 - [ ] Create `app/[page]/page.tsx` with metadata
 - [ ] Import and render `SiteNav` and `Footer`
 - [ ] Add skip link at top of `<body>`
+- [ ] Make the screen preview-addressable: router screens are done automatically; for a state-navigated screen, deep-link the app (`?screen=<Name>`) and add its entry to `.vortspec/screen-preview.json`
 
 **Phase 2 — Sections**
 - [ ] Implement `HeroSection` per component spec

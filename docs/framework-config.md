@@ -281,6 +281,65 @@ $spacing-4: 16px;
 
 ---
 
+## Preview-Addressable Screens
+
+Implements the **Preview-Addressable Screens** standard in `docs/page-standards.md`. Router frameworks already satisfy it (every screen has a route). The snippets below are for **state-navigated apps** (no router) — make the app deep-linkable so every screen is reachable via `?screen=<Name>`, and register screens in `.vortspec/screen-preview.json`.
+
+### React (Vite) — deep-link the app (preferred)
+
+Read the screen (and any selection) from the URL on mount, and reflect navigation back into the URL. This reuses the app's real prop-building — no separate harness.
+
+```tsx
+// src/App.tsx
+const params = new URLSearchParams(location.search);
+const [screen, setScreen] = React.useState(params.get('screen') ?? 'home');
+// A screen that needs a selection reads it too, then hydrates from the app's own data:
+const [itemId, setItemId] = React.useState(params.get('item'));
+
+React.useEffect(() => {
+  const u = new URL(location.href);
+  screen === 'home' ? u.searchParams.delete('screen') : u.searchParams.set('screen', screen);
+  itemId == null ? u.searchParams.delete('item') : u.searchParams.set('item', String(itemId));
+  history.replaceState(null, '', u); // deep-linkable, no reload
+}, [screen, itemId]);
+
+// Render the selected screen using the SAME props the in-app navigation builds
+// (e.g. DestinationDetail gets toDestination(LISTINGS[Number(itemId)])).
+```
+
+### React (Vite) — dev-only harness (fallback)
+
+Use only if deep-linking the app is impractical. Production output is unchanged because it's `import.meta.env.DEV`-guarded.
+
+```tsx
+// src/main.tsx
+import DestinationDetail from './screens/DestinationDetail';
+const screen = import.meta.env.DEV ? new URLSearchParams(location.search).get('screen') : null;
+const sampleProps = { /* representative props built from the app's own sample data */ };
+
+createRoot(document.getElementById('root')!).render(
+  screen === 'DestinationDetail' ? <DestinationDetail {...sampleProps} /> : <App />,
+);
+```
+
+### Vue 3 / Svelte / Vanilla
+
+Same pattern: on mount read `new URLSearchParams(location.search).get('screen')` into the app's active-screen state, and call `history.replaceState` when it changes. Hydrate any selection from the app's own data source. Register each screen in `.vortspec/screen-preview.json`.
+
+### Router frameworks (Next.js, Nuxt, SvelteKit, Angular, Astro)
+
+No action needed — screens are routes and already URL-addressable. Do **not** add a `?screen=` harness; use the real route.
+
+### The manifest — `.vortspec/screen-preview.json`
+
+Write/patch this whenever a state-navigated screen is added, so the cockpit's sitemap can list and open screens:
+
+```json
+{ "param": "screen", "screens": [ { "name": "DestinationDetail", "file": "src/screens/DestinationDetail.tsx" } ] }
+```
+
+---
+
 ## Design Token File — Default Locations
 
 | Framework     | Default `token_file`            |

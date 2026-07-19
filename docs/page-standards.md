@@ -29,6 +29,34 @@ Framework-specific implementations of this pattern: see `docs/framework-config.m
 
 ---
 
+## Preview-Addressable Screens (Deep-Linkable)
+
+**Every screen must be reachable by URL**, so it can be opened and previewed in isolation — in a browser, in a design-review tool, or in a shared link. A screen that can only be reached by clicking through the running app is not preview-addressable and must be fixed.
+
+There are two cases:
+
+- **Router apps** (Next.js, react-router, SvelteKit, Nuxt, Angular): every screen already has a route — this standard is satisfied automatically. Nothing to add.
+- **State-navigated apps** (no router — a screen shown by local state, e.g. `useState`): the app **must be made deep-linkable**. This is the required approach, in preference order:
+  1. **Deep-link the app itself (preferred).** On mount, the entry reads a `?screen=<Name>` query param (plus any selection id it needs, e.g. `&item=<id>`) and initializes navigation state to that screen; whenever the user navigates in-app, the current screen is reflected back into the URL via `history.replaceState`. This reuses the app's **real** prop-building logic (no synthesized sample data), and the deep link works in a normal browser too.
+  2. **Dev-only preview harness (fallback).** Only when deep-linking the app is impractical, add an `import.meta.env.DEV`-guarded branch in the entry that, when `?screen=<Name>` is present, renders that screen alone with representative sample props reused from the app's own data — otherwise renders the app unchanged. Production rendering must be identical with and without the harness.
+
+**Register every state-navigated screen** in `.vortspec/screen-preview.json` so tooling can list and open them. Keep it in sync as screens are added:
+
+```json
+{
+  "param": "screen",
+  "screens": [
+    { "name": "DestinationDetail", "file": "src/screens/DestinationDetail.tsx" }
+  ]
+}
+```
+
+`name` is the screen component's export name (the value used in `?screen=<Name>`); `file` is its project-relative source path.
+
+Framework-specific deep-link and harness implementations: see `docs/framework-config.md` → **Preview-Addressable Screens**.
+
+---
+
 ## Responsive Layout
 
 All pages are **mobile-first**. The standard breakpoint system applies to every project regardless of framework or styling approach:

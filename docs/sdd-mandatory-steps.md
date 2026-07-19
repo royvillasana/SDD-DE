@@ -75,6 +75,7 @@ Checklist:
 - [ ] Compare: all variants present and correct
 - [ ] Compare: all states (hover, focus, disabled, loading, error) present and correct
 - [ ] Run axe accessibility audit → zero errors
+- [ ] Screen is preview-addressable (reachable by URL): router screens by their route; state-navigated screens deep-link via `?screen=<Name>` and are registered in `.vortspec/screen-preview.json` (see `docs/page-standards.md` → Preview-Addressable Screens)
 - [ ] Tool: `/visual-verify` skill
 
 **Gate**: Zero unresolved discrepancies. Document any intentional deviations in `design.md`.
