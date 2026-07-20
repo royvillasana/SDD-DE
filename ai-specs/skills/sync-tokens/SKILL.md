@@ -13,6 +13,12 @@ Read `.sdd-de/project.yaml` to determine:
 - `token_file` — path to the project's design token file
 - `component_dir` — root component directory
 
+> **Tailwind bridge stays in sync automatically.** For `styling: tailwind`, the token→theme bridge
+> in `tailwind.config.cjs` reads `tokens.css` at config load, so re-syncing tokens updates the theme
+> with no regeneration. Only ACT if the styling pipeline is missing: if `tailwind.config`/
+> `postcss.config`/the `@tailwind` entry don't exist, create them (see `extract-design-system` →
+> Tailwind styling pipeline) so the synced tokens actually render.
+
 ---
 
 ## Branch A — Figma Flow  (design_source: figma)

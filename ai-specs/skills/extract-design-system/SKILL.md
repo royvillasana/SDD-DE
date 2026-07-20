@@ -93,6 +93,22 @@ Record the winning path to `memory/figma-token-extraction-method.md` so the next
    If the styling has no matching formatter, use `figma_get_variables { format: "full",
    resolveAliases: true }` and write the file yourself, preserving Figma slash-paths in comments.
 
+   **Tailwind (v3) — also wire the styling pipeline so the tokens actually render.** When
+   `styling: tailwind` and the token file is CSS variables, the components use design-token utility
+   classes (`bg-brand-primary`, `text-default`, `text-body-regular-size`) whose names mirror the
+   token variables. Those classes emit NO CSS unless the Tailwind theme maps them to the variables.
+   After writing `tokens.css`, ensure these exist (create only what's missing — never overwrite a
+   hand-authored config):
+   - `tailwind.config.cjs` — a **token → theme bridge**: read `tokens.css` at config load and map
+     every variable into `theme.extend` (colors by value-type; `--text-*-size|-leading|-family` →
+     fontSize/lineHeight/fontFamily; `--spacing-*`, `--radius-*`, `--shadow*`), with `content`
+     globbing `./src/**/*.{ts,tsx,js,jsx,mdx}` and `./.storybook/**`. Reading the file at load keeps
+     the theme in sync on every re-extract.
+   - `postcss.config.cjs` — `{ plugins: { tailwindcss: {}, autoprefixer: {} } }`.
+   - a `@tailwind base/components/utilities` entry stylesheet next to `tokens.css`.
+   - ensure `postcss` and `autoprefixer` are installed.
+   Components must use only config-backed token classes (no class that the bridge can't resolve).
+
 **Component inventory (compact → targeted):**
 
 3. `figma_get_design_system_summary` — categories + component/set counts (token-optimized, no details).

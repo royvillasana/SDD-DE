@@ -77,14 +77,15 @@ addons: [
 ],
 ```
 
-6. **Configure token file import** — update `.storybook/preview.[ts|js]` to import the project's design tokens so all stories render with the correct design system:
+6. **Configure the style imports** — update `.storybook/preview.[ts|js]` so all stories render with the real design system. For `styling: tailwind`, import the Tailwind entry stylesheet FIRST (the utility layers), THEN the tokens (the variables those utilities reference) — without the Tailwind import the token classes compile to nothing and stories render unstyled:
 
 ```js
-// Import design tokens so stories use real token values
+// Tailwind layers first, then the design tokens the utilities reference.
+import '../[styles_dir]/tailwind.css';   // omit for non-Tailwind styling
 import '../[token_file]';
 ```
 
-Replace `[token_file]` with the value from `.sdd-de/project.yaml`.
+Replace `[token_file]` with the value from `.sdd-de/project.yaml` and `[styles_dir]` with its directory.
 
 ### Phase 2 — Scan Components
 
@@ -130,9 +131,16 @@ find [component_dir] -name "*.tsx" -o -name "*.vue" -o -name "*.svelte" -o -name
 
 #### a) Default export with metadata
 
+The component import MUST match the component's actual export. Components follow the NAMED-export
+convention (`docs/component-standards.md` → Exports), so import it as a named import — `import
+{ [ComponentName] } from './[ComponentName]'`. Before writing the story, verify the component's
+export: if it still uses `export default`, either convert it to a named export or import it as a
+default import to match — never emit `{ Name }` for a default export or `Name` for a named export,
+which fails the build with `MISSING_EXPORT`.
+
 ```tsx
 import type { Meta, StoryObj } from '@storybook/[framework]';
-import { [ComponentName] } from './[ComponentName]';
+import { [ComponentName] } from './[ComponentName]';   // named import — matches the named export convention
 
 const meta: Meta<typeof [ComponentName]> = {
   title: '[Category]/[ComponentName]',   // e.g., 'Atoms/Button', 'Molecules/SearchBar'

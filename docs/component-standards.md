@@ -89,6 +89,23 @@ Every component follows this structure:
 - Variant types are exported via `VariantProps<typeof componentVariants>`
 - `defaultVariants` must match the default state in the design source
 
+### Exports — one convention: NAMED exports
+
+Every component is a **named export** (`export const Button = …` / `export { Button }`), never a
+default export. This is not a style preference: mixing default and named exports across the library
+makes stories and cross-component imports guess the wrong shape (`import { Icon }` from a file that
+`export default Icon`), which fails the Storybook/production build with `MISSING_EXPORT`. One
+convention removes that whole class of failure.
+
+```
+✗ BAD:   export default Button;              // then imported as { Button } elsewhere → build breaks
+✓ GOOD:  export const Button = forwardRef(…) // imported everywhere as: import { Button } from "./button"
+```
+
+Every consumer — stories, sibling components, barrels — imports the component as a **named import**
+matching this. When you touch a component that still uses a default export, convert it to a named
+export and fix its importers in the same change.
+
 Read `docs/styling-best-practices.md` for the full CVA pattern, `cn()` setup,
 and per-framework styling examples.
 
