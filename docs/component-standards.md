@@ -1,5 +1,27 @@
 # Component Standards
 
+## Figma source convention — one page per component
+
+When `design_source: figma`, organize the Figma file so that **each page is one component and
+holds that component with all its variations**. A page named `accordion` contains the accordion
+and its variant frames; a page named `alert` contains the alert and its severities/states.
+
+That page is the **authoritative design reference** for the component — the anchor both the build
+and `/visual-verify` use:
+
+- The component is **matched to its page by normalized name** (case/separator-insensitive), and the
+  page id is recorded as `figmaPage` / `figmaPageId` on the component's inventory entry.
+- The build **reproduces the referenced design** (structure, parts, variants); design tokens supply
+  **values only** (color/spacing/radius/typography). A component is never shaped from its name alone,
+  and never copied from a different existing component (an alert is not a restyled button).
+- If a component has **no page** bearing its name, it is recorded as **unreferenced** — the build
+  does not fabricate a design from the name, and `/visual-verify` reports its VISUAL layer as BLOCKED.
+- Utility pages (Cover, Typography, Icons, cover sheets, etc.) name no component and are **not**
+  component references.
+
+This convention is what makes visual validation possible: without a per-component page, there is no
+authoritative image to compare the built component against.
+
 ## Atomic Design Hierarchy
 
 All components follow the Atomic Design pattern:

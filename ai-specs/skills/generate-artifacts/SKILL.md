@@ -50,11 +50,25 @@ Read `.sdd-de/project.yaml` to determine:
 
 ## Branch A — Figma Flow  (design_source: figma)
 
+### Resolve the reference page FIRST (page-per-component)
+
+Each Figma **page is one component** and holds that component with all its variations — a page
+named `accordion` holds the accordion and its variant frames. Before writing the spec, resolve the
+component's authoritative reference: the **page named after it** (matched by normalized name), via
+the Figma MCP (`figma_file_url` in `.sdd-de/project.yaml`). Read its frames/variants and view its
+screenshot, and generate the spec to **reproduce that referenced design** — its structure, parts,
+and variants. Design tokens supply **values only** (color/spacing/radius/typography). Do **not**
+infer the component's shape from its name, and do **not** copy a different existing component (an
+alert is not a restyled button). If **no** page matches the component's name, or the Figma MCP is
+unavailable, do not fabricate from the name — record the component as **unreferenced** and stop
+(it needs a Figma page / a reachable MCP), so it is never mistaken for a design-matched component.
+
 ### Component Spec header additions
 ```
-Design source: Figma
-Figma file:    [figma_file_url]
-Frame URL:     [specific frame URL from enriched story]
+Design source:  Figma
+Figma file:     [figma_file_url]
+Reference page: [page named after the component] ([figmaPageId])
+Frame URL:      [specific variant frame URL, if any]
 Token collection: [figma_token_collection]
 ```
 

@@ -18,8 +18,54 @@ For `stitch`, the source of truth is the Stitch screen image + `design.md`.
 ## Prerequisites
 
 - All tasks in the Component Spec are checked (`- [x]`)
-- Dev server is running
-- Figma frame URL is in the Component Spec (Figma flow) OR library component docs are accessible (library flow)
+- Dev server (or Storybook) is running — this is the render surface the VISUAL layer needs
+- For the Figma flow, the component's **reference page** is resolvable (see the convention below); for the library flow, library component docs are accessible
+
+---
+
+## The gate: three layers, reported in order — VISUAL → TOKEN → CODE
+
+Verification is three layers, evaluated and reported in this order. A component is
+**"verified" only when ALL THREE pass on real evidence** — report each layer independently
+and never let a passing layer mask a failing one.
+
+1. **VISUAL (primary)** — render the live component and compare every variant/state to its
+   authoritative design (each branch below says where that reference comes from). A component
+   that COMPILES and uses tokens but does **not** match its reference **fails** this layer —
+   name the concrete differences (missing parts/slots, wrong container shape, absent variants,
+   wrong proportions), not a bare verdict. If there is no running render surface, VISUAL is
+   **BLOCKED, never PASS** — do the source-level checks you can and list what you could not render.
+2. **TOKEN** — every color/spacing/radius/typography value references a design token; zero
+   hardcoded hex/px (the TOKEN AUDIT in each branch's checklist).
+3. **CODE** — the component type-checks/builds cleanly (`npx tsc --noEmit`, and for a
+   Storybook/library project `npm run build-storybook`). Code that does not compile is a failing
+   CODE layer — and because it can't be rendered, VISUAL is then BLOCKED.
+
+### Page-per-component reference convention (Figma)
+
+Each Figma **page is one component** and holds that component with all its variations — a page
+named `accordion` holds the accordion and its variant frames. The authoritative reference for a
+component is **the page named after it** (matched by normalized name). Resolve it via the Figma
+MCP (`figma_file_url` in `.sdd-de/project.yaml`); read its frames/variants and view its screenshot.
+If **no** page matches the component's name, or the Figma MCP is unavailable, do **not** invent a
+reference — record the component as unreferenced and mark VISUAL as BLOCKED.
+
+### Required: machine-readable verdict block
+
+Every `visual-verify-report.md` **MUST end with this block** — the VortSpec cockpit reads it
+verbatim to set the component's status; a `fail` or `blocked` layer keeps the component out of
+"verified":
+
+```
+VISUAL: pass | fail | blocked
+TOKEN: pass | fail
+CODE: pass | fail
+VERIFY: PASS | ISSUES (<failing layers>) | BLOCKED (<what you could not verify>)
+```
+
+Report **PASS only** when all three layers passed on real evidence — you ACTUALLY rendered and
+compared (VISUAL), tokens are clean (TOKEN), and it compiles (CODE). Never claim a check you did
+not perform, and never report a VISUAL pass you did not render-and-compare.
 
 ---
 
@@ -31,11 +77,15 @@ Use this branch when `design_source: figma`.
 
 1. **Read** `specs/[feature-name]/[component]-component-spec.md`
 2. **Open the live component** at the correct URL and viewport
-3. **Open the Figma frame** in Dev Mode (URL from Component Spec)
-4. **Run the visual checklist** (report pass ✓ or fail ✗ for each):
+3. **Open the reference** — the Figma **page named after the component** (page-per-component
+   convention above), via the Figma MCP; read its variant frames and screenshot as authoritative.
+   If no such page exists or the MCP is unavailable, mark VISUAL **BLOCKED** and record it.
+4. **Run the visual checklist** (report pass ✓ or fail ✗ for each). A component that compiles and
+   uses tokens but does not match this reference **fails the VISUAL layer**:
 
 ```
 VIEWPORT: 375px
+[ ] Matches the reference page — layout, parts/slots, proportions (compare side-by-side with Figma)
 [ ] All variants present and correct (compare side-by-side with Figma)
 [ ] All states present: default, hover, focus, active, disabled, loading, error
 [ ] Colors match Figma Variables → CSS tokens (check DevTools Computed)
@@ -64,12 +114,14 @@ TOKEN AUDIT (DevTools → Computed — zero tolerance)
 [ ] Every spacing value references a CSS token variable
 ```
 
-5. **Document results** in `specs/[feature-name]/visual-verify-report.md`:
-   - List every discrepancy
-   - For each: state whether Figma or code is authoritative, and the fix applied
-6. **Gate**: Zero unresolved discrepancies → proceed to `/adversarial-review`
-7. **If discrepancies exist**: fix each one, re-run the checklist item, mark resolved
-8. **Announce**:
+5. **Run the CODE layer**: `npx tsc --noEmit` (and `npm run build-storybook` for a Storybook/library
+   project). A build error is a failing CODE layer — fix inline and re-run.
+6. **Document results** in `specs/[feature-name]/visual-verify-report.md`:
+   - List every discrepancy; for each, state whether Figma or code is authoritative, and the fix applied
+   - **End the report with the machine-readable verdict block** (VISUAL / TOKEN / CODE / VERIFY)
+7. **Gate**: all three layers pass on real evidence → proceed to `/adversarial-review`
+8. **If any layer fails or is blocked**: fix what you can, re-run, mark resolved; report ISSUES/BLOCKED honestly rather than a false PASS
+9. **Announce**:
 
 ```
 ──────────────────────────────────────────────
