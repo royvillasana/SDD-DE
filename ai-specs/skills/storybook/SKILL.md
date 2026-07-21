@@ -77,6 +77,20 @@ addons: [
 ],
 ```
 
+**Mirror the tsconfig path aliases into Vite** (REQUIRED when components import via `@/…`). Vite does
+NOT read `tsconfig.json` `compilerOptions.paths`, so `@/lib/utils` compiles under `tsc` but fails the
+Storybook build with `[vite:import-analysis] Failed to resolve import "@/lib/utils"`. For every
+`"@/*": ["./src/*"]` in tsconfig, add a matching `resolve.alias` in `main`'s `viteFinal`:
+```ts
+import { fileURLToPath } from 'node:url';
+// …
+viteFinal: async (config) => {
+  config.resolve = config.resolve ?? {};
+  config.resolve.alias = { ...config.resolve.alias, '@': fileURLToPath(new URL('../src', import.meta.url)) };
+  return config;
+},
+```
+
 6. **Configure the style imports** — update `.storybook/preview.[ts|js]` so all stories render with the real design system. For `styling: tailwind`, import the Tailwind entry stylesheet FIRST (the utility layers), THEN the tokens (the variables those utilities reference) — without the Tailwind import the token classes compile to nothing and stories render unstyled:
 
 ```js
