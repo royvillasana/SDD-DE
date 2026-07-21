@@ -54,9 +54,12 @@ Read `.sdd-de/project.yaml` to determine:
 
 Each Figma **page is one component** and holds that component with all its variations — a page
 named `accordion` holds the accordion and its variant frames. Before writing the spec, resolve the
-component's authoritative reference: the **page named after it** (matched by normalized name), via
-the Figma MCP (`figma_file_url` in `.sdd-de/project.yaml`). Read its frames/variants and view its
-screenshot, and generate the spec to **reproduce that referenced design** — its structure, parts,
+component's authoritative reference: the **page named after it** (matched by normalized name).
+**Enumerate ALL pages to find it** — prefer the Figma Desktop Bridge (`figma.root.children` lists
+every page). **Do NOT rely on the remote Figma MCP's page listing: it caps at 3 pages**, so a
+component whose page is 4th+ (Alerts, Buttons, Card, …) would look "missing" and get built blind.
+Read its frames/variants and view its screenshot, and generate the spec to **reproduce that
+referenced design** — its structure, parts,
 and variants. Design tokens supply **values only** (color/spacing/radius/typography). Do **not**
 infer the component's shape from its name, and do **not** copy a different existing component (an
 alert is not a restyled button). If **no** page matches the component's name, or the Figma MCP is

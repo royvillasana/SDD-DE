@@ -45,10 +45,12 @@ and never let a passing layer mask a failing one.
 
 Each Figma **page is one component** and holds that component with all its variations — a page
 named `accordion` holds the accordion and its variant frames. The authoritative reference for a
-component is **the page named after it** (matched by normalized name). Resolve it via the Figma
-MCP (`figma_file_url` in `.sdd-de/project.yaml`); read its frames/variants and view its screenshot.
-If **no** page matches the component's name, or the Figma MCP is unavailable, do **not** invent a
-reference — record the component as unreferenced and mark VISUAL as BLOCKED.
+component is **the page named after it** (matched by normalized name). To resolve it, **enumerate
+ALL pages** — prefer the Figma Desktop Bridge (`figma.root.children` lists every page); **do NOT
+rely on the remote Figma MCP's page listing, which caps at 3 pages** (a component whose page is 4th+
+would falsely look missing). Read its frames/variants and view its screenshot. If **no** page
+matches the component's name, or the reference truly can't be read, do **not** invent a reference —
+record the component as unreferenced and mark VISUAL as BLOCKED.
 
 ### Required: machine-readable verdict block
 
