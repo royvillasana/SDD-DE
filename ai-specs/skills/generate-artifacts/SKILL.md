@@ -50,20 +50,22 @@ Read `.sdd-de/project.yaml` to determine:
 
 ## Branch A — Figma Flow  (design_source: figma)
 
-### Resolve the reference page FIRST (page-per-component)
+### Resolve the component's Figma node FIRST (autonomously — never ask for a link)
 
-Each Figma **page is one component** and holds that component with all its variations — a page
-named `accordion` holds the accordion and its variant frames. Before writing the spec, resolve the
-component's authoritative reference: the **page named after it** (matched by normalized name).
-**Enumerate ALL pages to find it** — prefer the Figma Desktop Bridge (`figma.root.children` lists
-every page). **Do NOT rely on the remote Figma MCP's page listing: it caps at 3 pages**, so a
-component whose page is 4th+ (Alerts, Buttons, Card, …) would look "missing" and get built blind.
-Read its frames/variants and view its screenshot, and generate the spec to **reproduce that
+Before writing the spec, resolve the component's authoritative reference: **its own Figma node**
+(the component set). Resolve it in order — (1) the entry's **`figmaNodeId`/`componentKey`** in
+`.sdd-de/components.json`, read via the Figma MCP; (2) if missing, **`search_design_system`** scoped
+to THIS file's own library (from `figma_file_url`) to resolve it by name — it is **NOT capped** like
+the page listing; (3) the **Desktop Bridge** (`figma.root.children`) if connected. **Do NOT rely on
+the remote page listing — it caps at 3 pages**, so a component 4th+ would look "missing" and get
+built blind.
+Read the node's frames/variants and view its screenshot, and generate the spec to **reproduce that
 referenced design** — its structure, parts,
-and variants. Design tokens supply **values only** (color/spacing/radius/typography). Do **not**
-infer the component's shape from its name, and do **not** copy a different existing component (an
-alert is not a restyled button). If **no** page matches the component's name, or the Figma MCP is
-unavailable, do not fabricate from the name — record the component as **unreferenced** and stop
+and variants. Design tokens supply **values only** (color/spacing/radius/typography) — use the
+component's own semantic tokens (`--component-<name>-*`) where defined; never hardcode a hex/rgba.
+Do **not** infer the component's shape from its name, and do **not** copy a different existing
+component (an alert is not a restyled button). If the node truly can't be resolved by any method,
+do not fabricate from the name — record the component as **unreferenced** and stop
 (it needs a Figma page / a reachable MCP), so it is never mistaken for a design-matched component.
 
 ### Component Spec header additions

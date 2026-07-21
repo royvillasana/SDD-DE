@@ -41,16 +41,25 @@ and never let a passing layer mask a failing one.
    Storybook/library project `npm run build-storybook`). Code that does not compile is a failing
    CODE layer — and because it can't be rendered, VISUAL is then BLOCKED.
 
-### Page-per-component reference convention (Figma)
+### Resolve the Figma reference yourself (Figma) — never ask for a link
 
-Each Figma **page is one component** and holds that component with all its variations — a page
-named `accordion` holds the accordion and its variant frames. The authoritative reference for a
-component is **the page named after it** (matched by normalized name). To resolve it, **enumerate
-ALL pages** — prefer the Figma Desktop Bridge (`figma.root.children` lists every page); **do NOT
-rely on the remote Figma MCP's page listing, which caps at 3 pages** (a component whose page is 4th+
-would falsely look missing). Read its frames/variants and view its screenshot. If **no** page
-matches the component's name, or the reference truly can't be read, do **not** invent a reference —
-record the component as unreferenced and mark VISUAL as BLOCKED.
+The authoritative reference for a component is **its own Figma node** (the component set). **Resolve
+it autonomously**, in this order:
+1. The entry's **`figmaNodeId` / `componentKey`** in `.sdd-de/components.json` — read that exact node
+   via the Figma MCP (`get_design_context` / `get_screenshot`).
+2. If missing, **`search_design_system`** scoped to THIS file's own library (from `figma_file_url`) —
+   it resolves the component by name and is **NOT capped** like the page listing.
+3. The **Desktop Bridge** (`figma.root.children`) if connected.
+
+**Do NOT use the remote page listing to locate it — it caps at 3 pages.** Read the resolved node's
+frames/variants and view its screenshot. Compare EVERY variant/state. If the node truly cannot be
+resolved by any method, do **not** invent a reference — record the component as unreferenced and mark
+VISUAL as BLOCKED.
+
+**TOKEN layer, specifically:** flag any hardcoded `#hex` / `rgb()` / `rgba()` / raw `px` in the
+component AND its `*.variants.*` file (e.g. a `focus:ring-[rgba(13,110,253,0.25)]`) as a TOKEN
+failure, and confirm the component uses the design system's own semantic tokens (e.g.
+`--component-<name>-*`) where they exist.
 
 ### Required: machine-readable verdict block
 
@@ -79,9 +88,10 @@ Use this branch when `design_source: figma`.
 
 1. **Read** `specs/[feature-name]/[component]-component-spec.md`
 2. **Open the live component** at the correct URL and viewport
-3. **Open the reference** — the Figma **page named after the component** (page-per-component
-   convention above), via the Figma MCP; read its variant frames and screenshot as authoritative.
-   If no such page exists or the MCP is unavailable, mark VISUAL **BLOCKED** and record it.
+3. **Open the reference** — resolve the component's Figma node yourself (its `figmaNodeId`/
+   `componentKey` from `.sdd-de/components.json`, else `search_design_system` scoped to this file's
+   library; see "Resolve the Figma reference yourself" above). Read its variant frames and screenshot
+   as authoritative. If the node truly can't be resolved, mark VISUAL **BLOCKED** and record it.
 4. **Run the visual checklist** (report pass ✓ or fail ✗ for each). A component that compiles and
    uses tokens but does not match this reference **fails the VISUAL layer**:
 

@@ -117,6 +117,12 @@ Record the winning path to `memory/figma-token-extraction-method.md` so the next
    enumerate the sets and their variants. Do **not** dump every component's full detail — names,
    node IDs, variant axes, and category are enough for the inventory.
 
+**Record the Figma reference on every `components.json` entry** — set `figmaNodeId` to the component
+set's node id and `componentKey` to its durable library key (you already have both from
+`figma_search_components`). This is REQUIRED: build and verify look it up to fetch the authoritative
+design and validate against it without asking the user. Never leave a component without at least a
+`figmaNodeId`.
+
 Set `components.json → complete: true` — the Bridge sees the whole file.
 
 ---
