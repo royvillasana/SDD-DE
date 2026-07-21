@@ -53,7 +53,13 @@ Call in this order. **Stop at the first that succeeds.**
 ### Path A — Desktop Bridge bulk (PREFERRED — works on any Figma plan, complete, ~compact)
 
 Probe: `figma_diagnose` (figma-console MCP).
-- Connected → **use Path A.** This is the fast, complete route. Go to Step 2A.
+- Connected → **verify the OPEN file first.** The Desktop Bridge reads whatever file is currently open
+  in Figma Desktop — which may NOT be the file configured in `project.yaml`. Compare the open file's key
+  (from `figma.root` / the file url) to the `<FILE_KEY>` in the configured `figma_file_url`. If they
+  MATCH → use Path A (Step 2A). If a DIFFERENT file is open → do NOT extract from it (that silently reads
+  the wrong design system); either fall to Path B (remote MCP reads the configured file by key) or tell
+  the user, in one sentence, to open the configured file in Figma Desktop and re-probe. Record the actual
+  key you read; it MUST equal `<FILE_KEY>`.
 - Not connected → tell the user, in one plain sentence, how to enable it, then re-probe:
 
   > The Desktop Bridge gives a complete token + component dump in two calls instead of
