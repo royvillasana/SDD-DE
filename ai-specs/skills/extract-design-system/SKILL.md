@@ -93,17 +93,38 @@ Record the winning path to `memory/figma-token-extraction-method.md` so the next
    If the styling has no matching formatter, use `figma_get_variables { format: "full",
    resolveAliases: true }` and write the file yourself, preserving Figma slash-paths in comments.
 
-   **Tailwind (v3) — also wire the styling pipeline so the tokens actually render.** When
-   `styling: tailwind` and the token file is CSS variables, the components use design-token utility
-   classes (`bg-brand-primary`, `text-default`, `text-body-regular-size`) whose names mirror the
-   token variables. Those classes emit NO CSS unless the Tailwind theme maps them to the variables.
-   After writing `tokens.css`, ensure these exist (create only what's missing — never overwrite a
-   hand-authored config):
-   - `tailwind.config.cjs` — a **token → theme bridge**: read `tokens.css` at config load and map
-     every variable into `theme.extend` (colors by value-type; `--text-*-size|-leading|-family` →
-     fontSize/lineHeight/fontFamily; `--spacing-*`, `--radius-*`, `--shadow*`), with `content`
-     globbing `./src/**/*.{ts,tsx,js,jsx,mdx}` and `./.storybook/**`. Reading the file at load keeps
-     the theme in sync on every re-extract.
+   **Tailwind (v3) — author a CURATED, SEMANTIC theme so components use idiomatic classes.** This is
+   the single biggest driver of component fidelity. Do NOT dump every token as a raw arbitrary key —
+   that forces ugly `bg-[var(--brand-primary-100)]` classes and leaves standard utilities (`p-4`,
+   `rounded`, `shadow-md`, `border`) resolving to Tailwind's hardcoded defaults instead of your
+   tokens. Instead, hand-author `tailwind.config.js` (`theme.extend`) that maps **idiomatic Tailwind
+   scale names → your tokens**, so the component code reads like normal Tailwind and every value is a
+   token. Model it on this shape (adapt the token names to what's actually in `tokens.css`):
+   ```js
+   theme: { extend: {
+     colors: {
+       white: 'var(--primitive-neutral-white)', black: 'var(--primitive-neutral-black)',
+       primary: { DEFAULT: 'var(--theme-primary)', hover: 'var(--button-primary-background-hover)' },
+       secondary: 'var(--theme-secondary)', success: 'var(--color-status-success)',
+       danger: 'var(--color-status-danger)', warning: 'var(--color-status-warning)',
+       info: 'var(--color-status-info)',
+       neutral: { 100: 'var(--color-neutral-100)', 300: 'var(--color-neutral-300)', 600: 'var(--color-neutral-600)', 900: 'var(--color-neutral-900)', muted: 'var(--color-neutral-muted)' },
+       text: { DEFAULT: 'var(--color-text-default)', muted: 'var(--color-text-muted)' },
+       'brand-primary': { 100: 'var(--brand-primary-100)', /* …200–900 */ },
+     },
+     spacing: { 2: 'var(--spacing-8)', 3: 'var(--spacing-12)', 4: 'var(--spacing-16)', /* … */ },
+     borderRadius: { sm: 'var(--radius-4)', DEFAULT: 'var(--radius-8)', md: 'var(--radius-8)', lg: 'var(--radius-6)' },
+     boxShadow: { DEFAULT: 'var(--shadow-default)', md: 'var(--shadow-default)' },
+     borderWidth: { DEFAULT: 'var(--stroke-width-1)', 1: 'var(--stroke-width-1)' },
+     fontFamily: { base: 'var(--font-family-base)', sans: 'var(--font-family-base)', mono: 'var(--font-family-mono)' },
+     fontSize: { body: ['var(--font-size-body)', { lineHeight: 'var(--line-height-body)' }], h1: ['var(--font-size-h1)', { lineHeight: 'var(--line-height-heading)' }] /* … */ },
+     opacity: { disabled: 'var(--opacity-disabled)' },
+   } }
+   ```
+   `content`: `['./src/**/*.{ts,tsx}', './.storybook/**/*.{ts,tsx}']`. Components then use CLEAN
+   idiomatic classes — `bg-primary`, `text-danger`, `bg-success/20`, `border-1 border-neutral-300`,
+   `rounded shadow-md p-3 gap-2`, `text-body`, `opacity-disabled` — NEVER raw `bg-[var(--…)]`.
+   Also create (only what's missing — never overwrite a hand-authored config):
    - `postcss.config.cjs` — `{ plugins: { tailwindcss: {}, autoprefixer: {} } }`.
    - a `@tailwind base/components/utilities` entry stylesheet next to `tokens.css`.
    - ensure `postcss` and `autoprefixer` are installed.

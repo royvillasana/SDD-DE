@@ -53,6 +53,25 @@ See `docs/framework-config.md` for framework-specific file extensions and naming
     └── hero-section.[ext]
 ```
 
+## Styling — idiomatic semantic classes mapped to tokens
+
+Components use **idiomatic Tailwind classes that resolve to design tokens via the curated
+`tailwind.config` theme** (see `extract-design-system` → the semantic theme). This is what makes a
+component look like its Figma design instead of a rough approximation.
+
+```
+✗ BAD:   bg-[var(--brand-primary-100)] border-[var(--color-neutral-300)]  (raw arbitrary values)
+✗ BAD:   bg-blue-500 rounded-lg shadow                                    (Tailwind defaults, not tokens)
+✓ GOOD:  bg-primary text-danger bg-success/20 border-1 border-neutral-300 rounded shadow-md p-3
+✓ GOOD:  text-body font-base opacity-disabled                            (semantic type/opacity → tokens)
+```
+
+The theme maps `primary/secondary/success/danger/warning/info`, `neutral.{100,300,600,900,muted}`,
+`text.{DEFAULT,muted}`, brand ramps, the spacing scale, `rounded{,-sm,-md,-lg}`, `shadow{,-md}`,
+`border-1`, `font-{base,sans,mono}`, `text-{body,h1…}`, and `opacity-disabled` — all to tokens. If a
+class you need isn't in the theme, ADD the mapping to `tailwind.config` (pointing at the token);
+never fall back to a raw `[var(--…)]` or a hardcoded value.
+
 ## Style Encapsulation — CVA + cn()
 
 **Components own their styles.** Consumers interact through props and variants.
