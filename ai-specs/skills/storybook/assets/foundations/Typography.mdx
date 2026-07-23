@@ -1,0 +1,47 @@
+import { Meta } from "@storybook/blocks";
+import { TypeScale } from "./FoundationBlocks";
+
+{/*
+  Foundations / Typography — GENERATED from token_file by the /storybook skill.
+  Replace the samples with the project's real type scale (font-size + weight tokens),
+  font families, and weight/line-height tokens.
+*/}
+
+<Meta title="Foundations/Typography" />
+
+# Typography
+
+The type scale, font weights, and line heights defined by the design tokens.
+
+**Font stack:** `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`
+
+<TypeScale
+  title="Type Scale"
+  samples={[
+    { name: "Display 1", size: "5rem", weight: "300", sample: "Display One" },
+    { name: "Heading 1", size: "2.5rem", weight: "500", sample: "Heading One — Page Title" },
+    { name: "Heading 2", size: "2rem", weight: "500", sample: "Heading Two — Section Title" },
+    { name: "Heading 3", size: "1.75rem", weight: "500", sample: "Heading Three — Subsection" },
+    { name: "Lead", size: "1.25rem", weight: "300", sample: "Lead paragraph — introductory text." },
+    { name: "Body", size: "1rem", weight: "400", sample: "Default body text for main content." },
+    { name: "Body SM", size: "0.875rem", weight: "400", sample: "Small body text for secondary content." },
+    { name: "Caption", size: "0.75rem", weight: "400", sample: "Caption text for annotations." },
+  ]}
+/>
+
+<TypeScale
+  title="Font Weights"
+  samples={[
+    { name: "Light — 300", size: "1.125rem", weight: "300" },
+    { name: "Regular — 400", size: "1.125rem", weight: "400" },
+    { name: "Medium — 500", size: "1.125rem", weight: "500" },
+    { name: "Semibold — 600", size: "1.125rem", weight: "600" },
+    { name: "Bold — 700", size: "1.125rem", weight: "700" },
+  ]}
+/>
+
+## Usage guidelines
+
+- Use headings in order (h1 → h6); never skip levels for styling.
+- Use **Lead** for introductory copy, **Body** for main content, **Caption** for annotations.
+- Keep line length ~60–80 characters for comfortable reading.

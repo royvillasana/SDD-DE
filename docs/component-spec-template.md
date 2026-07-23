@@ -98,12 +98,41 @@ List every token this component references. Add to `globals.css` if missing.
 
 ---
 
-### Do Not
+### Common Patterns
 
-- Do not hardcode colors — use tokens
-- Do not nest interactive elements inside the button
-- Do not remove the focus ring
-- Do not add a loading state without an `aria-busy` attribute
+Named, real usage patterns with runnable composition code. These become `metadata.commonPatterns`
+and render on the Storybook docs page.
+
+| Pattern | When to use | Composition |
+|---|---|---|
+| `primary-action` | Main call-to-action | `<Button variant="primary">Save</Button>` |
+| `with-icon` | Action needing a glyph | `<Button variant="primary"><Icon/> Add item</Button>` |
+| `destructive-confirm` | Irreversible action | `<Button variant="destructive">Delete</Button>` |
+
+---
+
+### Anti-Patterns
+
+Structured misuses (replaces a free-text "Do Not"). These become `metadata.antiPatterns`.
+
+| Pattern (what NOT to do) | Why | Instead |
+|---|---|---|
+| Hardcoding colors instead of tokens | Breaks theming + token audit | Reference the design token |
+| Nesting interactive elements inside the button | Invalid a11y tree, ambiguous focus | Use one interactive element |
+| Removing the focus ring | Fails keyboard accessibility | Keep a visible ring ≥ 2:1 contrast |
+| A loading state without `aria-busy` | Screen readers miss the busy state | Set `aria-busy="true"` while loading |
+
+---
+
+### AI Usage Hints
+
+Guidance for AI-assisted generation. Becomes `metadata.aiHints`.
+
+- **When to use**: [one or two sentences — the context in which this component is the right choice]
+- **Keywords**: `button`, `action`, `submit`, `cta`, `trigger`
+- **Generation rules**:
+  1. [rule the generator must follow, e.g. "Always give an accessible label"]
+  2. [e.g. "Use one primary button per view; others secondary"]
 
 ---
 

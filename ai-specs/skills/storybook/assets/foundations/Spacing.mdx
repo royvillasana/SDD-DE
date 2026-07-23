@@ -1,0 +1,43 @@
+import { Meta } from "@storybook/blocks";
+import { SpacingScale } from "./FoundationBlocks";
+
+{/*
+  Foundations / Spacing — GENERATED from token_file by the /storybook skill.
+  Replace `steps` with the project's real spacing scale. The same scale drives padding AND
+  margin utilities, so this page documents margins too (per the spacing base unit).
+*/}
+
+<Meta title="Foundations/Spacing" />
+
+# Spacing
+
+The spacing scale drives both **padding** and **margin** in every direction. One step of the
+scale is the base unit; utilities multiply it (`p-*` / `m-*`, and directional `pt/px/mt/mx/…`).
+
+<SpacingScale
+  title="Spacing Scale"
+  steps={[
+    { name: "0", value: "0", px: "0px" },
+    { name: "1", value: "0.25rem", px: "4px" },
+    { name: "2", value: "0.5rem", px: "8px" },
+    { name: "3", value: "1rem", px: "16px" },
+    { name: "4", value: "1.5rem", px: "24px" },
+    { name: "5", value: "3rem", px: "48px" },
+  ]}
+/>
+
+## Direction reference
+
+| Prefix | Meaning | CSS |
+| --- | --- | --- |
+| `p-*` / `m-*` | All sides | `padding` / `margin` |
+| `pt/mt` · `pb/mb` | Top · Bottom | `padding/margin-block` |
+| `ps/ms` · `pe/me` | Start · End | `padding/margin-inline` |
+| `px/mx` · `py/my` | Horizontal · Vertical | both axes |
+| `mx-auto` | Center | `margin: 0 auto` |
+
+## Usage guidelines
+
+- Compose layouts from scale steps only — never arbitrary pixel values.
+- Use consistent vertical rhythm: the same step between sibling blocks.
+- `mx-auto` centers a fixed-width block within its container.

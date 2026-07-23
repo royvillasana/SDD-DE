@@ -13,6 +13,12 @@ Read `.sdd-de/project.yaml` to determine `design_source`:
 
 The enrichment process branches based on where design specs come from.
 
+> **Capture usage intent for the metadata.** For a **component** brief, also note its common
+> usage patterns, misuses to avoid (anti-patterns), and trigger keywords. `/generate-artifacts`
+> turns these into the Component Spec's Common Patterns / Anti-Patterns / AI Usage Hints sections,
+> which `/storybook` compiles into the component's `metadata.ts` + rich docs page
+> (see `docs/component-metadata-model.md`).
+
 ### Screen Creation Gate Check
 
 If the brief describes a **screen, page, or layout** (not a single component), verify

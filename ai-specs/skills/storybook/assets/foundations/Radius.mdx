@@ -1,0 +1,29 @@
+import { Meta } from "@storybook/blocks";
+import { RadiusGrid } from "./FoundationBlocks";
+
+{/*
+  Foundations / Radius — GENERATED from token_file by the /storybook skill.
+  Replace `tokens` with the project's real border-radius tokens (resolved values).
+*/}
+
+<Meta title="Foundations/Radius" />
+
+# Radius
+
+Corner-radius tokens for surfaces, controls, and pills.
+
+<RadiusGrid
+  title="Border Radius"
+  tokens={[
+    { name: "radius-sm", value: "4px" },
+    { name: "radius-md", value: "8px" },
+    { name: "radius-lg", value: "12px" },
+    { name: "radius-full", value: "9999px" },
+  ]}
+/>
+
+## Usage guidelines
+
+- Use the smaller radii for inputs/buttons, larger for cards/sheets.
+- Use `radius-full` for pills, avatars, and circular icon buttons.
+- Keep radius consistent within a component family.

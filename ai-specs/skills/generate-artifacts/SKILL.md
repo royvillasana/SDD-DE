@@ -29,6 +29,9 @@ Read `.sdd-de/project.yaml` to determine:
 3. **Generate Component Spec** using `docs/component-spec-template.md`:
    - Fill every section from the enriched story
    - List design tokens using the project's variable format (CSS `var(--token)` or SCSS `$token`)
+   - **Fill the metadata-feeding sections** — `Common Patterns`, `Anti-Patterns`, and `AI Usage Hints`.
+     These become the component's `metadata.ts` (`commonPatterns` / `antiPatterns` / `aiHints`) which
+     the `/storybook` skill turns into the rich docs page. See `docs/component-metadata-model.md`.
    - Apply design-source-specific header (see branches below)
    - Save to `specs/[feature-name]/[component]-component-spec.md`
 

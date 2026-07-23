@@ -1,0 +1,72 @@
+import { Meta } from "@storybook/blocks";
+import { ColorGrid, ShadeScales, ShadowGrid } from "./FoundationBlocks";
+
+{/*
+  Foundations / Colors & Shadows — GENERATED from token_file by the /storybook skill.
+  Replace every token array below with the project's real color + shadow tokens
+  (resolved values). Group as: brand/semantic swatches, numbered shade ramps, neutrals,
+  and elevation shadows. Delete groups the token set doesn't have.
+*/}
+
+<Meta title="Foundations/Colors & Shadows" />
+
+# Colors & Shadows
+
+The project's color palette, shade ramps, neutrals, and elevation shadows — all sourced from
+the design tokens. Use semantic roles (primary, success, danger…) in components, never raw hex.
+
+<ColorGrid
+  title="Brand & Semantic"
+  tokens={[
+    { name: "Primary", value: "#0d6efd" },
+    { name: "Secondary", value: "#6c757d" },
+    { name: "Success", value: "#198754" },
+    { name: "Danger", value: "#dc3545" },
+    { name: "Warning", value: "#ffc107" },
+    { name: "Info", value: "#0dcaf0" },
+  ]}
+/>
+
+<ShadeScales
+  title="Shade Scales"
+  families={[
+    {
+      name: "Primary",
+      shades: [
+        { step: "100", value: "#cfe2ff" },
+        { step: "300", value: "#6ea8fe" },
+        { step: "500", value: "#0d6efd" },
+        { step: "700", value: "#084298" },
+        { step: "900", value: "#031633" },
+      ],
+    },
+  ]}
+/>
+
+<ColorGrid
+  title="Neutrals"
+  tokens={[
+    { name: "White", value: "#ffffff" },
+    { name: "Gray 100", value: "#f8f9fa" },
+    { name: "Gray 300", value: "#dee2e6" },
+    { name: "Gray 600", value: "#6c757d" },
+    { name: "Gray 900", value: "#212529" },
+    { name: "Black", value: "#000000" },
+  ]}
+/>
+
+<ShadowGrid
+  title="Elevation & Shadows"
+  tokens={[
+    { name: "shadow-sm", value: "0 .125rem .25rem rgba(0,0,0,.075)" },
+    { name: "shadow", value: "0 .5rem 1rem rgba(0,0,0,.15)" },
+    { name: "shadow-lg", value: "0 1rem 3rem rgba(0,0,0,.175)" },
+  ]}
+/>
+
+## Usage guidelines
+
+- Use **Primary** for main calls-to-action, links, and interactive elements.
+- Use **Success / Danger / Warning / Info** for feedback states and alerts.
+- Use mid neutrals for body text, lighter neutrals for muted/helper text.
+- Ensure a contrast ratio ≥ 4.5:1 for text on colored backgrounds (WCAG AA).

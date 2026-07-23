@@ -119,9 +119,48 @@ find [component_dir] -name "*.tsx" -o -name "*.vue" -o -name "*.svelte" -o -name
    - Accessibility requirements
    - Design token usage
 
-### Phase 3 — Generate Stories
+### Phase 3 — Install the shared docs system (once per project)
 
-9. **For each component**, generate a story file next to the component:
+The rich per-component docs pages and the Foundations pages are driven by **shipped templates**
+in this skill's `assets/` directory. Copy them into the project ONCE (before generating stories),
+adapting import paths to the project. Read [`docs/component-metadata-model.md`](../../../docs/component-metadata-model.md)
+first — it defines the metadata schema every component will carry.
+
+Copy from `.sdd-de/ai-specs/skills/storybook/assets/` into the project:
+
+| Template asset | Copy to | Notes |
+|---|---|---|
+| `docs/ComponentDocs.tsx` (or `.jsx` for JS projects) | `.storybook/ComponentDocs.tsx` | The shared docs-page renderer. **React/MDX even in Vue/Svelte/Angular** — the Docs addon renders in React everywhere. |
+| `foundations/FoundationBlocks.tsx` | `.storybook/foundations/FoundationBlocks.tsx` | Presentational primitives for the Foundations pages. |
+| `foundations/{Colors,Typography,Spacing,Radius}.mdx` | `.storybook/foundations/*.mdx` | Foundations pages — you fill their token arrays in Phase 4. |
+
+Then make Storybook pick up the new folders — add `.storybook/**/*.mdx` and the foundations glob to
+the `stories` array in `.storybook/main.*` (keep the existing component glob):
+
+```ts
+stories: [
+  "../src/**/*.stories.@(ts|tsx|js|jsx)",
+  "../.storybook/**/*.mdx",
+],
+```
+
+Install the docs blocks if `storybook init` didn't (usually present via `addon-essentials`):
+`npm install -D @storybook/blocks @storybook/addon-docs`.
+
+> The `.stories.*` files stay in the project's framework format (React/Vue/Svelte/Angular). Only
+> `ComponentDocs` and the Foundations `.mdx` are shared React/MDX. See `assets/wiring.md` for the
+> exact per-framework stories snippet.
+
+### Phase 3b — Generate Stories + Metadata
+
+9. **For each component**, generate BOTH a story file and a metadata file next to the component:
+
+```
+src/components/Accordion/
+├── Accordion.tsx            # the component (untouched)
+├── Accordion.stories.tsx    # ← generated (stories + docs.page wiring)
+└── Accordion.metadata.ts    # ← generated (structured metadata; see component-metadata-model.md)
+```
 
 ```
 [component_dir]/
@@ -154,21 +193,21 @@ which fails the build with `MISSING_EXPORT`.
 
 ```tsx
 import type { Meta, StoryObj } from '@storybook/[framework]';
-import { [ComponentName] } from './[ComponentName]';   // named import — matches the named export convention
+import { [ComponentName] } from './[ComponentName]';       // named import — matches the named export convention
+import { metadata } from './[ComponentName].metadata';     // the structured metadata (Phase 3c)
+import { ComponentDocs } from '../../../.storybook/ComponentDocs';  // adjust depth, or use the project alias
 
 const meta: Meta<typeof [ComponentName]> = {
   title: '[Category]/[ComponentName]',   // e.g., 'Atoms/Button', 'Molecules/SearchBar'
   component: [ComponentName],
   tags: ['autodocs'],
   parameters: {
-    docs: {
-      description: {
-        component: '[One-line description from the Component Spec]',
-      },
-    },
+    // Render the SHARED rich docs page (Identity, Props, Patterns, Anti-Patterns, States,
+    // Accessibility, Design Tokens, AI Hints, …) instead of the bare autodocs default.
+    docs: { page: () => <ComponentDocs meta={metadata} /> },
   },
   argTypes: {
-    // Map every prop with controls
+    // Map every prop with controls (feeds the interactive Controls block on the docs page)
     // variant: { control: 'select', options: ['primary', 'secondary', 'ghost'] },
     // disabled: { control: 'boolean' },
     // size: { control: 'radio', options: ['sm', 'md', 'lg'] },
@@ -178,6 +217,9 @@ const meta: Meta<typeof [ComponentName]> = {
 export default meta;
 type Story = StoryObj<typeof [ComponentName]>;
 ```
+
+See `assets/wiring.md` for the exact snippet in Vue / Svelte / Angular (the `docs.page` call is the
+same; only the story format differs).
 
 #### b) A `Default` story showing the component with default props
 
@@ -243,6 +285,27 @@ export const AccessibilityTest: Story = {
 };
 ```
 
+#### g) The component metadata file — `[ComponentName].metadata.ts`
+
+Author a structured metadata file next to the component. This is what makes the docs page rich and
+what downstream AI generation reads. **Do NOT re-analyze the component from scratch** — transform the
+existing artifacts. Start from `assets/metadata.template.ts` and fill every field from:
+
+- **`.sdd-de/components.json`** — `identity.category` (from `level`), `figmaFile`/`figmaNode`
+  (from `figmaNodeId`/`componentKey`), and variant axes.
+- **The Component Spec** (`specs/[feature]/[component]-component-spec.md`) — `props`/`itemShape`
+  (Props/API table), `states` (States table), `accessibility` (Accessibility section),
+  `commonPatterns` / `antiPatterns` / `aiHints` (the new spec sections), and the token names in
+  the "Design Tokens Used" table.
+- **The Interaction Spec** — timing/behaviour detail for `states`.
+- **`token_file`** — RESOLVE each used token name to its value for `designTokens` (embed the real
+  hex/rem, grouped by `colors` / `typography` / `spacing` / `shadows` / `radius`). Spacing covers
+  margins (same scale). This is the ONE thing you compute rather than copy.
+
+Emit only the sections the component has (omit `itemShape` unless it has an object/array prop, omit
+`designTokens.shadows` unless it casts a shadow, etc.). The full schema + field-by-field sourcing
+table lives in [`docs/component-metadata-model.md`](../../../docs/component-metadata-model.md).
+
 11. **Category mapping** for the story `title` field:
 
 | Component directory | Storybook category |
@@ -298,23 +361,57 @@ Each component followed the SDD 7-step cycle:
 7. PR with spec as description
 ```
 
-14. **For each component**, the `tags: ['autodocs']` in the meta object will auto-generate a documentation page from the component's props, JSDoc/TSDoc comments, and story definitions. No separate docs page is needed per component.
+14. **Generate the Foundations pages from `token_file`.** These are global docs pages that visualize
+    the design system's tokens — the same values components reference. Fill the token arrays in the
+    `.mdx` files you copied in Phase 3 (`.storybook/foundations/`) from the project's `token_file`:
+
+    | Page | Title | Fill from these token categories |
+    |---|---|---|
+    | `Colors.mdx` | `Foundations/Colors & Shadows` | color tokens (brand/semantic, numbered shade ramps, neutrals) + shadow tokens |
+    | `Typography.mdx` | `Foundations/Typography` | font-size + weight + line-height tokens (the type scale) |
+    | `Spacing.mdx` | `Foundations/Spacing` | the spacing scale (drives padding AND margin utilities) |
+    | `Radius.mdx` | `Foundations/Radius` | border-radius tokens |
+
+    Embed RESOLVED values (real hex/rem) so a page always reflects the tokens it was generated from.
+    Re-running `/storybook` after a token change refreshes them. Read `token_file` and group by the
+    naming conventions in [`docs/design-token-model.md`](../../../docs/design-token-model.md).
+
+15. **Order the sidebar** so Foundations sits above the component library. Add `options.storySort`
+    to `.storybook/preview.*`:
+
+```ts
+export const parameters = {
+  options: {
+    storySort: {
+      order: ['Introduction', 'Foundations', ['Colors & Shadows', 'Typography', 'Spacing', 'Radius'],
+              'Atoms', 'Molecules', 'Organisms'],
+    },
+  },
+  a11y: { /* keep the a11y addon config */ },
+};
+```
+
+Every built component's rich docs page is produced by the shared `ComponentDocs` renderer wired in
+Phase 3b (`parameters.docs.page`) — not the bare autodocs default — reading its `[ComponentName].metadata.ts`.
 
 ### Phase 5 — Verify (do NOT start a blocking server)
 
-15. **Verify the setup — never launch a long-running dev server here.** You are
+16. **Verify the setup — never launch a long-running dev server here.** You are
     running head-less; `npm run storybook` is a foreground process that never
     exits, so starting it would hang this run. VortSpec's Playground starts and
-    serves Storybook for the user. Instead, confirm the setup is complete and
-    every built component has a story:
+    serves Storybook for the user. Instead, confirm the setup is complete — every
+    built component has BOTH a story and a metadata file, and the shared docs system
+    is in place:
 ```bash
 ls .storybook/main.* && node -e "process.exit(require('./package.json').scripts?.storybook?0:1)"
-find [component_dir] -name "*.stories.*" | wc -l   # should match the component count
+ls .storybook/ComponentDocs.* .storybook/foundations/*.mdx    # shared docs + Foundations exist
+find [component_dir] -name "*.stories.*" | wc -l              # should match the component count
+find [component_dir] -name "*.metadata.*" | wc -l             # should ALSO match the component count
 ```
-    If a story is missing for any built component, generate it now (Phase 3).
+    If a story OR metadata file is missing for any built component, generate it now (Phase 3b).
     Storybook opens at `http://localhost:6006` when the user runs the Playground.
 
-16. **Announce**:
+17. **Announce**:
 
 ```
 ──────────────────────────────────────────────
@@ -328,10 +425,16 @@ find [component_dir] -name "*.stories.*" | wc -l   # should match the component 
  Storybook is running at: http://localhost:6006
 
  Browse the component library in your browser.
- Every component shows:
+ Foundations pages (Colors & Shadows, Typography,
+ Spacing, Radius) sit at the top; every component shows:
    • Live interactive preview with controls
    • All variants and states as separate stories
-   • Auto-generated documentation from props/types
+   • Component Identity, Props + Item Shape
+   • Common Patterns + Anti-Patterns
+   • States & Behaviour + Accessibility
+   • Design Tokens (colors, typography, spacing,
+     shadows, radius) with resolved swatches
+   • AI Generation Hints, Keywords, Generation Rules
    • Accessibility audit via the a11y addon
 
  When you are satisfied with your component library,
@@ -347,16 +450,25 @@ find [component_dir] -name "*.stories.*" | wc -l   # should match the component 
 
 ## Story Generation Checklist
 
+Shared, once per project:
+
+- [ ] `.storybook/ComponentDocs.(tsx|jsx)` copied from this skill's `assets/`
+- [ ] `.storybook/foundations/FoundationBlocks.tsx` + `{Colors,Typography,Spacing,Radius}.mdx` copied and filled from `token_file`
+- [ ] `.storybook/main.*` `stories` glob includes `.storybook/**/*.mdx`
+- [ ] `.storybook/preview.*` sets `options.storySort` (Foundations above Atoms/Molecules/Organisms)
+
 For each component, verify:
 
 - [ ] Story file exists next to the component file
-- [ ] `tags: ['autodocs']` is set for auto-documentation
+- [ ] `[ComponentName].metadata.ts` exists and follows `component-metadata-model.md`
+- [ ] `parameters.docs.page` renders the shared `ComponentDocs` with this component's `metadata`
+- [ ] `tags: ['autodocs']` is set (feeds the interactive Controls block)
 - [ ] All props have `argTypes` with appropriate controls
 - [ ] Default story exists with sensible default args
 - [ ] Every variant has its own named story
 - [ ] Interactive states (disabled, loading, error) have stories
-- [ ] Component description is populated from the Component Spec
-- [ ] Category (`Atoms/`, `Molecules/`, `Organisms/`) matches the component directory
+- [ ] `metadata.designTokens` values are RESOLVED from `token_file` (real hex/rem, not names)
+- [ ] Category (`Atoms/`, `Molecules/`, `Organisms/`) matches the component directory + `components.json` level
 - [ ] Design tokens are loaded (preview imports `[token_file]`)
 - [ ] Accessibility addon is enabled and no violations flagged
 
@@ -364,6 +476,7 @@ For each component, verify:
 
 When a component is modified during Screen Creation or later:
 1. Re-read the component file to detect new props or variants
-2. Update the story file to reflect changes
-3. Verify the story renders correctly in Storybook
-4. Run the a11y check on the updated story
+2. Update the story file AND `[ComponentName].metadata.ts` to reflect changes
+3. Re-resolve `metadata.designTokens` values if the component's token usage changed
+4. Verify the story + docs page render correctly in Storybook
+5. Run the a11y check on the updated story

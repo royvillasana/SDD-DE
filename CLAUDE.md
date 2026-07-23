@@ -108,7 +108,7 @@ and follow the corresponding `SKILL.md` automatically before responding.
 | `/adversarial-review` | `.sdd-de/ai-specs/skills/adversarial-review/SKILL.md` | Red-team implementation before committing |
 | `/sync-tokens` | `.sdd-de/ai-specs/skills/sync-tokens/SKILL.md` | Sync design tokens between Figma and code |
 | `/commit` | `.sdd-de/ai-specs/skills/commit/SKILL.md` | Commit with spec as PR description |
-| `/storybook` | `.sdd-de/ai-specs/skills/storybook/SKILL.md` | Install Storybook, generate stories for all components, launch dev server |
+| `/storybook` | `.sdd-de/ai-specs/skills/storybook/SKILL.md` | Install Storybook; generate per-component stories + `metadata.ts` + metadata-driven docs pages (Identity, Props, Patterns, Anti-Patterns, States, Accessibility, Design Tokens, AI hints) and Foundations pages |
 | `/design-doc` | `.sdd-de/ai-specs/skills/design-doc/SKILL.md` | Generate DESIGN.md from components, validate with @google/design.md |
 | `/sync-agent-symlinks` | `.sdd-de/ai-specs/skills/sync-agent-symlinks/SKILL.md` | Repair broken symlinks across editor directories |
 
@@ -120,6 +120,7 @@ Read these documents before implementing any component or page:
 - [Page Standards](.sdd-de/docs/page-standards.md) — layout composition, responsive breakpoints, landmark structure
 - [Framework Configuration](.sdd-de/docs/framework-config.md) — framework-specific patterns and file conventions
 - [Design Token Model](.sdd-de/docs/design-token-model.md) — color, spacing, typography, radius, shadow systems
+- [Component Metadata Model](.sdd-de/docs/component-metadata-model.md) — the per-component `metadata.ts` schema that drives the rich Storybook docs + AI generation
 - [Styling Best Practices](.sdd-de/docs/styling-best-practices.md) — per-framework styling patterns and encapsulation rules
 - [Documentation Standards](.sdd-de/docs/documentation-standards.md) — spec format and maintenance rules
 - [SDD Mandatory Steps](.sdd-de/docs/sdd-mandatory-steps.md) — required checklist for every SDD cycle

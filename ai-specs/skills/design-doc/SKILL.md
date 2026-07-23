@@ -50,7 +50,10 @@ Study the output. The DESIGN.md file must use YAML frontmatter with specific key
    - Typography tokens (font families, sizes, weights, line-heights) → map to `typography`
    - Border radius tokens → map to `rounded`
    - Spacing tokens → map to `spacing`
-   - Shadow tokens → include in prose section
+   - Shadow / elevation tokens → emit as a STRUCTURED `shadows:` frontmatter block (name → value)
+     AND a `## Shadows` prose section with a table (name · value · when to use). Do not leave shadows
+     as free-text only — the Storybook Foundations "Colors & Shadows" page and each component's
+     `metadata.designTokens.shadows` need every shadow token with its resolved value.
 
 4. **Scan all component files** in `[component_dir]`:
 ```bash
