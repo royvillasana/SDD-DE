@@ -1,5 +1,5 @@
 import React from "react";
-import { Title, Primary, Controls, Stories } from "@storybook/blocks";
+import { Title, Primary, Controls, Stories } from "@storybook/addon-docs/blocks";
 
 /**
  * ComponentDocs — the ONE shared autodocs page for every design-system component.

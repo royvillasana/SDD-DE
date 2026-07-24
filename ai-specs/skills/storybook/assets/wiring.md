@@ -91,5 +91,5 @@ export default meta;
 `ComponentDocs` and the Foundations `.mdx` are React/MDX, which the Docs addon renders in every
 Storybook. Keep the `.storybook/ComponentDocs.(tsx|jsx)` and `.storybook/foundations/*.mdx` files
 as React/MDX even in a Vue/Svelte/Angular project — only your component **stories** use the native
-framework format. Ensure `@storybook/addon-docs` (and `@storybook/blocks`) are installed; `storybook
+framework format. Ensure `@storybook/addon-docs` (and `@storybook/addon-docs/blocks`) are installed; `storybook
 init` includes them via `@storybook/addon-essentials`.

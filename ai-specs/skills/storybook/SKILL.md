@@ -24,7 +24,9 @@ User says: "storybook", "create stories", "document components", "/storybook", o
 ls .storybook/main.* 2>/dev/null
 ```
 
-3. **If Storybook is NOT installed**, run the initializer for the detected framework. You are running head-less (no TTY), so the init MUST be non-interactive — always pass `--yes` and set `CI=1` so it never waits on a prompt:
+3. **If Storybook is NOT installed**, run the initializer for the detected framework. You are running head-less (no TTY), so the init MUST be non-interactive — always pass `--yes` and set `CI=1` so it never waits on a prompt.
+
+> **Ensure a builder is detectable first.** Storybook 10's `init` still prompts "select a builder (Vite / Webpack / Rsbuild)" — even under `CI=1 --yes` — when it can't detect one, which hangs a head-less run. Before init, make sure the project has a bundler Storybook can detect: for a Vite project ensure `vite` + `@vitejs/plugin-react` (or the framework plugin) are installed and a `vite.config.*` exists; `npm install -D vite @vitejs/plugin-react` and write a minimal `vite.config.ts` if missing. Then run:
 
 #### Branch A — React / Next.js
 ```bash
@@ -83,23 +85,39 @@ Storybook build with `[vite:import-analysis] Failed to resolve import "@/lib/uti
 `"@/*": ["./src/*"]` in tsconfig, add a matching `resolve.alias` in `main`'s `viteFinal`:
 ```ts
 import { fileURLToPath } from 'node:url';
+import tailwindcss from '@tailwindcss/vite';   // only for styling: tailwind (v4) on a Vite builder
 // …
 viteFinal: async (config) => {
   config.resolve = config.resolve ?? {};
   config.resolve.alias = { ...config.resolve.alias, '@': fileURLToPath(new URL('../src', import.meta.url)) };
+  // Tailwind v4 needs its Vite plugin, or `@import "tailwindcss"` is a no-op and NO utilities generate.
+  config.plugins = [...(config.plugins ?? []), tailwindcss()];
   return config;
 },
 ```
 
-6. **Configure the style imports** — update `.storybook/preview.[ts|js]` so all stories render with the real design system. For `styling: tailwind`, import the Tailwind entry stylesheet FIRST (the utility layers), THEN the tokens (the variables those utilities reference) — without the Tailwind import the token classes compile to nothing and stories render unstyled:
+> For `styling: tailwind` on a Vite builder, install the plugin if the project doesn't already have it:
+> `npm install -D @tailwindcss/vite tailwindcss`. Omit the `tailwindcss()` plugin line for non-Tailwind projects.
 
-```js
-// Tailwind layers first, then the design tokens the utilities reference.
-import '../[styles_dir]/tailwind.css';   // omit for non-Tailwind styling
-import '../[token_file]';
-```
+6. **Configure the style imports** — update `.storybook/preview.[ts|js]` so all stories render with the real design system.
 
-Replace `[token_file]` with the value from `.sdd-de/project.yaml` and `[styles_dir]` with its directory.
+   **For `styling: tailwind` (v4), import a SINGLE Tailwind entry — never the tokens as a second, separate import.** Tailwind v4 defines the design system in a `@theme { … }` block, and the utilities (`bg-brand-primary`, `rounded-md`, …) are generated **only for tokens Tailwind sees in the same compiled module** as `@import "tailwindcss"`. If `preview` imports `tailwind.css` and `tokens.css` as two separate entries, the `@theme` tokens live in a different module than the `@import "tailwindcss"` that generates utilities, so the token utilities compile to nothing and every component preview renders **unstyled**.
+
+   So the Tailwind entry stylesheet MUST pull the tokens in via CSS `@import`, and `preview` imports only that one file. Ensure `[styles_dir]/tailwind.css` reads:
+
+   ```css
+   @import "tailwindcss";
+   @import "[token_file_relative_to_this_file]";   /* the @theme { … } tokens — Tailwind must see them to emit utilities */
+   ```
+
+   Then in `.storybook/preview.[ts|js]`:
+
+   ```js
+   // One Tailwind entry — it @imports the tokens, so @theme utilities are generated.
+   import '../[styles_dir]/tailwind.css';   // for non-Tailwind styling, import the token/global CSS directly instead
+   ```
+
+   Replace `[styles_dir]` and `[token_file]` with the values from `.sdd-de/project.yaml`. (Confirm the Tailwind Vite plugin `@tailwindcss/vite` is wired in `main`'s `viteFinal` `plugins` for a Vite builder, or the PostCSS plugin otherwise — without it `@import "tailwindcss"` is a no-op.) For **non-Tailwind** styling, there is no utility-generation step, so importing the token/global CSS directly in `preview` is correct.
 
 ### Phase 2 — Scan Components
 
@@ -145,7 +163,7 @@ stories: [
 ```
 
 Install the docs blocks if `storybook init` didn't (usually present via `addon-essentials`):
-`npm install -D @storybook/blocks @storybook/addon-docs`.
+`npm install -D @storybook/addon-docs/blocks @storybook/addon-docs`.
 
 > The `.stories.*` files stay in the project's framework format (React/Vue/Svelte/Angular). Only
 > `ComponentDocs` and the Foundations `.mdx` are shared React/MDX. See `assets/wiring.md` for the
@@ -343,7 +361,7 @@ are never omitted for a real component.
 13. **Create an overview documentation page** at `.storybook/stories/Introduction.mdx`:
 
 ```mdx
-import { Meta } from '@storybook/blocks';
+import { Meta } from '@storybook/addon-docs/blocks';
 
 <Meta title="Introduction" />
 
