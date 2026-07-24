@@ -285,26 +285,40 @@ export const AccessibilityTest: Story = {
 };
 ```
 
-#### g) The component metadata file — `[ComponentName].metadata.ts`
+#### g) The component metadata file — `[ComponentName].metadata.ts` (MANDATORY)
 
-Author a structured metadata file next to the component. This is what makes the docs page rich and
-what downstream AI generation reads. **Do NOT re-analyze the component from scratch** — transform the
-existing artifacts. Start from `assets/metadata.template.ts` and fill every field from:
+Author a structured metadata file next to the component. **This is what makes the docs page rich** —
+without it the docs page falls back to bare autodocs (props only), which is exactly the "no metadata"
+failure this skill exists to prevent. Every component MUST get a non-empty metadata file with an
+`identity` block, `props`, `designTokens`, and the analysis fields below. Start from
+`assets/metadata.template.ts`.
 
-- **`.sdd-de/components.json`** — `identity.category` (from `level`), `figmaFile`/`figmaNode`
-  (from `figmaNodeId`/`componentKey`), and variant axes.
-- **The Component Spec** (`specs/[feature]/[component]-component-spec.md`) — `props`/`itemShape`
-  (Props/API table), `states` (States table), `accessibility` (Accessibility section),
-  `commonPatterns` / `antiPatterns` / `aiHints` (the new spec sections), and the token names in
-  the "Design Tokens Used" table.
-- **The Interaction Spec** — timing/behaviour detail for `states`.
-- **`token_file`** — RESOLVE each used token name to its value for `designTokens` (embed the real
-  hex/rem, grouped by `colors` / `typography` / `spacing` / `shadows` / `radius`). Spacing covers
-  margins (same scale). This is the ONE thing you compute rather than copy.
+**Use the `ai-component-metadata` skill to produce the analysis-derived fields.** The specs are the
+first source, but they may not carry rich `commonPatterns` / `antiPatterns` / `aiHints` / `states` /
+`accessibility` — so **invoke the `ai-component-metadata` skill on the component** (it analyzes the
+component's composition, variants, props, and a11y and emits exactly these fields). Then merge:
+
+- **Spec-sourced (authoritative when present):** `props`/`itemShape` and the "Design Tokens Used" table
+  from the Component Spec; `identity.category`/`figmaFile`/`figmaNode`/variants from
+  **`.sdd-de/components.json`** (`level`, `figmaNodeId`, `componentKey`); timing/behaviour for `states`
+  from the Interaction Spec.
+- **`ai-component-metadata`-sourced (fills the gaps):** `commonPatterns`, `antiPatterns`,
+  `aiHints` (context + keywords + generationRules), and any `states`/`accessibility` the specs omit.
+- **`token_file` (computed — the ONE thing you resolve, not copy):** every used token name → its VALUE
+  for `designTokens`, grouped by `colors` / `typography` / `spacing` / `shadows` / `radius` (spacing
+  covers margins). Embed the real hex/rem, never the token name.
+
+**Schema bridge.** The `ai-component-metadata` skill emits a `component: { … }` block with a plural
+`category` (`atoms|molecules|organisms`); the toolkit's `ComponentDocs` renderer reads the canonical
+shape in [`docs/component-metadata-model.md`](../../../docs/component-metadata-model.md) — an
+`identity: { … }` block with a **singular** `category` (`atom|molecule|organism|template`). Map
+`component`→`identity`, singularize the category, and add `designTokens`/`itemShape` (which the
+analysis skill doesn't produce). The final file MUST match the canonical schema — that's what
+`ComponentDocs` renders.
 
 Emit only the sections the component has (omit `itemShape` unless it has an object/array prop, omit
-`designTokens.shadows` unless it casts a shadow, etc.). The full schema + field-by-field sourcing
-table lives in [`docs/component-metadata-model.md`](../../../docs/component-metadata-model.md).
+`designTokens.shadows` unless it casts a shadow, etc.) — but `identity`, `props`, and `designTokens`
+are never omitted for a real component.
 
 11. **Category mapping** for the story `title` field:
 
@@ -407,9 +421,17 @@ ls .storybook/main.* && node -e "process.exit(require('./package.json').scripts?
 ls .storybook/ComponentDocs.* .storybook/foundations/*.mdx    # shared docs + Foundations exist
 find [component_dir] -name "*.stories.*" | wc -l              # should match the component count
 find [component_dir] -name "*.metadata.*" | wc -l             # should ALSO match the component count
+# Every metadata file must be REAL, not a stub: an `identity` block, `designTokens`, and the
+# docs.page must be wired. Any hit here is a component that would render bare autodocs — fix it.
+for m in $(find [component_dir] -name "*.metadata.*"); do
+  grep -q "identity" "$m" && grep -q "designTokens" "$m" || echo "THIN METADATA: $m"
+done
+grep -RL "ComponentDocs" [component_dir] --include="*.stories.*"   # stories NOT wired to ComponentDocs
 ```
-    If a story OR metadata file is missing for any built component, generate it now (Phase 3b).
-    Storybook opens at `http://localhost:6006` when the user runs the Playground.
+    If a story OR metadata file is missing, or a metadata file is thin (no `identity`/`designTokens`),
+    or a story isn't wired to `ComponentDocs`, **fix it now (Phase 3b/3c) before announcing** — a
+    passing story count with empty metadata is the exact "docs show no metadata" bug. Storybook opens
+    at `http://localhost:6006` when the user runs the Playground.
 
 17. **Announce**:
 
@@ -460,7 +482,8 @@ Shared, once per project:
 For each component, verify:
 
 - [ ] Story file exists next to the component file
-- [ ] `[ComponentName].metadata.ts` exists and follows `component-metadata-model.md`
+- [ ] `[ComponentName].metadata.ts` exists, is non-empty, and follows `component-metadata-model.md` (has `identity`, `props`, `designTokens` at minimum — never a stub)
+- [ ] Analysis fields (`commonPatterns`, `antiPatterns`, `aiHints`) generated via the `ai-component-metadata` skill where the specs don't carry them
 - [ ] `parameters.docs.page` renders the shared `ComponentDocs` with this component's `metadata`
 - [ ] `tags: ['autodocs']` is set (feeds the interactive Controls block)
 - [ ] All props have `argTypes` with appropriate controls

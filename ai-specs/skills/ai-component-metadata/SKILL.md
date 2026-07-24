@@ -8,6 +8,16 @@ description: Generate AI-ready metadata for design system components to enable i
 
 Generate structured, AI-consumable metadata for design system components to enable intelligent UI generation and component usage.
 
+> **SDD-DE / Storybook integration.** When invoked by the `/storybook` skill, this skill's job is to
+> produce the **analysis-derived** fields — `commonPatterns`, `antiPatterns`, `aiHints`
+> (context + keywords + generationRules), and any `states`/`accessibility` the specs omit — which
+> `/storybook` merges into the canonical component metadata that the toolkit's `ComponentDocs` renderer
+> reads. The canonical shape is defined in `../../docs/component-metadata-model.md`: an `identity: { … }`
+> block with a **singular** `category` (`atom|molecule|organism|template`), plus `props`, `itemShape`,
+> and `designTokens` (with resolved values). This skill's own schema uses `component: { … }` with a
+> plural category — `/storybook` maps `component`→`identity` and singularizes. Focus your output on the
+> analysis fields; `/storybook` supplies `identity`/`props`/`designTokens` from the specs + token file.
+
 ## Quick Start
 
 When analyzing a component, use the metadata schema template in `scripts/generate_metadata.py` or follow the manual process below:
