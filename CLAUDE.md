@@ -101,6 +101,7 @@ and follow the corresponding `SKILL.md` automatically before responding.
 | Slash Command | SKILL.md Location | Purpose |
 |---|---|---|
 | `/setup` | `.sdd-de/ai-specs/skills/setup/SKILL.md` | Configure the project (framework, language, design source) |
+| `/provision-library` | `.sdd-de/ai-specs/skills/provision-library/SKILL.md` | For `design_source: library`: pull the library's REAL components into the project — run its CLI (shadcn/radix) or install + wrap it (MUI/Chakra/…). Adapt, never rebuild. |
 | `/extract-design-system` | `.sdd-de/ai-specs/skills/extract-design-system/SKILL.md` | Pull the complete token set + component inventory from Figma (once, before the cycle) |
 | `/enrich-brief` | `.sdd-de/ai-specs/skills/enrich-brief/SKILL.md` | Transform a vague brief into a spec-ready story |
 | `/generate-artifacts` | `.sdd-de/ai-specs/skills/generate-artifacts/SKILL.md` | Generate all 3 spec files from the enriched story |
@@ -167,6 +168,13 @@ of rediscovering it. Then **pilot the richest atom (e.g. Button) end-to-end thro
 7-step cycle first** to prove the token set, then fan out the remaining components per tier in
 isolated subagents (atoms → molecules → organisms). Never run the cycle stage-by-stage across
 all components at once.
+
+**For a `library` source (shadcn/ui, MUI, Chakra, …), run `/provision-library` after `/setup`,
+before `/extract-design-system`.** A library already ships its components — so VortSpec pulls
+the REAL ones in (the library's CLI for shadcn/radix; `npm install` + token-mapped wrappers for
+MUI/Chakra/Ant/Mantine/Headless UI) rather than hand-rebuilding generic look-alikes. After
+provisioning, `/extract-design-system` inventories the provisioned files and the 7-step cycle
+**adapts** them (props · tokens · customization) — it does not reconstruct what the library provides.
 
 | Level | Examples |
 |---|---|

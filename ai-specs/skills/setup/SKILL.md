@@ -207,6 +207,12 @@ Reply with the number or name.
 
 Record as `component_library`. If `8`, ask for the name as a follow-up.
 
+**Record the provisioning kind** as `component_library_kind` — it decides how the real
+components get into the project (see the `/provision-library` step):
+- `shadcn`, `radix` → `copy-source` (the library's CLI copies component *source files* into the repo)
+- `mui`, `chakra`, `antd`, `mantine`, `headlessui` → `package` (components are imported from an installed npm package)
+- `other` → **ask** the user which applies ("Does its CLI copy component files into your repo, or do you `npm install` and import it?"); record their answer.
+
 Auto-set styling suggestion based on library:
 - `shadcn` or `headlessui` → suggest `tailwind`
 - `radix` or `mantine` → suggest `css-modules`
@@ -218,6 +224,32 @@ Auto-set styling suggestion based on library:
 
 After recording the library, present the styling suggestion.
 Skip to Question 6 (Styling) with the auto-suggestion pre-filled.
+
+### After setup completes (library source)
+
+A library source is NOT ready to build against until its components are **provisioned**
+into `component_dir` — nothing else installs them. So when `/setup` finishes for a
+`design_source: library` project, tell the user the real next step is provisioning, and
+what it will do (so it's clear the library is pulled/installed, **not rebuilt from scratch**):
+
+```
+──────────────────────────────────────────────
+ ✓ Project configured — component_library: [library] ([kind])
+
+ Next step → provision the library's real components
+
+   Run: /provision-library
+
+ • copy-source (shadcn/radix): runs the library's own CLI so its ACTUAL
+   component source files land in [component_dir] — nothing is re-created.
+ • package (MUI/Chakra/…): installs the package and generates thin,
+   token-mapped wrappers that import the real components.
+
+ Do NOT hand-build components a library already ships. After provisioning,
+ run /extract-design-system to inventory them, then the 7-step cycle
+ adapts them (props/tokens/customization) instead of rebuilding.
+──────────────────────────────────────────────
+```
 
 ---
 

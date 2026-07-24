@@ -21,6 +21,14 @@ Read `.sdd-de/project.yaml`:
   "Write components.json".
 - `figma_file_url`, `token_file`, `component_dir`.
 
+> **Library guard (`design_source: library`).** The library's real components must already be
+> in `component_dir` — that's the job of **`/provision-library`**, which runs after `/setup`.
+> If `component_dir` is empty (or missing the library's components), **STOP and tell the user to
+> run `/provision-library` first.** Do NOT invent an inventory, and do NOT fall back to building
+> components from scratch — the whole point is to read the provisioned library files. Once they
+> exist, inventory them directly into `components.json` (record each component's file path; there
+> is no Figma node id for a library source).
+
 Then read project memory (`memory/figma-token-extraction-method.md` if present). If it records a
 working extraction path for this file, **use it and skip the capability probe entirely.**
 

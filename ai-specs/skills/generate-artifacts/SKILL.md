@@ -115,13 +115,24 @@ Token collection: [figma_token_collection]
 
 ## Branch B — Component Library Flow  (design_source: library)
 
+> **Adapt, don't rebuild.** The library's real components are already in `component_dir`
+> (provisioned by `/provision-library`, inventoried in `.sdd-de/components.json`). A library
+> component spec describes the **customization of a named, provisioned base component** — the
+> props, tokens, and overrides to apply — NOT a from-scratch reconstruction. If `components.json`
+> has no library entry, stop and point the user at `/provision-library`; do not spec a rebuild.
+
 ### Component Spec header additions
 ```
 Design source:  Component Library
-Library:        [component_library]
-Base component: [LibraryComponentName]
-Customization:  [brief summary of what to override]
+Library:        [component_library] ([component_library_kind])
+Base component: [provisioned component name + its file path from components.json]
+Customization:  [only the props/variants/tokens/overrides to apply]
 ```
+
+Scope the spec's **task list to customization**: apply token bindings, add project-specific
+props/variants, compose/re-export — never tasks that reimplement behavior the base already ships.
+For `package` libraries the "component" is the token-mapped wrapper around the library import;
+for `copy-source` libraries it's the owned source file the CLI wrote.
 
 ### Interaction Spec notes
 - Note which interactions are handled natively by the library vs. must be implemented custom
