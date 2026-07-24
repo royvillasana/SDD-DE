@@ -53,6 +53,8 @@ There are two cases:
 
 `name` is the screen component's export name (the value used in `?screen=<Name>`); `file` is its project-relative source path.
 
+**Multi-state screens — ask before fanning out.** Register **one entry per screen component** by default. A single component that renders several *data* variants — a product-detail screen shown for many products, a screen with device/theme variants, or loading/empty/loaded states — is **one screen**, not one entry per product/variant. When such a component genuinely has multiple meaningfully-distinct preview states, **ask the user** whether they want **each state as its own navigable screen** (distinct `name`s, same `file`, each deep-linked via a prop the harness reads) or a **single screen**, then register accordingly. Default to a single entry when unsure; never silently fan one component out into many site-tree entries.
+
 Framework-specific deep-link and harness implementations: see `docs/framework-config.md` → **Preview-Addressable Screens**.
 
 ---
