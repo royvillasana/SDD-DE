@@ -12,6 +12,8 @@ Works with **Claude Code** | **Cursor** | **GitHub Copilot** | any AI agent that
 [![license](https://img.shields.io/npm/l/@royvillasana/sdd-de.svg)](https://github.com/royvillasana/SDD-DE/blob/main/LICENSE)
 [![node](https://img.shields.io/node/v/@royvillasana/sdd-de.svg)](https://nodejs.org)
 
+**[Website](https://royvillasana.github.io/SDD-DE/)** · **[Usage Guide](https://royvillasana.github.io/SDD-DE/guide.html)** · **[Documentation](https://royvillasana.github.io/SDD-DE/docs.html)**
+
 </div>
 
 ---
@@ -196,6 +198,18 @@ Build a Login screen: email input, password input, submit button, "forgot passwo
 ```bash
 npx @royvillasana/sdd-de@latest update
 ```
+
+---
+
+## Links
+
+| | |
+|---|---|
+| **Website** | https://royvillasana.github.io/SDD-DE/ |
+| **Usage Guide** | https://royvillasana.github.io/SDD-DE/guide.html |
+| **Documentation** | https://royvillasana.github.io/SDD-DE/docs.html |
+| **npm** | https://www.npmjs.com/package/@royvillasana/sdd-de |
+| **Source** | https://github.com/royvillasana/SDD-DE |
 
 ---
 
