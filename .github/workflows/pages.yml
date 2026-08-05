@@ -1,0 +1,52 @@
+name: Deploy site to GitHub Pages
+
+# The site is also deployed to Vercel (site-omega-red-44.vercel.app).
+# This workflow publishes the same static site/ directory to GitHub Pages
+# at https://royvillasana.github.io/SDD-DE/ — the two are independent.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let a running deploy finish; queue at most one more.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # site/ is plain static HTML/JS/SVG — no build step.
+      # content/ holds the markdown sources already rendered into docs-data.js,
+      # so it is excluded from what gets served.
+      - name: Stage site
+        run: |
+          mkdir -p _pages
+          rsync -a --exclude 'content/' site/ _pages/
+          # Pages runs the uploaded files through Jekyll unless told not to.
+          touch _pages/.nojekyll
+          ls -la _pages
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _pages
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
