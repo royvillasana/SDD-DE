@@ -39,6 +39,10 @@ jobs:
       - name: Check embedded bundles are current
         run: python3 site/rebundle.py --check
 
+      # The hero badge is hardcoded; catch it drifting from package.json.
+      - name: Check version badge matches package.json
+        run: python3 site/sync-version.py --check
+
       - name: Stage site
         run: |
           mkdir -p _pages
