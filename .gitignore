@@ -4,3 +4,4 @@ node_modules/
 package-lock.json
 .mcp.json
 .vscode/
+__pycache__/

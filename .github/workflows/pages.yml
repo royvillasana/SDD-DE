@@ -31,6 +31,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # docs-data.js ships pre-rendered HTML; the code blocks are tokenised at
+      # build time from the fence language in site/content/*.md.
+      - name: Check code blocks are syntax-highlighted
+        run: python3 site/highlight.py --check
+
       # The pages embed their JS as gzipped virtual assets; editing the sibling
       # .js file alone leaves the rendered page stale. Fail loudly if they drift.
       - name: Check embedded bundles are current
