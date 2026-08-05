@@ -29,11 +29,8 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      # site/ is plain static HTML/JS/SVG — no build step.
-      # content/ holds the markdown sources already rendered into docs-data.js,
-      # so it is excluded from what gets served.
       # The pages embed their JS as gzipped virtual assets; editing the sibling
       # .js file alone leaves the rendered page stale. Fail loudly if they drift.
       - name: Check embedded bundles are current
@@ -43,19 +40,23 @@ jobs:
       - name: Check version badge matches package.json
         run: python3 site/sync-version.py --check
 
+      # site/ is plain static HTML/JS/SVG — no build step. content/ holds the
+      # markdown sources already rendered into docs-data.js, so it is excluded
+      # from what gets served.
       - name: Stage site
         run: |
           mkdir -p _pages
           rsync -a --exclude 'content/' site/ _pages/
-          # Pages runs the uploaded files through Jekyll unless told not to.
           touch _pages/.nojekyll
           ls -la _pages
 
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: _pages
+          # v5 defaults this to false, which would silently drop .nojekyll.
+          include-hidden-files: true
 
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
