@@ -34,6 +34,11 @@ jobs:
       # site/ is plain static HTML/JS/SVG — no build step.
       # content/ holds the markdown sources already rendered into docs-data.js,
       # so it is excluded from what gets served.
+      # The pages embed their JS as gzipped virtual assets; editing the sibling
+      # .js file alone leaves the rendered page stale. Fail loudly if they drift.
+      - name: Check embedded bundles are current
+        run: python3 site/rebundle.py --check
+
       - name: Stage site
         run: |
           mkdir -p _pages
