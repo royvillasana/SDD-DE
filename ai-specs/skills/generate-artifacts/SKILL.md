@@ -26,11 +26,24 @@ Read `.sdd-de/project.yaml` to determine:
 1. **Read** `.sdd-de/project.yaml`
 2. **Read** `specs/[feature-name]/enriched-story.md`
 
-3. **Create the feature branch** (see [Branch creation](#branch-creation) below) —
-   do this **before** writing any spec file, so the specs are committed on the branch
-   and never on `main`.
+3. **Run the design-source preflight** for the active flow — **before branching.**
+   Every flow has a gate that can stop the run (see the flow sections below):
 
-4. **Generate Component Spec** using `docs/component-spec-template.md`:
+   | `design_source` | Preflight gate |
+   |---|---|
+   | `figma` | Resolve the component's Figma node. Unresolvable → record it as **unreferenced** and stop |
+   | `library` | `.sdd-de/components.json` must hold the library entry. Missing → stop, point at `/provision-library` |
+   | `github` / `zip` | The source component file must be readable. Missing → stop, name the path |
+   | `stitch` | The screen + token mapping table must exist in `enriched-story.md`. Missing → stop |
+
+   If a gate stops the run, **do not create the branch** — the user stays on their current
+   branch with nothing to clean up. Branching first would leave an empty orphan branch.
+
+4. **Create the feature branch** (see [Branch creation](#branch-creation) below) —
+   only once the preflight passes, and **before** writing any spec file, so the specs
+   land on the branch and never on `main`.
+
+5. **Generate Component Spec** using `docs/component-spec-template.md`:
    - Fill every section from the enriched story
    - List design tokens using the project's variable format (CSS `var(--token)` or SCSS `$token`)
    - **Fill the metadata-feeding sections** — `Common Patterns`, `Anti-Patterns`, and `AI Usage Hints`.
@@ -39,19 +52,19 @@ Read `.sdd-de/project.yaml` to determine:
    - Apply design-source-specific header (see branches below)
    - Save to `specs/[feature-name]/[component]-component-spec.md`
 
-5. **Generate Interaction Spec** using `docs/interaction-spec-template.md`:
+6. **Generate Interaction Spec** using `docs/interaction-spec-template.md`:
    - Cover every state transition and animation from the enriched story
    - Apply design-source-specific notes (see branches below)
    - Save to `specs/[feature-name]/[component]-interaction-spec.md`
 
-6. **Generate Page/Feature Spec** using `docs/page-spec-template.md`:
+7. **Generate Page/Feature Spec** using `docs/page-spec-template.md`:
    - Cover layout, breakpoints, component composition, data flow
    - Reference framework-agnostic patterns from `docs/page-standards.md`
    - Fill the **Preview / Deep Link** section: every screen must be preview-addressable (reachable by URL). Router screens use their route; state-navigated screens deep-link via `?screen=<Name>` and are registered in `.vortspec/screen-preview.json` (see `docs/page-standards.md` → Preview-Addressable Screens, and `docs/framework-config.md` for the per-framework snippet)
    - Apply design-source-specific notes (see branches below)
    - Save to `specs/[feature-name]/[page]-page-spec.md`
 
-7. **Announce** (see per-flow announcement below)
+8. **Announce** (see per-flow announcement below)
 
 ---
 
@@ -63,7 +76,7 @@ The skill creates the branch itself. The user never runs `git checkout -b` by ha
 `specs/[feature-name]/` directory, lowercased and hyphenated
 (e.g. `feature/button-spec`, `feature/checkout-flow-spec`).
 
-**Procedure** — run before writing any spec file:
+**Procedure** — run after the preflight passes, before writing any spec file:
 
 1. Confirm the project is a git repository (`git rev-parse --git-dir`).
    If it is not, skip branch creation entirely, generate the specs, and say so in the
@@ -81,7 +94,8 @@ The skill creates the branch itself. The user never runs `git checkout -b` by ha
    `git checkout -b` carries them onto the new branch, which is the desired behavior.
    If the checkout fails because of a conflict, stop and report it — never use `--force`.
 
-**Never** commit, push, or open a PR here. Committing the specs is `/commit`'s job at step 7.
+**Never** commit, push, or open a PR here. Committing the specs is `/commit`'s job at step 7
+of the cycle.
 
 ---
 
