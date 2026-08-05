@@ -457,7 +457,7 @@ async function init() {
       '',
       '  1  /enrich-brief       Brief → enriched story + acceptance criteria',
       '  2  /generate-artifacts Story → Component + Interaction + Page specs',
-      '  3  git checkout -b     Branch before any implementation',
+      '  3  Branch created      Automatic — /generate-artifacts branches first',
       '  4  Implement           One spec task at a time (mark ✓ when done)',
       '  5  /visual-verify      Compare live to spec — zero discrepancies',
       '  6  /adversarial-review Red-team: resolve all Blockers before committing',
@@ -784,7 +784,7 @@ Usage:
 
     1  /enrich-brief       Brief → enriched story + acceptance criteria
     2  /generate-artifacts Story → Component + Interaction + Page specs
-    3  git checkout -b     Branch before any implementation
+    3  Branch created      Automatic — /generate-artifacts branches first
     4  Implement           One spec task at a time (mark ✓ when done)
     5  /visual-verify      Compare live to spec — zero discrepancies
     6  /adversarial-review Red-team: resolve all Blockers before committing

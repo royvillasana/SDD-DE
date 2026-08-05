@@ -26,7 +26,11 @@ Read `.sdd-de/project.yaml` to determine:
 1. **Read** `.sdd-de/project.yaml`
 2. **Read** `specs/[feature-name]/enriched-story.md`
 
-3. **Generate Component Spec** using `docs/component-spec-template.md`:
+3. **Create the feature branch** (see [Branch creation](#branch-creation) below) —
+   do this **before** writing any spec file, so the specs are committed on the branch
+   and never on `main`.
+
+4. **Generate Component Spec** using `docs/component-spec-template.md`:
    - Fill every section from the enriched story
    - List design tokens using the project's variable format (CSS `var(--token)` or SCSS `$token`)
    - **Fill the metadata-feeding sections** — `Common Patterns`, `Anti-Patterns`, and `AI Usage Hints`.
@@ -35,19 +39,49 @@ Read `.sdd-de/project.yaml` to determine:
    - Apply design-source-specific header (see branches below)
    - Save to `specs/[feature-name]/[component]-component-spec.md`
 
-4. **Generate Interaction Spec** using `docs/interaction-spec-template.md`:
+5. **Generate Interaction Spec** using `docs/interaction-spec-template.md`:
    - Cover every state transition and animation from the enriched story
    - Apply design-source-specific notes (see branches below)
    - Save to `specs/[feature-name]/[component]-interaction-spec.md`
 
-5. **Generate Page/Feature Spec** using `docs/page-spec-template.md`:
+6. **Generate Page/Feature Spec** using `docs/page-spec-template.md`:
    - Cover layout, breakpoints, component composition, data flow
    - Reference framework-agnostic patterns from `docs/page-standards.md`
    - Fill the **Preview / Deep Link** section: every screen must be preview-addressable (reachable by URL). Router screens use their route; state-navigated screens deep-link via `?screen=<Name>` and are registered in `.vortspec/screen-preview.json` (see `docs/page-standards.md` → Preview-Addressable Screens, and `docs/framework-config.md` for the per-framework snippet)
    - Apply design-source-specific notes (see branches below)
    - Save to `specs/[feature-name]/[page]-page-spec.md`
 
-6. **Announce** (see per-branch announcement below)
+7. **Announce** (see per-flow announcement below)
+
+---
+
+## Branch creation
+
+The skill creates the branch itself. The user never runs `git checkout -b` by hand.
+
+**Name**: `feature/[feature-name]-spec` — the same `[feature-name]` used for the
+`specs/[feature-name]/` directory, lowercased and hyphenated
+(e.g. `feature/button-spec`, `feature/checkout-flow-spec`).
+
+**Procedure** — run before writing any spec file:
+
+1. Confirm the project is a git repository (`git rev-parse --git-dir`).
+   If it is not, skip branch creation entirely, generate the specs, and say so in the
+   announcement: `⚠ Not a git repository — no branch created.`
+2. Read the current branch (`git rev-parse --abbrev-ref HEAD`) and apply the matching case:
+
+| Current state | Action |
+|---|---|
+| On `main` / `master` / any non-feature branch | `git checkout -b feature/[feature-name]-spec` |
+| Already on `feature/[feature-name]-spec` | Reuse it — do not branch again |
+| On a *different* `feature/*` branch | **Stop and ask.** Do not branch off unrelated in-progress work. Offer: branch from here, or switch to `main` first |
+| `feature/[feature-name]-spec` already exists | `git checkout feature/[feature-name]-spec` — reuse, never force-create |
+
+3. If the working tree has uncommitted changes, **do not stash and do not commit them**.
+   `git checkout -b` carries them onto the new branch, which is the desired behavior.
+   If the checkout fails because of a conflict, stop and report it — never use `--force`.
+
+**Never** commit, push, or open a PR here. Committing the specs is `/commit`'s job at step 7.
 
 ---
 
@@ -91,6 +125,7 @@ Token collection: [figma_token_collection]
 ### Announce
 ```
 ──────────────────────────────────────────────
+ ✓ Branch feature/[feature-name]-spec created
  ✓ 3 spec artifacts generated
    specs/[feature-name]/[component]-component-spec.md
    specs/[feature-name]/[component]-interaction-spec.md
@@ -100,9 +135,7 @@ Token collection: [figma_token_collection]
  What happens next
 ──────────────────────────────────────────────
 
- Next step → Create a branch, then implement
-
-   git checkout -b feature/[name]-spec
+ Next step → Implement
 
  Open the Component Spec and work through each task
  one at a time, marking [ ] → [x] as you complete them.
@@ -145,6 +178,7 @@ for `copy-source` libraries it's the owned source file the CLI wrote.
 ### Announce
 ```
 ──────────────────────────────────────────────
+ ✓ Branch feature/[feature-name]-spec created
  ✓ 3 spec artifacts generated
    specs/[feature-name]/[component]-component-spec.md
    specs/[feature-name]/[component]-interaction-spec.md
@@ -154,9 +188,7 @@ for `copy-source` libraries it's the owned source file the CLI wrote.
  What happens next
 ──────────────────────────────────────────────
 
- Next step → Create a branch, then implement
-
-   git checkout -b feature/[name]-spec
+ Next step → Implement
 
  Open the Component Spec and work through each task
  one at a time, marking [ ] → [x] as you complete them.
@@ -190,6 +222,7 @@ Available props/variants: [extracted from enriched story]
 ### Announce
 ```
 ──────────────────────────────────────────────
+ ✓ Branch feature/[feature-name]-spec created
  ✓ 3 spec artifacts generated
    specs/[feature-name]/[component]-component-spec.md
    specs/[feature-name]/[component]-interaction-spec.md
@@ -199,9 +232,7 @@ Available props/variants: [extracted from enriched story]
  What happens next
 ──────────────────────────────────────────────
 
- Next step → Create a branch, then implement
-
-   git checkout -b feature/[name]-spec
+ Next step → Implement
 
  Open the Component Spec and work through each task
  one at a time, marking [ ] → [x] as you complete them.
@@ -233,6 +264,7 @@ Available props/variants: [extracted from enriched story]
 ### Announce
 ```
 ──────────────────────────────────────────────
+ ✓ Branch feature/[feature-name]-spec created
  ✓ 3 spec artifacts generated
    specs/[feature-name]/[component]-component-spec.md
    specs/[feature-name]/[component]-interaction-spec.md
@@ -242,9 +274,7 @@ Available props/variants: [extracted from enriched story]
  What happens next
 ──────────────────────────────────────────────
 
- Next step → Create a branch, then implement
-
-   git checkout -b feature/[name]-spec
+ Next step → Implement
 
  Open the Component Spec and work through each task
  one at a time, marking [ ] → [x] as you complete them.
@@ -284,6 +314,7 @@ Stitch flow — the token table IS the design handoff.
 ### Announce
 ```
 ──────────────────────────────────────────────
+ ✓ Branch feature/[feature-name]-spec created
  ✓ 3 spec artifacts generated
    specs/[feature-name]/[component]-component-spec.md
    specs/[feature-name]/[component]-interaction-spec.md
@@ -294,9 +325,7 @@ Stitch flow — the token table IS the design handoff.
  What happens next
 ──────────────────────────────────────────────
 
- Next step → Create a branch, then implement
-
-   git checkout -b feature/[name]-spec
+ Next step → Implement
 
  Open the Component Spec and work through each task
  one at a time, marking [ ] → [x] as you complete them.

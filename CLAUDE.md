@@ -269,7 +269,7 @@ This cycle repeats for every component and every screen:
 |---|---|---|
 | 1 | `/enrich-brief` | Brief → enriched story with acceptance criteria |
 | 2 | `/generate-artifacts` | Story → Component Spec + Interaction Spec + Page Spec |
-| 3 | `git checkout -b feature/[name]-spec` | Branch before any implementation |
+| 3 | Branch created — *automatic* | `/generate-artifacts` creates `feature/[name]-spec` before it writes the specs |
 | 4 | Implement | One spec task at a time — mark `[ ]` → `[x]` when done |
 | 5 | `/visual-verify` | Compare live implementation to spec — zero discrepancies required |
 | 6 | `/adversarial-review` | Red-team: resolve all Blocker findings before committing |

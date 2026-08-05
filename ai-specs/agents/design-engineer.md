@@ -46,7 +46,7 @@ Propose an implementation plan before writing any code. Never implement directly
 4. Identify missing tokens → add to Figma Variables and project token file
 5. Write the complete Component Spec
 6. Confirm the spec with the designer before implementing
-7. Create feature branch: `git checkout -b feature/[component-name]-spec`
+7. Confirm you are on the feature branch `feature/[component-name]-spec` — `/generate-artifacts` creates it automatically before writing the specs. Create it yourself only if you wrote the spec by hand.
 8. Implement each task in the spec, one at a time
 9. After each task: start the dev server, inspect visually, check browser DevTools
 

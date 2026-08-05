@@ -4,15 +4,19 @@ Every SDD cycle — regardless of component size or complexity — must execute 
 
 ---
 
-## Step 0 — Branch (MANDATORY FIRST STEP)
+## Step 0 — Branch (AUTOMATIC)
 
-Create a feature branch before any file changes.
+A feature branch must exist before any file changes. **`/generate-artifacts` creates it for
+you** — it branches first, then writes the three spec files onto the branch. You do not run
+`git checkout -b` by hand.
+
+Branch naming: `feature/[component-name]-spec` or `feature/[page-name]-layout`.
+
+If you are working outside the skill (writing specs manually), create it yourself:
 
 ```bash
 git checkout -b feature/[component-name]-spec
 ```
-
-Branch naming: `feature/[component-name]-spec` or `feature/[page-name]-layout`.
 
 **Gate**: No spec files, no code changes, and no Figma exports happen on `main`. If you are on `main`, stop and branch first.
 

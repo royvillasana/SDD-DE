@@ -92,7 +92,7 @@ Runs once per component and once per screen:
 |---|---|---|
 | 1 | `/enrich-brief` | Brief → enriched story with acceptance criteria |
 | 2 | `/generate-artifacts` | Story → Component Spec + Interaction Spec + Page Spec |
-| 3 | `git checkout -b` | Branch before implementation |
+| 3 | Branch created — *automatic* | `/generate-artifacts` creates `feature/[name]-spec` before it writes the specs |
 | 4 | Implement | One spec task at a time — mark `[ ]` → `[x]` |
 | 5 | `/visual-verify` | Compare live to spec — zero discrepancies |
 | 6 | `/adversarial-review` | Red-team before committing |
