@@ -9,9 +9,16 @@ User says: "enrich this brief", "make this spec-ready", "/enrich-brief", or prov
 ## Before starting
 
 Read `.sdd-de/project.yaml` to determine `design_source`:
-`figma` | `library` | `github` | `zip` | `stitch`
+`figma` | `library` | `github` | `zip` | `stitch` | `claude-design` | `enterprise`
 
 The enrichment process branches based on where design specs come from.
+
+> **Consume sources.** `library` and `enterprise` are the same family: the components ALREADY exist
+> and are referenced, never recreated; customization is an overlay rather than a fork; and
+> `token_file` points at the real token source rather than a file this toolkit writes. Wherever this
+> skill says Branch B, it applies to both. `claude-design` is an EXTRACT source and behaves like
+> Figma: the design is read, then components are generated.
+
 
 > **Capture usage intent for the metadata.** For a **component** brief, also note its common
 > usage patterns, misuses to avoid (anti-patterns), and trigger keywords. `/generate-artifacts`
@@ -42,9 +49,15 @@ components exist, Storybook is updated, and DESIGN.md is current.
 
 ---
 
-## Branch A — Figma Flow  (design_source: figma)
+## Branch A — Figma Flow  (design_source: figma | claude-design)
 
-Use this branch when `design_source: figma`.
+Use this branch when `design_source: figma` **or** `design_source: claude-design`.
+
+**`claude-design` uses the same flow with a different reader.** Screens and tokens come from the
+design MCP rather than the Figma MCP; everything after the read — token extraction, spec shape,
+component generation — is identical. Where a step below says "Figma MCP", use the design MCP for a
+`claude-design` project. If that MCP is not connected, STOP and say so: an invented structure is
+worse than an unconfigured project, because it looks finished.
 
 ### Steps
 
@@ -118,9 +131,20 @@ As a [user type], I want to [action] so that [outcome].
 
 ---
 
-## Branch B — Component Library Flow  (design_source: library)
+## Branch B — Component Library Flow  (design_source: library | enterprise)
 
-Use this branch when `design_source: library`.
+Use this branch when `design_source: library` **or** `design_source: enterprise` — both CONSUME an
+existing design system.
+
+**What consuming changes about enrichment.** The brief is never "build component X"; it is "use
+component X, and say precisely how this screen needs it to differ". So the enriched story must name
+the real component being consumed, and express every difference as something the library's own
+theming surface can express. A story that describes a component to BUILD is the failure mode here:
+it produces a look-alike beside the real one, which passes review and drifts on the next release.
+
+For `enterprise`, the vendor's own Storybook or docs (`enterprise_storybook_url`, when set) is the
+reference for what the component already does — check it before writing an acceptance criterion that
+the component may already satisfy.
 
 ### Steps
 

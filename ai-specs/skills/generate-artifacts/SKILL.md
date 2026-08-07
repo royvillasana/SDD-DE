@@ -9,7 +9,14 @@ User says: "generate artifacts", "create specs", "/generate-artifacts", or after
 ## Before starting
 
 Read `.sdd-de/project.yaml` to determine:
-- `design_source` — `figma` | `library` | `github` | `zip` | `stitch`
+- `design_source` — `figma` | `library` | `github` | `zip` | `stitch` | `claude-design` | `enterprise`
+
+> **Consume sources.** `library` and `enterprise` are the same family: the components ALREADY exist
+> and are referenced, never recreated; customization is an overlay rather than a fork; and
+> `token_file` points at the real token source rather than a file this toolkit writes. Wherever this
+> skill says Branch B, it applies to both. `claude-design` is an EXTRACT source and behaves like
+> Figma: the design is read, then components are generated.
+
 - `framework`, `language`, `styling` — for framework-appropriate spec content
 - `token_file` — for token references in specs
 
@@ -35,6 +42,8 @@ Read `.sdd-de/project.yaml` to determine:
    | `library` | `.sdd-de/components.json` must hold the library entry. Missing → stop, point at `/provision-library` |
    | `github` / `zip` | The source component file must be readable. Missing → stop, name the path |
    | `stitch` | The screen + token mapping table must exist in `enriched-story.md`. Missing → stop |
+   | `claude-design` | The design MCP must resolve the project. Unresolvable → stop, say so |
+   | `enterprise` | `.sdd-de/components.json` must hold the consumed component's pointer entry. Missing → stop, point at `/extract-design-system` |
 
    If a gate stops the run, **do not create the branch** — the user stays on their current
    branch with nothing to clean up. Branching first would leave an empty orphan branch.
@@ -99,7 +108,13 @@ of the cycle.
 
 ---
 
-## Branch A — Figma Flow  (design_source: figma)
+## Branch A — Figma Flow  (design_source: figma | claude-design)
+
+**`claude-design` uses the same flow with a different reader.** Screens and tokens come from the
+design MCP rather than the Figma MCP; everything after the read — token extraction, spec shape,
+component generation — is identical. Where a step below says "Figma MCP", use the design MCP for a
+`claude-design` project. If that MCP is not connected, STOP and say so: an invented structure is
+worse than an unconfigured project, because it looks finished.
 
 ### Resolve the component's Figma node FIRST (autonomously — never ask for a link)
 
@@ -160,7 +175,18 @@ Token collection: [figma_token_collection]
 
 ---
 
-## Branch B — Component Library Flow  (design_source: library)
+## Branch B — Component Library Flow  (design_source: library | enterprise)
+
+Use this branch for both CONSUME sources. The spec describes how an EXISTING component is used and
+customized — it never specifies a component to build. Three consequences for the artifacts:
+
+- The Component Spec names the consumed component and its import path, and its task list contains no
+  "implement the component" task. There is nothing to implement; there is something to configure.
+- Every visual difference is expressed against the library's own theming surface (an overlay), not
+  as a restyle of the component's internals. The library's source is never edited — the next install
+  would overwrite the edit, and until then it is an invisible fork.
+- `token_file` is a POINTER for these sources. Specs reference the real tokens; they never propose
+  writing to that path.
 
 > **Adapt, don't rebuild.** The library's real components are already in `component_dir`
 > (provisioned by `/provision-library`, inventoried in `.sdd-de/components.json`). A library
