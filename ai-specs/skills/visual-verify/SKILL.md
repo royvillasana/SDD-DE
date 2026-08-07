@@ -9,11 +9,21 @@ User says: "verify", "visual QA", "/visual-verify", or after all Apply tasks are
 ## Before starting
 
 Read `.sdd-de/project.yaml` to determine `design_source`:
-`figma` | `library` | `github` | `zip` | `stitch`
+`figma` | `library` | `github` | `zip` | `stitch` | `claude-design` | `enterprise`
 
 The verification process adapts based on the source of truth.
 For `github` and `zip`, the source of truth is the component source files.
 For `stitch`, the source of truth is the Stitch screen image + `design.md`.
+For `claude-design`, the source of truth is the design MCP's screens (same shape as Figma).
+For `library` and `enterprise`, the source of truth is the LIBRARY'S OWN docs or Storybook —
+never a Figma frame, which a consume-source project does not have.
+
+> **Consume sources.** `library` and `enterprise` are the same family: the components ALREADY exist
+> and are referenced, never recreated; customization is an overlay rather than a fork; and
+> `token_file` points at the real token source rather than a file this toolkit writes. Wherever this
+> skill says Branch B, it applies to both. `claude-design` is an EXTRACT source and behaves like
+> Figma: the design is read, then components are generated.
+
 
 ## Prerequisites
 
@@ -157,9 +167,21 @@ TOKEN AUDIT (DevTools → Computed — zero tolerance)
 
 ---
 
-## Branch B — Component Library Flow  (design_source: library)
+## Branch B — Component Library Flow  (design_source: library | enterprise)
 
-Use this branch when `design_source: library`.
+Use this branch when `design_source: library` **or** `design_source: enterprise`.
+
+**Verify against the vendor's own reference, not a design file.** For `enterprise`, that is
+`enterprise_storybook_url` when set, and the library's published docs otherwise. Asking for a Figma
+frame here is the specific failure this branch exists to prevent: a consume-source project has no
+Figma file, so the check either invents a reference or stalls.
+
+**A difference from the library's default is not automatically a defect.** It is a defect only when
+it was not asked for. Compare the rendered component against the enriched story's stated overlay: an
+intended brand difference passes, an unintended drift fails.
+
+**Never record a fix that edits the library's source.** The correction for a consume source is
+always an overlay or a prop — a patch to a dependency is overwritten by the next install.
 
 ### Steps
 

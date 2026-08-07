@@ -112,6 +112,16 @@ async function init() {
         label: 'Google Stitch',
         hint: 'Google\'s AI design tool — connect via Stitch MCP or exported ZIP',
       },
+      {
+        value: 'claude-design',
+        label: 'Claude Design',
+        hint: 'A claude.ai/design project, read through the design MCP',
+      },
+      {
+        value: 'enterprise',
+        label: 'Enterprise Design System',
+        hint: 'Consume your existing components, Storybook and tokens — never rebuild them',
+      },
     ],
   });
   if (isCancel(designSource)) return cancelSetup(cancel);
@@ -122,6 +132,14 @@ async function init() {
   let figmaFileUrl = '';
   let figmaTokenCollection = '';
   let componentLibrary = '';
+  let claudeDesignUrl = '';
+  let enterpriseSourceKind = '';
+  let enterprisePackage = '';
+  let enterpriseRepoUrl = '';
+  let enterpriseStorybookUrl = '';
+  // A consume source POINTS AT its real tokens; this overrides the generated default below so the
+  // toolkit never claims ownership of a file inside someone else's package.
+  let enterpriseTokenFile = '';
 
   if (designSource === 'figma') {
     figmaFileUrl = await text({
@@ -284,6 +302,62 @@ async function init() {
   // ─────────────────────────────────────────────────────────────────────────
   // Q4 — Styling Approach (with auto-suggestion)
   // ─────────────────────────────────────────────────────────────────────────
+  // ─────────────────────────────────────────────────────────────────────────
+  // Branch F — Claude Design (EXTRACT: the design is read, components generated)
+  // ─────────────────────────────────────────────────────────────────────────
+  if (designSource === 'claude-design') {
+    const url = await text({
+      message: 'claude.ai/design project URL (or project id)',
+      placeholder: 'https://claude.ai/design/proj_abc123',
+      validate: (v) => (v && v.trim() ? undefined : 'Required'),
+    });
+    if (isCancel(url)) return cancelSetup(cancel);
+    claudeDesignUrl = url.trim();
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Branch G — Enterprise Design System (CONSUME: referenced, never rebuilt)
+  // ─────────────────────────────────────────────────────────────────────────
+  if (designSource === 'enterprise') {
+    const kind = await select({
+      message: 'How does your team consume the design system today?',
+      options: [
+        { value: 'package', label: 'An installed package', hint: 'e.g. @acme/design-system' },
+        { value: 'repo', label: 'A repository', hint: 'a monorepo package or a separate repo' },
+      ],
+    });
+    if (isCancel(kind)) return cancelSetup(cancel);
+    enterpriseSourceKind = kind;
+
+    const which = await text({
+      message: kind === 'package' ? 'Package name' : 'Repository URL',
+      placeholder: kind === 'package' ? '@acme/design-system' : 'https://github.com/acme/design-system',
+      validate: (v) => (v && v.trim() ? undefined : 'Required'),
+    });
+    if (isCancel(which)) return cancelSetup(cancel);
+    if (kind === 'package') enterprisePackage = which.trim();
+    else enterpriseRepoUrl = which.trim();
+
+    const sb = await text({
+      message: 'Storybook / docs URL (leave blank if none)',
+      placeholder: 'https://design.acme.com',
+      defaultValue: '',
+    });
+    if (isCancel(sb)) return cancelSetup(cancel);
+    enterpriseStorybookUrl = (sb || '').trim();
+
+    // token_file is a POINTER for a consume source: it names where the REAL tokens already live so
+    // everything reads them. Nothing is ever written to this path — doing so would edit a dependency,
+    // which the next install discards and which is an invisible fork until it does.
+    const tf = await text({
+      message: 'Where do its design tokens live? (a POINTER — never written to)',
+      placeholder: 'node_modules/@acme/design-system/dist/tokens.css',
+      validate: (v) => (v && v.trim() ? undefined : 'Required'),
+    });
+    if (isCancel(tf)) return cancelSetup(cancel);
+    enterpriseTokenFile = tf.trim();
+  }
+
   const stylingSuggestion = autoStyling(framework, designSource, componentLibrary);
 
   const stylingOptions = [
@@ -360,7 +434,11 @@ async function init() {
                           githubRepoUrl, githubBranch, githubComponentDir,
                           zipFilePath, zipComponentDir,
                           stitchConnection, stitchApiKey, stitchProjectId, stitchZipPath,
-                          tokenFile: tokenFile || tokenDefault,
+                          claudeDesignUrl,
+                          enterpriseSourceKind, enterprisePackage, enterpriseRepoUrl, enterpriseStorybookUrl,
+                          // The consumed system's token pointer wins: writing a generated default here
+                          // would point the project at a file nobody maintains.
+                          tokenFile: enterpriseTokenFile || tokenFile || tokenDefault,
                           componentDir, testRunner }),
       'utf8',
     );
@@ -426,6 +504,8 @@ async function init() {
     designSource === 'github'   ? `GitHub  →  ${githubRepoUrl} (${githubBranch}/${githubComponentDir})` :
     designSource === 'zip'      ? `ZIP  →  ${zipFilePath} (${zipComponentDir})` :
     designSource === 'stitch'   ? `Google Stitch  →  ${stitchConnection === 'mcp' ? `MCP (project: ${stitchProjectId || 'unset'})` : `ZIP: ${stitchZipPath}`}` :
+    designSource === 'claude-design' ? `Claude Design  →  ${claudeDesignUrl}` :
+    designSource === 'enterprise' ? `Enterprise (consumed)  →  ${enterprisePackage || enterpriseRepoUrl}` :
     designSource;
 
   note(
@@ -623,8 +703,10 @@ function autoStyling(framework, designSource, library) {
     const map = { shadcn: 'tailwind', headlessui: 'tailwind', mui: 'emotion', chakra: 'emotion', mantine: 'css-modules', antd: 'scss', radix: 'css-modules' };
     if (map[library]) return map[library];
   }
-  // github, zip, stitch: default to css-modules (most neutral for unknown sources)
-  if (designSource === 'github' || designSource === 'zip' || designSource === 'stitch') return 'css-modules';
+  // github, zip, stitch, claude-design: default to css-modules (most neutral for unknown sources).
+  // enterprise too — the consumed library brings its own styling, so guessing here would state a
+  // convention the project does not follow.
+  if (['github', 'zip', 'stitch', 'claude-design', 'enterprise'].includes(designSource)) return 'css-modules';
   const map = { next: 'tailwind', angular: 'scss', vue: 'css-modules', nuxt: 'css-modules' };
   return map[framework] || 'css-modules';
 }
@@ -659,6 +741,8 @@ function buildProjectYaml({
   githubRepoUrl, githubBranch, githubComponentDir,
   zipFilePath, zipComponentDir,
   stitchConnection, stitchApiKey, stitchProjectId, stitchZipPath,
+  claudeDesignUrl,
+  enterpriseSourceKind, enterprisePackage, enterpriseRepoUrl, enterpriseStorybookUrl,
   tokenFile, componentDir, testRunner,
 }) {
   const lines = [
@@ -670,7 +754,9 @@ function buildProjectYaml({
     `language: ${language}`,
     `styling: ${styling}`,
     '',
-    '# Design system source: figma | library | github | zip | stitch',
+    '# Design system source: figma | library | github | zip | stitch | claude-design | enterprise',
+    '# (library and enterprise CONSUME an existing system: components are referenced, not rebuilt,',
+    '#  and token_file POINTS AT the real tokens rather than a file this toolkit writes.)',
     `design_source: ${designSource}`,
   ];
 
@@ -686,6 +772,13 @@ function buildProjectYaml({
   } else if (designSource === 'zip') {
     lines.push(`zip_file_path: "${zipFilePath}"`);
     lines.push(`zip_component_dir: ${zipComponentDir}`);
+  } else if (designSource === 'claude-design') {
+    lines.push(`claude_design_url: "${claudeDesignUrl}"`);
+  } else if (designSource === 'enterprise') {
+    lines.push(`enterprise_source_kind: ${enterpriseSourceKind}`);
+    if (enterprisePackage) lines.push(`enterprise_package: "${enterprisePackage}"`);
+    if (enterpriseRepoUrl) lines.push(`enterprise_repo_url: "${enterpriseRepoUrl}"`);
+    if (enterpriseStorybookUrl) lines.push(`enterprise_storybook_url: "${enterpriseStorybookUrl}"`);
   } else if (designSource === 'stitch') {
     lines.push(`stitch_connection: ${stitchConnection}`);
     if (stitchConnection === 'mcp') {

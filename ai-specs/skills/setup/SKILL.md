@@ -128,11 +128,29 @@ Where do your components and design specs come from?
      images, and design tokens) or reads the exported ZIP (design.md +
      screen PNGs) if MCP is not configured.
 
-Reply with A, B, C, D, or E.
+  F  Claude Design
+     A claude.ai/design project, read through the design MCP.
+     Claude reads the project's screens and tokens directly.
+
+  G  Enterprise Design System
+     Your company ALREADY has a design system — real components, a Storybook,
+     tokens, and docs. Claude CONSUMES it: it references your real components
+     and points at your real tokens. It never rebuilds them, and never edits
+     your library's source.
+
+Reply with A, B, C, D, E, F, or G.
 ```
 
 Record as `design_source`:
-`A` → `figma` | `B` → `library` | `C` → `github` | `D` → `zip` | `E` → `stitch`
+`A` → `figma` | `B` → `library` | `C` → `github` | `D` → `zip` | `E` → `stitch` |
+`F` → `claude-design` | `G` → `enterprise`
+
+> **Two families, not seven independent sources.** `library` and `enterprise` are CONSUME
+> sources: the components already exist and are referenced, never recreated, and `token_file`
+> POINTS AT the real token source rather than naming a file the toolkit will write. Every other
+> value is an EXTRACT source: the toolkit reads a design, then generates components and owns the
+> token file it writes. Where a later step says "consume source", it means `library` or
+> `enterprise`.
 
 ---
 
@@ -451,6 +469,121 @@ Skip to Question 6 (Styling).
 
 ---
 
+## Branch F — Claude Design Questions (if design_source = claude-design)
+
+### Question 4F — Claude Design Project
+
+```
+──────────────────────────────────────────────
+ Question 4 of 8 — Claude Design Project
+──────────────────────────────────────────────
+
+Paste the claude.ai/design project URL (or its project id).
+
+Example: https://claude.ai/design/proj_abc123
+```
+
+Record as `claude_design_url`. Read the project through the **design MCP** — the same
+extract-and-rebuild family as Figma: screens and tokens are READ, components are then
+GENERATED into `component_dir`, and the toolkit OWNS the `token_file` it writes.
+
+If the design MCP is not connected, say so and stop rather than guessing at a structure:
+an invented component set is worse than an unconfigured project, because it looks finished.
+
+### Question 5F — Component Directory
+
+Ask where generated components should live (default `src/components`), then continue to
+Question 6.
+
+---
+
+## Branch G — Enterprise Design System Questions (if design_source = enterprise)
+
+**This is a CONSUME source.** The components already exist and are already correct. The job is
+to point at them accurately — not to inventory a design and rebuild it. Three rules govern every
+later step, and they are the reason this branch exists at all:
+
+1. **The base component comes from the consumed library and is NEVER recreated.** A look-alike
+   built beside the real one is the single worst outcome here: it passes review, drifts on the
+   library's next release, and nobody knows which one is authoritative.
+2. **Customization is an OVERLAY, not a fork.** Brand differences are expressed on top of the
+   library's own theming surface, and the library's source is never edited — it belongs to
+   someone else and the next install would overwrite the edit anyway.
+3. **`token_file` is a POINTER, not a file the toolkit writes.** It names where the real tokens
+   already live so everything reads THEM. The toolkit does not own that file and must not
+   rewrite it.
+
+### Question 4G — What to consume
+
+```
+──────────────────────────────────────────────
+ Question 4 of 8 — Your design system
+──────────────────────────────────────────────
+
+How does your team consume the design system today?
+
+  1  An installed package     (e.g. @acme/design-system)
+  2  A repository             (a monorepo package or a separate repo)
+
+Reply with the number, then the package name or repo URL.
+```
+
+Record as `enterprise_source_kind` (`package` | `repo`) plus `enterprise_package` or
+`enterprise_repo_url`.
+
+### Question 5G — Its Storybook or docs
+
+```
+──────────────────────────────────────────────
+ Question 5 of 8 — Storybook / documentation
+──────────────────────────────────────────────
+
+Does your design system publish a Storybook or component docs?
+Paste the URL, or reply "none".
+```
+
+Record as `enterprise_storybook_url` (omit when "none").
+
+**Do NOT build a Storybook for this project.** When the vendor publishes one it is embedded as
+is; when it does not, the Design System screen is the component surface. A second, generated
+Storybook describing components the toolkit did not build would compete with the real docs and
+lose.
+
+### Question 5G-2 — Where its tokens live
+
+```
+──────────────────────────────────────────────
+ Where are the design tokens?
+──────────────────────────────────────────────
+
+Path or package entry point for the real tokens
+(e.g. node_modules/@acme/design-system/dist/tokens.css)
+```
+
+Record it as `token_file` — as a POINTER. Write no token file, and change nothing at that path.
+
+### After setup completes (enterprise source)
+
+```
+──────────────────────────────────────────────
+ ✓ Project configured — consuming [package or repo]
+
+ Next step → index what already exists
+
+   Run: /extract-design-system
+
+ • Components are REFERENCED from your library, never rebuilt.
+ • Tokens are read from your real token source; nothing is written there.
+ • Brand differences are applied as an overlay, not by editing the library.
+
+ /storybook and /design-doc are NOT prerequisites for a consume source.
+ Browse the system through the Design System screen (and your own Storybook
+ when you have one).
+──────────────────────────────────────────────
+```
+
+---
+
 ## Question 6 — Styling Approach
 
 Show any auto-suggested value in brackets `[suggested]`.
@@ -597,7 +730,26 @@ stitch_connection: zip
 stitch_zip_path: "[path/to/stitch-export.zip]"
 ```
 
-**Full YAML structure** (all five cases share these fields):
+### For Claude Design flow:
+
+```yaml
+design_source: claude-design
+claude_design_url: "[https://claude.ai/design/proj_abc123]"
+```
+
+### For Enterprise Design System flow (CONSUME — token_file is a pointer):
+
+```yaml
+design_source: enterprise
+enterprise_source_kind: package        # package | repo
+enterprise_package: "[@acme/design-system]"
+# or: enterprise_repo_url: "[https://github.com/acme/design-system]"
+enterprise_storybook_url: "[https://design.acme.com]"   # omit if none
+# token_file POINTS AT the real tokens — the toolkit never writes this path.
+token_file: node_modules/@acme/design-system/dist/tokens.css
+```
+
+**Full YAML structure** (every case shares these fields):
 
 ```yaml
 # SDD-DE Project Configuration

@@ -9,7 +9,7 @@ User says: "sync tokens", "sync Figma tokens", "/sync-tokens", or after visual-v
 ## Before starting
 
 Read `.sdd-de/project.yaml` to determine:
-- `design_source` — `figma` | `library` | `github` | `zip` | `stitch`
+- `design_source` — `figma` | `library` | `github` | `zip` | `stitch` | `claude-design` | `enterprise`
 - `token_file` — path to the project's design token file
 - `component_dir` — root component directory
 
@@ -269,10 +269,17 @@ List every variable in one call — do not enumerate collection-by-collection.
 
 ---
 
-## Branch B — Component Library Flow  (design_source: library)
+## Branch B — Component Library Flow  (design_source: library | enterprise)
 
-Use this branch when `design_source: library`.
+Use this branch when `design_source: library` **or** `design_source: enterprise`.
 There is no Figma Variable sync. The goal is to ensure all brand customizations use token variables rather than hardcoded values.
+
+> **NEVER WRITE TO `token_file` FOR THESE SOURCES.** For a consume source it is a POINTER at the
+> real tokens — usually inside an installed package or another repo. Writing there edits a
+> dependency: the next install silently discards the change, and until it does, the project is
+> running an invisible fork of someone else's design system. Brand differences belong in the
+> project's own overlay, never in the consumed token file. This branch AUDITS token usage; it does
+> not sync tokens into the source.
 
 ### Steps
 
@@ -323,6 +330,14 @@ grep -rn '[0-9]\+px' [component-dir]/[component-name]
  Run it now: /commit
 ──────────────────────────────────────────────
 ```
+
+---
+
+## Branch A2 — Claude Design Flow  (design_source: claude-design)
+
+Same shape as Branch A, with the design MCP in place of the Figma MCP: read the project's tokens,
+reconcile them into the project's OWN `token_file`, and report drift. This is an extract source, so
+the toolkit owns that file and writing to it is correct.
 
 ---
 

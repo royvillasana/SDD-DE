@@ -87,7 +87,11 @@ with colored divider lines so the user can instantly spot it:
 - `framework` — the UI framework (react, next, vue, nuxt, svelte, sveltekit, angular, astro, vanilla)
 - `language` — typescript or javascript
 - `styling` — CSS approach (css, css-modules, scss, tailwind, styled-components, emotion)
-- `design_source` — where components come from: `figma` | `library` | `github` | `zip`
+- `design_source` — where components come from. Two families:
+  **extract + rebuild** (`figma` | `github` | `zip` | `stitch` | `claude-design`) — the design is read and
+  components are generated, and the toolkit OWNS the `token_file` it writes; **consume**
+  (`library` | `enterprise`) — the components already exist and are referenced, never recreated,
+  customization is an overlay rather than a fork, and `token_file` POINTS AT the real token source
 - `token_file` — path to the design token file
 - `component_dir` — root component directory
 
