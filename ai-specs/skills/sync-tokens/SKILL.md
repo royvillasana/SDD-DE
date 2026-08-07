@@ -21,9 +21,13 @@ Read `.sdd-de/project.yaml` to determine:
 
 ---
 
-## Branch A — Figma Flow  (design_source: figma)
+## Branch A — Figma Flow  (design_source: figma | claude-design)
 
-Use this branch when `design_source: figma`.
+Use this branch when `design_source: figma` **or** `design_source: claude-design`.
+
+**`claude-design` reads through the design MCP instead of the Figma MCP.** Everything else is the
+same: read the tokens, reconcile them into the project's OWN `token_file`, report drift. Both are
+EXTRACT sources, so the toolkit owns that file and writing to it is correct — unlike Branch B.
 
 > Two-way sync is available in the Inspector on demand. Beyond this Figma→code
 > reconcile, the Inspector's **"Send to Figma"** pushes code-side token changes
@@ -330,14 +334,6 @@ grep -rn '[0-9]\+px' [component-dir]/[component-name]
  Run it now: /commit
 ──────────────────────────────────────────────
 ```
-
----
-
-## Branch A2 — Claude Design Flow  (design_source: claude-design)
-
-Same shape as Branch A, with the design MCP in place of the Figma MCP: read the project's tokens,
-reconcile them into the project's OWN `token_file`, and report drift. This is an extract source, so
-the toolkit owns that file and writing to it is correct.
 
 ---
 

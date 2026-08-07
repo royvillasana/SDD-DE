@@ -49,9 +49,15 @@ components exist, Storybook is updated, and DESIGN.md is current.
 
 ---
 
-## Branch A — Figma Flow  (design_source: figma)
+## Branch A — Figma Flow  (design_source: figma | claude-design)
 
-Use this branch when `design_source: figma`.
+Use this branch when `design_source: figma` **or** `design_source: claude-design`.
+
+**`claude-design` uses the same flow with a different reader.** Screens and tokens come from the
+design MCP rather than the Figma MCP; everything after the read — token extraction, spec shape,
+component generation — is identical. Where a step below says "Figma MCP", use the design MCP for a
+`claude-design` project. If that MCP is not connected, STOP and say so: an invented structure is
+worse than an unconfigured project, because it looks finished.
 
 ### Steps
 
