@@ -6,13 +6,33 @@ Generate a DESIGN.md file that captures the full design system built during comp
 
 User says: "design doc", "generate DESIGN.md", "/design-doc", or when component creation is complete and `/storybook` has been run.
 
+## This skill ENRICHES; it does not create
+
+VortSpec derives a first `DESIGN.md` when the design source is read — tokens, component names, tiers
+and variants, straight from the state, with no run and no cost. That derived section is fenced:
+
+```
+<!-- vortspec:derived:start — regenerated; edits here are overwritten -->
+…tokens + component index…
+<!-- vortspec:derived:end -->
+```
+
+**Write OUTSIDE those markers.** Everything outside is yours and is preserved when the derived section
+is refreshed; everything inside is replaced the next time a component is built. Your job is what only a
+model can write — intent, conventions, component contracts, the reasoning behind the system — not the
+mechanical inventory, which is already there and already correct.
+
+If a `DESIGN.md` has no markers, it was authored entirely (by an earlier version of this skill, or by
+hand). Leave its structure alone and enrich in place.
+
 ## Prerequisites
 
 - `.sdd-de/project.yaml` exists (project is configured)
-- At least one component has been implemented and committed during component creation
-- The component directory (`[component_dir]`) contains built components
-- `/storybook` has been run (Storybook is installed and stories exist)
 - `@google/design.md` is installed (`npx @google/design.md --version` succeeds). If not, install it: `npm install -D @google/design.md`
+
+Built components and `/storybook` are NOT prerequisites for a manifest to exist — the derived version
+exists from the first read of the design source. They only affect how much there is to enrich: with no
+components built, document the tokens and the design intent, and leave component contracts for later.
 
 ## Steps
 
