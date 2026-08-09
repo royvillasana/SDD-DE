@@ -82,6 +82,7 @@ Read `.sdd-de/project.yaml` to determine:
    | `designTokens` | Component Spec's token sections, with values RESOLVED from the token file |
    | `states` | Interaction Spec's state transitions |
    | `accessibility` | Component Spec's Accessibility section |
+   | `useCases` | Component Spec §1 Purpose + §Common Patterns — WHEN to reach for this component |
    | `commonPatterns` | Component Spec §Common Patterns (`code` must be runnable JSX) |
    | `antiPatterns` | Component Spec §Anti-Patterns — every entry needs `instead`, not just a warning |
    | `aiHints` | Component Spec §AI Usage Hints |
@@ -90,8 +91,14 @@ Read `.sdd-de/project.yaml` to determine:
 
    - `antiPatterns` MUST carry an alternative. A bare "do not do X" leaves the model to invent the Y,
      and the alternative is the only field that changes generated code.
-   - `aiHints.selectionCriteria` says what makes THIS component the right choice over its siblings —
-     not what it does. A composer reads it first.
+   - `useCases` is MANDATORY and is the field an agent reads first. It says WHEN to reach for this
+     component, in the words someone would use to describe the job — "a single freestanding action in
+     a form footer", "confirming a destructive action". Describe the SITUATION, not the component:
+     "a red button" is not a use case. One entry per distinct job; three specific ones beat a
+     paragraph. Without it a generator matches on NAME, which is how a Card ends up as a banner.
+   - `aiHints.selectionCriteria` is an ARRAY of strings, one criterion per entry — not a sentence. It
+     says what makes THIS component the right choice over its SIBLINGS, which is a different question
+     from `useCases`: use cases say when to reach for the component at all.
    - `props[].description` and `variants[].purpose` explain WHY to pick a value. The enum values are
      already in the source; the reasoning is the only thing the record adds.
    - Omit a section you have nothing real for. An empty section is honest; a padded one costs tokens
@@ -438,6 +445,8 @@ silently skipped for as long as it was only described in prose.
 - [ ] Component Spec, Interaction Spec and Page Spec written for every component in scope
 - [ ] `.vortspec/metadata/[component].json` EXISTS for every component, and is not a stub
 - [ ] Each record uses `identity` with a SINGULAR category — not the skill's `component` + plural
+- [ ] Every record has `useCases` — never empty; it is what an agent reads first
+- [ ] `aiHints.selectionCriteria` is an ARRAY, not a single string
 - [ ] Every `antiPatterns` entry carries an `instead`
 - [ ] `designTokens` values are RESOLVED (the real hex/rem), not token names alone
 - [ ] No `[ComponentName].metadata.ts` was written into the component directory
