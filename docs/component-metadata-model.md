@@ -53,6 +53,7 @@ export const metadata = {
     radius?:     { role, value }[],
   },
   useCases?: string[],           // WHEN to reach for this component — see the rule below
+  notFor?: { situation, use }[],  // when to reach for a DIFFERENT component — see the rule below
   states?: { state, description }[],
   accessibility?: { role?, keyboard?, screenReader?, wcag?, notes?: string[] },
   commonPatterns?: { name, description, code }[],
@@ -99,6 +100,30 @@ for a banner and a `Badge` for a button.
 - Describe the SITUATION, not the component. "Confirming a destructive action" — not "a red button".
 - It is distinct from `aiHints.selectionCriteria`: use cases say when to reach for the component at
   all, selection criteria say why THIS one rather than its siblings.
+
+## `notFor` — the negative selection signal
+
+`useCases` says when to reach for this component. `notFor` says when NOT to, and **which component to
+reach for instead**:
+
+```ts
+notFor: [
+  { situation: "navigating to another page or view", use: "Link — it renders an anchor and gets browser navigation, middle-click and open-in-new-tab for free" },
+  { situation: "a row of related actions the user picks between", use: "ButtonGroup — it owns the spacing and the segmented selection state" },
+]
+```
+
+**This is NOT the same as `antiPatterns`, and conflating them loses the useful half.** An anti-pattern
+is about MISUSING this component — restyling it with inline styles, nesting it where it does not
+belong. `notFor` is about SELECTION: the component is fine, it is simply the wrong one for this job.
+A generator choosing between forty components needs the second far more than the first, and today it
+is buried among implementation warnings or missing entirely.
+
+- Every entry MUST name the alternative in `use`. "Do not use this for navigation" without naming
+  `Link` leaves the model to guess, and it will guess a variant of the component it already has.
+- Write the situations someone would actually reach for it in wrongly — the near misses, not absurd
+  ones. "Do not use Button as a page layout" helps nobody.
+- Two or three entries is usually the whole truth. A component with ten is probably doing too much.
 
 ## Rules
 
