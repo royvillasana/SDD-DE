@@ -1,8 +1,8 @@
 # Component Metadata Model
 
-Every design-system component ships a `<Name>.metadata.ts` alongside its component and stories
-files. This is the **structured, AI-consumable record** of what the component is, how to use it,
-and which tokens it consumes. It powers two things:
+Every design-system component has a metadata record at `.vortspec/metadata/<name>.json`. This is the
+**structured, AI-consumable record** of what the component is, how to use it, and which tokens it
+consumes. It powers two things:
 
 1. **Rich Storybook docs** — the shared `.storybook/ComponentDocs` renderer reads it to build the
    component's autodocs page (Identity, Props, Item Shape, Common Patterns, Anti-Patterns, States,
@@ -13,13 +13,19 @@ and which tokens it consumes. It powers two things:
 It is the design-system twin of the [Design Token Model](design-token-model.md): tokens define the
 values, metadata defines each component's *meaning and usage*.
 
+> **The record is VortSpec-owned, and Storybook READS it.** It used to be a `<Name>.metadata.ts`
+> authored by `/storybook` in the component directory. That made metadata a Storybook feature: a
+> project without Storybook had none at all, and the agent composing screens had nothing to read.
+> Two writers also meant two truths that drift. `/generate-artifacts` writes the record; `/storybook`
+> renders it; nothing else authors one.
+
 ## The three-file component set
 
 | File | Owner | Purpose |
 |---|---|---|
 | `<Name>.tsx` | implementation | the component (CVA variants + `cn()` + `forwardRef`) |
 | `<Name>.stories.tsx` | `/storybook` | stories (Default + one per variant/state) + `docs.page` wiring |
-| `<Name>.metadata.ts` | `/storybook` | the structured metadata below |
+| `.vortspec/metadata/<name>.json` | `/generate-artifacts` (step 3b) | the structured metadata below |
 
 Plus two **shared** files per project (authored once): `.storybook/ComponentDocs.(tsx\|jsx)` (the docs
 renderer) and `.storybook/foundations/*.mdx` (the token Foundations pages).
