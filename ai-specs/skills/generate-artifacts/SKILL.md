@@ -83,6 +83,7 @@ Read `.sdd-de/project.yaml` to determine:
    | `states` | Interaction Spec's state transitions |
    | `accessibility` | Component Spec's Accessibility section |
    | `useCases` | Component Spec §1 Purpose + §Common Patterns — WHEN to reach for this component |
+   | `notFor` | The SIBLING components in the roster — when to reach for one of THEM instead |
    | `commonPatterns` | Component Spec §Common Patterns (`code` must be runnable JSX) |
    | `antiPatterns` | Component Spec §Anti-Patterns — every entry needs `instead`, not just a warning |
    | `aiHints` | Component Spec §AI Usage Hints |
@@ -96,6 +97,12 @@ Read `.sdd-de/project.yaml` to determine:
      a form footer", "confirming a destructive action". Describe the SITUATION, not the component:
      "a red button" is not a use case. One entry per distinct job; three specific ones beat a
      paragraph. Without it a generator matches on NAME, which is how a Card ends up as a banner.
+   - `notFor` is the NEGATIVE selection signal: `{ situation, use }` pairs saying when a DIFFERENT
+     component is right, naming it in `use`. It is not the same as `antiPatterns` — an anti-pattern is
+     misusing THIS component, `notFor` is choosing the wrong component entirely. Write the near
+     misses a person would plausibly get wrong (Button vs Link, Card vs Alert), not absurd ones, and
+     always name the alternative: "do not use this for navigation" without naming `Link` leaves the
+     model to guess, and it guesses a variant of what it already has.
    - `aiHints.selectionCriteria` is an ARRAY of strings, one criterion per entry — not a sentence. It
      says what makes THIS component the right choice over its SIBLINGS, which is a different question
      from `useCases`: use cases say when to reach for the component at all.
@@ -446,6 +453,7 @@ silently skipped for as long as it was only described in prose.
 - [ ] `.vortspec/metadata/[component].json` EXISTS for every component, and is not a stub
 - [ ] Each record uses `identity` with a SINGULAR category — not the skill's `component` + plural
 - [ ] Every record has `useCases` — never empty; it is what an agent reads first
+- [ ] Every record has `notFor`, and every entry names the component to use instead
 - [ ] `aiHints.selectionCriteria` is an ARRAY, not a single string
 - [ ] Every `antiPatterns` entry carries an `instead`
 - [ ] `designTokens` values are RESOLVED (the real hex/rem), not token names alone
