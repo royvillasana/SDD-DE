@@ -52,11 +52,17 @@ export const metadata = {
     shadows?:    { role, value }[],
     radius?:     { role, value }[],
   },
+  useCases?: string[],           // WHEN to reach for this component — see the rule below
   states?: { state, description }[],
   accessibility?: { role?, keyboard?, screenReader?, wcag?, notes?: string[] },
   commonPatterns?: { name, description, code }[],
   antiPatterns?: { pattern, why, instead }[],
-  aiHints?: { context?, keywords?: string[], generationRules?: string[] },
+  aiHints?: {
+    context?: string,
+    selectionCriteria?: string[],   // ARRAY, one criterion per entry — not a sentence
+    keywords?: string[],
+    generationRules?: string[],
+  },
 } as const;
 ```
 
@@ -78,6 +84,21 @@ Because the Component/Interaction Specs already capture variants, states, sizes,
 WCAG, token usage, patterns, and anti-patterns, generating the metadata is a **mechanical transform of
 the specs**, not a fresh analysis. The one thing to compute is resolving each used token name to its
 value via `token_file`.
+
+## `useCases` — the field an agent reads first
+
+`useCases` says WHEN to reach for this component, in the words someone would use to describe the job:
+`"a single freestanding action in a form footer"`, `"grouping related content on its own surface"`.
+
+It is the highest-value field in the record and the easiest to omit, because a component's *purpose*
+feels obvious to whoever just built it. It is not obvious to a generator choosing between forty
+components, and without it the model falls back to matching on NAME — which is how a `Card` gets used
+for a banner and a `Badge` for a button.
+
+- One entry per distinct job. Three specific ones beat a paragraph.
+- Describe the SITUATION, not the component. "Confirming a destructive action" — not "a red button".
+- It is distinct from `aiHints.selectionCriteria`: use cases say when to reach for the component at
+  all, selection criteria say why THIS one rather than its siblings.
 
 ## Rules
 
