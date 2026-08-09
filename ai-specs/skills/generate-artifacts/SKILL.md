@@ -56,8 +56,48 @@ Read `.sdd-de/project.yaml` to determine:
    - Fill every section from the enriched story
    - List design tokens using the project's variable format (CSS `var(--token)` or SCSS `$token`)
    - **Fill the metadata-feeding sections** — `Common Patterns`, `Anti-Patterns`, and `AI Usage Hints`.
-     These become the component's `metadata.ts` (`commonPatterns` / `antiPatterns` / `aiHints`) which
-     the `/storybook` skill turns into the rich docs page. See `docs/component-metadata-model.md`.
+     Step 3b turns these into the component's metadata record. See `docs/component-metadata-model.md`.
+
+3b. **Write the metadata record** — `.vortspec/metadata/[component].json` (MANDATORY)
+
+   This step used to be a sentence saying the spec sections "become the component's metadata".
+   Nothing performed that becoming, so projects ended up with complete specs and an EMPTY
+   `.vortspec/metadata/` — the docs page had nothing to render and grounded runs had no record to
+   read. The information existed only as prose in a spec nobody parses.
+
+   **Use the `ai-component-metadata` skill** for the three analysis-derived sections
+   (`usage.commonPatterns`, `usage.antiPatterns`, `aiHints`). Everything else is a TRANSFORM of what
+   you just wrote in the specs — carry it across rather than re-deriving it, which is both cheaper
+   and more accurate than a second analysis of the same component.
+
+   **Schema bridge — the skill's output is NOT the record shape.** `ai-component-metadata` emits
+   `component: { … }` with a PLURAL category (`atoms`/`molecules`/`organisms`). The record uses
+   `identity: { … }` with a SINGULAR one (`atom`/`molecule`/`organism`/`template`). Map and
+   singularise before writing, or the record will not parse and the docs page stays empty.
+
+   | Record field | Source |
+   |---|---|
+   | `identity` | Component Spec §1 Purpose + the roster entry (name, category, importPath) |
+   | `props` | Component Spec's variant-axes → props table |
+   | `designTokens` | Component Spec's token sections, with values RESOLVED from the token file |
+   | `states` | Interaction Spec's state transitions |
+   | `accessibility` | Component Spec's Accessibility section |
+   | `commonPatterns` | Component Spec §Common Patterns (`code` must be runnable JSX) |
+   | `antiPatterns` | Component Spec §Anti-Patterns — every entry needs `instead`, not just a warning |
+   | `aiHints` | Component Spec §AI Usage Hints |
+
+   Rules that decide whether the record is worth its tokens:
+
+   - `antiPatterns` MUST carry an alternative. A bare "do not do X" leaves the model to invent the Y,
+     and the alternative is the only field that changes generated code.
+   - `aiHints.selectionCriteria` says what makes THIS component the right choice over its siblings —
+     not what it does. A composer reads it first.
+   - `props[].description` and `variants[].purpose` explain WHY to pick a value. The enum values are
+     already in the source; the reasoning is the only thing the record adds.
+   - Omit a section you have nothing real for. An empty section is honest; a padded one costs tokens
+     on every run and tells the model nothing.
+   - Write ONLY the JSON record. Do NOT create a `[ComponentName].metadata.ts` in the component
+     directory — the record is VortSpec-owned and must exist whether or not Storybook is installed.
    - Apply design-source-specific header (see branches below)
    - Save to `specs/[feature-name]/[component]-component-spec.md`
 
@@ -385,4 +425,23 @@ specs/
     ├── [component]-component-spec.md
     ├── [component]-interaction-spec.md
     └── [page]-page-spec.md
+
+.vortspec/metadata/
+└── [component].json          # ← step 3b; the docs page and every grounded run read THIS
 ```
+
+## Done means
+
+Not done until every box is true. The metadata record is listed because it is the one that was
+silently skipped for as long as it was only described in prose.
+
+- [ ] Component Spec, Interaction Spec and Page Spec written for every component in scope
+- [ ] `.vortspec/metadata/[component].json` EXISTS for every component, and is not a stub
+- [ ] Each record uses `identity` with a SINGULAR category — not the skill's `component` + plural
+- [ ] Every `antiPatterns` entry carries an `instead`
+- [ ] `designTokens` values are RESOLVED (the real hex/rem), not token names alone
+- [ ] No `[ComponentName].metadata.ts` was written into the component directory
+
+If a record could not be written, say which component and why. A spec without its record is a
+component the docs page cannot describe and a generator cannot use correctly — report it rather
+than leaving the gap to be discovered in Storybook.

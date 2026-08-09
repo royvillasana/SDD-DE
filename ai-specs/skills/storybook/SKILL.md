@@ -303,13 +303,26 @@ export const AccessibilityTest: Story = {
 };
 ```
 
-#### g) The component metadata file — `[ComponentName].metadata.ts` (MANDATORY)
+#### g) The component metadata record — `.vortspec/metadata/[component].json` (MANDATORY)
 
-Author a structured metadata file next to the component. **This is what makes the docs page rich** —
-without it the docs page falls back to bare autodocs (props only), which is exactly the "no metadata"
-failure this skill exists to prevent. Every component MUST get a non-empty metadata file with an
-`identity` block, `props`, `designTokens`, and the analysis fields below. Start from
-`assets/metadata.template.ts`.
+**Storybook is a READER of the metadata record, not its author.** The record is written by
+`/generate-artifacts` step 3b and lives at `.vortspec/metadata/[component].json`. This skill points
+the docs page at it; it does NOT author a `[ComponentName].metadata.ts` in the component directory.
+
+Two reasons the ownership sits there and not here:
+
+1. **The record must exist whether or not Storybook is installed.** Grounded runs read it to choose
+   variants and avoid anti-patterns. Making Storybook the owner meant a project without Storybook had
+   no metadata at all, and the agent composing screens had nothing to read.
+2. **Two writers means two truths.** A `metadata.ts` in source and a record in `.vortspec/` drift the
+   moment either is edited, and nothing reconciles them.
+
+**If the record is missing, do NOT write one here.** Say which components lack it and point at
+`/generate-artifacts`. Authoring a second copy is what this split exists to prevent — and a docs page
+built from a metadata file Storybook invented is a page describing something nobody specified.
+
+Without a record the docs page falls back to bare autodocs (props only), which is exactly the
+"no metadata" failure this skill exists to surface.
 
 **Use the `ai-component-metadata` skill to produce the analysis-derived fields.** The specs are the
 first source, but they may not carry rich `commonPatterns` / `antiPatterns` / `aiHints` / `states` /
@@ -500,7 +513,8 @@ Shared, once per project:
 For each component, verify:
 
 - [ ] Story file exists next to the component file
-- [ ] `[ComponentName].metadata.ts` exists, is non-empty, and follows `component-metadata-model.md` (has `identity`, `props`, `designTokens` at minimum — never a stub)
+- [ ] `.vortspec/metadata/[component].json` exists, is non-empty, and follows `component-metadata-model.md` (has `identity`, `props`, `designTokens` at minimum — never a stub). MISSING → report it and point at `/generate-artifacts`; do NOT author one here
+- [ ] No `[ComponentName].metadata.ts` was created in the component directory
 - [ ] Analysis fields (`commonPatterns`, `antiPatterns`, `aiHints`) generated via the `ai-component-metadata` skill where the specs don't carry them
 - [ ] `parameters.docs.page` renders the shared `ComponentDocs` with this component's `metadata`
 - [ ] `tags: ['autodocs']` is set (feeds the interactive Controls block)

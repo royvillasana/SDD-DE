@@ -26,6 +26,13 @@ If none of these exist, infer from folder structure and ask the user for clarity
 
 ### Example Metadata Hierarchy
 
+> **In an SDD-DE project the records are NOT colocated `*.metadata.ts` modules.** The tree below is
+> the upstream skill's own example layout, kept for the reasoning it illustrates. Here, every
+> component's record lives at `.vortspec/metadata/<name>.json`, written by `/generate-artifacts`
+> (step 3b). Read those. Looking for `Button.metadata.ts` in the component directory will find
+> nothing, and concluding "this project has no metadata" from that would be wrong.
+
+
 ```
 project-root/
 ├── src/
