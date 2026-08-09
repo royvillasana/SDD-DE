@@ -25,6 +25,39 @@ mechanical inventory, which is already there and already correct.
 If a `DESIGN.md` has no markers, it was authored entirely (by an earlier version of this skill, or by
 hand). Leave its structure alone and enrich in place.
 
+## Document what IS — never what is wrong
+
+`DESIGN.md` is read in order to BUILD. A defect recorded inside it is an ambiguous instruction: is the
+model being told to reproduce the source faithfully, or to correct it? A real manifest carried "a red
+border alone is colour-only information that fails SC 1.4.1" next to that component's spec, which is
+fidelity and correctness in direct conflict inside the one document whose job is to be unambiguous.
+
+So, while documenting:
+
+| What you observed | Where it goes |
+|---|---|
+| How the component IS — colours, sizes, variants, behaviour | `DESIGN.md` |
+| Anything WRONG — a contrast failure, a touch target below the minimum, a variant with no hover state, a `Loading` identical to `Default` | `.vortspec/ai/findings.json` |
+| A check that PASSES, or a criterion that does not apply | **nowhere** |
+
+That last row matters as much as the others. "SC 1.4.3 does not apply to these as text" asserts nothing
+and belongs in neither file: the manifest is not a place for analysis, and a findings list containing
+non-findings cannot be used as a work queue.
+
+Each finding needs enough to be acted on without re-deriving it:
+
+```json
+{ "id": "badge-solid-secondary-contrast", "component": "Badge",
+  "summary": "solid Secondary/Warning fails text contrast",
+  "observed": "2.15:1 — neutral-0 on secondary-500, live 10–12px text",
+  "expected": "4.5:1 for text below 18.66px", "criterion": "WCAG 2.2 SC 1.4.3",
+  "where": "Badge solid / Secondary and Warning",
+  "resolution": "darken the fill, or switch the label to a dark foreground" }
+```
+
+If something is wrong but you cannot name a fix, still record it and leave `resolution` empty — it is
+reported as needing investigation. Dropping it is how a defect becomes invisible.
+
 ## Prerequisites
 
 - `.sdd-de/project.yaml` exists (project is configured)
