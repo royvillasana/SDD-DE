@@ -9,13 +9,16 @@
   },
   "files": [
     "bin/",
+    "lib/",
     "ai-specs/skills/",
+    "ai-specs/agents/",
     "docs/",
     "ascii-art.txt",
     "CLAUDE.md"
   ],
   "dependencies": {
-    "@clack/prompts": "^0.9.0"
+    "@clack/prompts": "^0.9.0",
+    "yaml": "^2.9.1"
   },
   "engines": {
     "node": ">=18"
@@ -43,5 +46,8 @@
   "homepage": "https://github.com/royvillasana/SDD-DE#readme",
   "bugs": {
     "url": "https://github.com/royvillasana/SDD-DE/issues"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.js\""
   }
 }

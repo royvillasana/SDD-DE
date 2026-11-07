@@ -1,6 +1,18 @@
+---
+name: commit
+description: Commit finished work and open a pull request whose description is the Component Spec. Use as the last step, after visual-verify and adversarial-review passed.
+context: fork
+agent: px-committer
+background: false
+---
+
 # Skill: commit
 
 Create a focused commit and open a pull request where the Component Spec is the PR description.
+
+**Delegation.** This step is meant to run in the `px-committer` subagent. Claude Code does that itself (`context: fork`). In any other tool, unless you already are `px-committer`: if the tool has custom subagents, hand this whole step to `px-committer` with the feature or component name and wait for its summary; if it has none, run the step here.
+
+As `px-committer` you have a fresh context: no conversation history and no way to ask the user. Everything needed is in files; where this skill says to ask, confirm or STOP, return `BLOCKED: <what is needed>` instead. End with the short summary your agent file defines, not the full output.
 
 ## When to invoke
 

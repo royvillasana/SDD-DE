@@ -117,6 +117,10 @@ and follow the corresponding `SKILL.md` automatically before responding.
 | `/design-doc` | `.sdd-de/ai-specs/skills/design-doc/SKILL.md` | Generate DESIGN.md from components, validate with @google/design.md |
 | `/sync-agent-symlinks` | `.sdd-de/ai-specs/skills/sync-agent-symlinks/SKILL.md` | Repair broken symlinks across editor directories |
 
+### Subagents
+
+`/visual-verify` → `px-visual-checker`, `/adversarial-review` → `px-reviewer`, `/commit` → `px-committer` (model and effort per step: `.sdd-de/docs/model-tiers.md`). Claude Code forks them automatically; in any other tool, delegate the step to the named subagent (if the tool has subagents; otherwise run it inline) and pass the feature or component name, e.g. `/adversarial-review <name>`. `npx @royvillasana/sdd-de agents sync` renders them for your tools.
+
 ## Standards
 
 Read these documents before implementing any component or page:
