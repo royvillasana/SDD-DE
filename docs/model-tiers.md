@@ -1,20 +1,27 @@
 # Model tiers: which step runs where
 
-The three steps that follow a settled spec (`/visual-verify`, `/adversarial-review`, `/commit`) run in their own subagents, each fixed
-to its own model and effort (agent files in `ai-specs/agents/px-*.md`, wired from the skill front matter with `context: fork` +
-`agent:`). The steps that need a dialogue with you (`/setup`, `/enrich-brief`, `/generate-artifacts`, `/sync-tokens`) and the implementation
-itself stay in the main session, on whatever model and effort it is set to.
+The steps that follow a settled spec (`/implement-spec`, `/visual-verify`, `/adversarial-review`, `/commit`) run in their own subagents,
+each fixed to its own model and effort (agent files in `ai-specs/agents/px-*.md`, wired from the skill front matter with
+`context: fork` + `agent:`). The steps that need a dialogue with you (`/setup`, `/enrich-brief`, `/generate-artifacts`, `/sync-tokens`)
+stay in the main session, on whatever model and effort it is set to.
 
 | Step | Where it runs | Model | Effort |
 |---|---|---|---|
-| `/setup`, `/enrich-brief`, `/generate-artifacts`, `/sync-tokens`, implementing | Main session | session's model | session's setting |
+| `/setup`, `/enrich-brief`, `/generate-artifacts`, `/sync-tokens` | Main session | session's model | session's setting |
+| `/implement-spec` (once per task, or fix) | `px-screen-builder` | Sonnet | Low |
 | `/visual-verify` | `px-visual-checker` | Sonnet | Low |
 | `/adversarial-review` | `px-reviewer` | Opus | Low |
 | `/commit` | `px-committer` | Haiku | Low |
 
-Why these three: they read files and write one report or one commit, never ask you anything, and return a short summary. Opus is kept
-for the review, where the judgement is. Not ported from the Storybook-workflow toolkit (PX-SDD-DE): the spec-writer and screen-builder
-agents, which depend on Task Packets and `screen check`, neither of which this toolkit has.
+Why these four: they read files and write code, one report or one commit, never ask you anything, and return a short summary. Opus is
+kept for the review, where the judgement is. `/implement-spec` does one spec task per call, as the cycle requires (never the whole
+spec in one shot), and cannot see the screen: the dev-server inspection after each task stays with you.
+
+`/implement-spec` and its agent come from the PX-SDD-DE Storybook screen workflow, where the builder worked from self-contained Task
+Packets. Here it works from the spec files and `.sdd-de/docs/` directly, which has **not been measured**: the effort figures below are
+from the PX workflow. Not ported: the spec-writer agent (`/generate-artifacts` asks you questions, and a forked agent cannot), Task
+Packets, `screen check`, `screen drift`, `lint-packets` and the cost report, which depend on a deployed-Storybook catalog this toolkit
+does not have.
 
 ## Why `low` effort
 Opus never runs at `high` here. The effort matrix was measured on the PX-SDD-DE screen workflow (one screen, headless, one run each

@@ -109,6 +109,7 @@ and follow the corresponding `SKILL.md` automatically before responding.
 | `/extract-design-system` | `.sdd-de/ai-specs/skills/extract-design-system/SKILL.md` | Pull the complete token set + component inventory from Figma (once, before the cycle) |
 | `/enrich-brief` | `.sdd-de/ai-specs/skills/enrich-brief/SKILL.md` | Transform a vague brief into a spec-ready story |
 | `/generate-artifacts` | `.sdd-de/ai-specs/skills/generate-artifacts/SKILL.md` | Generate all 3 spec files from the enriched story |
+| `/implement-spec` | `.sdd-de/ai-specs/skills/implement-spec/SKILL.md` | Implement ONE spec task in a cheaper subagent and tick it (step 3 / Apply) |
 | `/visual-verify` | `.sdd-de/ai-specs/skills/visual-verify/SKILL.md` | Run structured visual QA against the spec |
 | `/adversarial-review` | `.sdd-de/ai-specs/skills/adversarial-review/SKILL.md` | Red-team implementation before committing |
 | `/sync-tokens` | `.sdd-de/ai-specs/skills/sync-tokens/SKILL.md` | Sync design tokens between Figma and code |
@@ -119,7 +120,7 @@ and follow the corresponding `SKILL.md` automatically before responding.
 
 ### Subagents
 
-`/visual-verify` → `px-visual-checker`, `/adversarial-review` → `px-reviewer`, `/commit` → `px-committer` (model and effort per step: `.sdd-de/docs/model-tiers.md`). Claude Code forks them automatically; in any other tool, delegate the step to the named subagent (if the tool has subagents; otherwise run it inline) and pass the feature or component name, e.g. `/adversarial-review <name>`. `npx @royvillasana/sdd-de agents sync` renders them for your tools.
+`/implement-spec` → `px-screen-builder` (one task per call), `/visual-verify` → `px-visual-checker`, `/adversarial-review` → `px-reviewer`, `/commit` → `px-committer` (model and effort per step: `.sdd-de/docs/model-tiers.md`). Claude Code forks them automatically; in any other tool, delegate the step to the named subagent (if the tool has subagents; otherwise run it inline) and pass the feature or component name, e.g. `/adversarial-review <name>`. `npx @royvillasana/sdd-de agents sync` renders them for your tools.
 
 ## Standards
 

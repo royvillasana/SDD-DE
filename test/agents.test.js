@@ -14,7 +14,7 @@ const fm = (t) => YAML.parse(/^---\n([\s\S]*?)\n---/.exec(t)[1]);
 const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'sdde-'));
 
 // The table in docs/model-tiers.md is the contract: agent files, skills and the table must agree.
-const STEPS = { 'px-visual-checker': ['balanced', 'low', 'visual-verify'], 'px-reviewer': ['frontier', 'low', 'adversarial-review'], 'px-committer': ['fast', 'low', 'commit'] };
+const STEPS = { 'px-screen-builder': ['balanced', 'low', 'implement-spec'], 'px-visual-checker': ['balanced', 'low', 'visual-verify'], 'px-reviewer': ['frontier', 'low', 'adversarial-review'], 'px-committer': ['fast', 'low', 'commit'] };
 const MODEL = { frontier: 'opus', balanced: 'sonnet', fast: 'haiku' };
 
 test('step agents: tier/effort follow the table; each skill forks to its agent; persona agents are untouched', () => {
@@ -28,6 +28,7 @@ test('step agents: tier/effort follow the table; each skill forks to its agent; 
     assert.ok(row && row.toLowerCase().includes(MODEL[tier]) && row.toLowerCase().includes(effort), name + ' is in the table');
     const k = fm(fs.readFileSync(path.join(root, 'ai-specs', 'skills', skill, 'SKILL.md'), 'utf8'));
     assert.equal(k.name, skill); assert.equal(k.context, 'fork'); assert.equal(k.agent, name); assert.equal(k.background, false);
+    assert.ok(fs.lstatSync(path.join(root, '.claude', 'skills', skill)).isSymbolicLink(), skill + ' is linked for Claude Code');
     assert.match(fs.readFileSync(path.join(root, 'ai-specs', 'skills', skill, 'SKILL.md'), 'utf8'), /\*\*Delegation\.\*\*/);
   }
 });
@@ -37,7 +38,7 @@ test('render: Claude pins models by tier; other tools inherit until configured; 
   for (const d of ['.cursor', '.codex', '.gemini', '.opencode', '.devin', '.github/agents']) fs.mkdirSync(path.join(dir, d), { recursive: true });
   assert.deepEqual(detectTools(dir, loadConfig(dir)), ['claude', 'cursor', 'codex', 'gemini', 'opencode', 'devin', 'copilot']);
   const rows = renderAgents({ cwd: dir, pkgDir: root, cfg: loadConfig(dir) });
-  assert.equal(rows.length, 3 * 7);
+  assert.equal(rows.length, Object.keys(STEPS).length * 7);
   const c = fm(fs.readFileSync(path.join(dir, '.claude/agents/px-reviewer.md'), 'utf8'));
   assert.equal(c.model, 'opus'); assert.equal(c.effort, 'low');
   assert.equal(fm(fs.readFileSync(path.join(dir, '.cursor/agents/px-reviewer.md'), 'utf8')).model, 'inherit');
