@@ -8,10 +8,10 @@ stay in the main session, on whatever model and effort it is set to.
 | Step | Where it runs | Model | Effort |
 |---|---|---|---|
 | `/setup`, `/enrich-brief`, `/generate-artifacts`, `/sync-tokens` | Main session | session's model | session's setting |
-| `/implement-spec` (once per task, or fix) | `px-screen-builder` | Sonnet | Low |
-| `/visual-verify` | `px-visual-checker` | Sonnet | Low |
+| `/implement-spec` (once per task, or fix) | `px-screen-builder` | Sonnet | Medium |
+| `/visual-verify` | `px-visual-checker` | Sonnet | Medium |
 | `/adversarial-review` | `px-reviewer` | Opus | Low |
-| `/commit` | `px-committer` | Haiku | Low |
+| `/commit` | `px-committer` | Haiku | Medium |
 
 Why these four: they read files and write code, one report or one commit, never ask you anything, and return a short summary. Opus is
 kept for the review, where the judgement is. `/implement-spec` does one spec task per call, as the cycle requires (never the whole
@@ -23,12 +23,20 @@ from the PX workflow. Not ported: the spec-writer agent (`/generate-artifacts` a
 Packets, `screen check`, `screen drift`, `lint-packets` and the cost report, which depend on a deployed-Storybook catalog this toolkit
 does not have.
 
-## Why `low` effort
-Opus never runs at `high` here. The effort matrix was measured on the PX-SDD-DE screen workflow (one screen, headless, one run each
-unless noted), not on this toolkit's cycle, so treat it as indicative: Opus and Sonnet at `low` cost $1.92–2.72 over three runs
-(mean $2.23); Opus `medium` everywhere cost $3.77; one Opus-`medium` session cost $3.51. Opus output tokens are about 85% of every
-run's cost, and `low` roughly halves them. Sonnet effort moved the cost by cents. Haiku as a builder was nearly free but produced a
-weaker review and skipped its report, so Haiku stays on `/commit`. Raise an agent's effort in its file only if its output shows it is needed.
+## Why Opus is `low` and the others `medium`
+Nothing runs at `high`. The rule is: **Opus agents `low`, Sonnet and Haiku agents `medium`.** It comes from a measured check of the claim
+"low effort ends up using more tokens, so there is no saving". The check was run on the PX-SDD-DE screen workflow (one screen, headless,
+six runs), not on this toolkit's cycle, so treat it as indicative:
+
+- **Opus: the claim is false.** Output tokens per step, medium vs low: spec 44–49K vs 15–21K, review 11K vs 3–5K. A whole run cost
+  $1.92–2.72 at low (three runs) against $3.43–3.77 at medium. Low did not cause more rework: one of three low runs needed a fix round
+  (+$0.92), and so did the one medium run (+$0.48). Opus output is about 85% of a run's cost, so this is where `low` pays.
+- **Sonnet: effort is a wash.** Builder 11–14K output tokens at low vs 15K at medium; verify 2–3K both. The difference is cents per run, so
+  Sonnet and Haiku agents sit at `medium` as cheap insurance on quality rather than for a measured saving.
+- Haiku as a builder was nearly free but its review failed and its verify step wrote no report, so Haiku stays on `/commit`.
+
+Limits: one screen, one run per setting except low-all (three), and not measured on this toolkit's cycle. Raise an agent's effort in
+`ai-specs/agents/<name>.md` if its output quality shows it is needed.
 
 ## How it works
 - A forked skill runs in a fresh context: no conversation history, no way to ask the user. Each forked skill therefore reads only files (`specs/<feature>/…`, `.sdd-de/`) and returns `BLOCKED: <what is needed>` instead of asking. Pass the feature or component name as the argument: `/adversarial-review <name>`.

@@ -2,7 +2,7 @@
 name: px-visual-checker
 description: Verifies a built component or screen against its design reference in layers (visual, token, code) and writes the report. Runs through /visual-verify; follows a spec that is already settled.
 tier: balanced
-effort: low
+effort: medium
 maxTurns: 60
 ---
 

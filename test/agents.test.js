@@ -14,7 +14,7 @@ const fm = (t) => YAML.parse(/^---\n([\s\S]*?)\n---/.exec(t)[1]);
 const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'sdde-'));
 
 // The table in docs/model-tiers.md is the contract: agent files, skills and the table must agree.
-const STEPS = { 'px-screen-builder': ['balanced', 'low', 'implement-spec'], 'px-visual-checker': ['balanced', 'low', 'visual-verify'], 'px-reviewer': ['frontier', 'low', 'adversarial-review'], 'px-committer': ['fast', 'low', 'commit'] };
+const STEPS = { 'px-screen-builder': ['balanced', 'medium', 'implement-spec'], 'px-visual-checker': ['balanced', 'medium', 'visual-verify'], 'px-reviewer': ['frontier', 'low', 'adversarial-review'], 'px-committer': ['fast', 'medium', 'commit'] };
 const MODEL = { frontier: 'opus', balanced: 'sonnet', fast: 'haiku' };
 
 test('step agents: tier/effort follow the table; each skill forks to its agent; persona agents are untouched', () => {
@@ -43,7 +43,7 @@ test('render: Claude pins models by tier; other tools inherit until configured; 
   assert.equal(c.model, 'opus'); assert.equal(c.effort, 'low');
   assert.equal(fm(fs.readFileSync(path.join(dir, '.cursor/agents/px-reviewer.md'), 'utf8')).model, 'inherit');
   const t = fs.readFileSync(path.join(dir, '.codex/agents/px-committer.toml'), 'utf8');
-  assert.match(t, /^name = "px-committer"$/m); assert.match(t, /^model_reasoning_effort = "low"$/m);
+  assert.match(t, /^name = "px-committer"$/m); assert.match(t, /^model_reasoning_effort = "medium"$/m);
   assert.ok(fs.existsSync(path.join(dir, '.github/agents/px-reviewer.agent.md')));
   assert.ok(fs.existsSync(path.join(dir, '.opencode/agents/px-reviewer.md')));
   assert.ok(fs.existsSync(path.join(dir, '.devin/agents/px-reviewer.md')));

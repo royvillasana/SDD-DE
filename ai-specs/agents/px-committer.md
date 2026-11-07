@@ -2,7 +2,7 @@
 name: px-committer
 description: Stages finished work, commits it with the standard message, pushes and opens the pull request whose body is the Component Spec. Runs through /commit; the work is mechanical.
 tier: fast
-effort: low
+effort: medium
 tools: [read, shell, search]
 maxTurns: 25
 ---

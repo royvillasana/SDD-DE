@@ -2,7 +2,7 @@
 name: px-screen-builder
 description: Implements exactly one task from a Component Spec, Interaction Spec or Page Spec (a component, a variant, a state, a screen region) using the project's tokens and standards, then ticks the task. Runs through /implement-spec; not for planning or writing specs.
 tier: balanced
-effort: low
+effort: medium
 tools: [read, write, shell, search]
 maxTurns: 40
 ---
