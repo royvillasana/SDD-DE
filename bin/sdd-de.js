@@ -18,7 +18,9 @@ if (arg === '--help' || arg === '-h') {
   process.exit(0);
 }
 
-if (arg === 'update' || arg === '--update') {
+if (arg === 'agents') {
+  process.exit(require('../lib/agents/cli').run(process.argv.slice(3)));
+} else if (arg === 'update' || arg === '--update') {
   update().catch(err => {
     console.error('\n  Error:', err.message);
     process.exit(1);
@@ -423,6 +425,8 @@ async function init() {
   try {
     // Skills
     copyDir(path.join(pkgDir, 'ai-specs', 'skills'), path.join(sddeDir, 'ai-specs', 'skills'));
+    // Step subagents (model + effort per workflow step), rendered for each coding tool found
+    require('../lib/agents/cli').installStepAgents(cwd, pkgDir);
     // Docs
     copyDir(path.join(pkgDir, 'docs'), path.join(sddeDir, 'docs'));
     // project.yaml
@@ -612,6 +616,8 @@ async function update() {
   try {
     // Skills — overwrite
     copyDir(path.join(pkgDir, 'ai-specs', 'skills'), path.join(sddeDir, 'ai-specs', 'skills'));
+    // Step subagents (model + effort per workflow step), rendered for each coding tool found
+    require('../lib/agents/cli').installStepAgents(cwd, pkgDir);
 
     // Docs — overwrite
     copyDir(path.join(pkgDir, 'docs'), path.join(sddeDir, 'docs'));
@@ -856,6 +862,9 @@ Usage:
   npx @royvillasana/sdd-de            Install SDD-DE and configure your project
   npx @royvillasana/sdd-de update     Update skills, docs, and CLAUDE.md to latest
                                       (preserves your project.yaml config)
+  npx @royvillasana/sdd-de agents sync|status
+                                      Render the step subagents for Claude, Cursor, Codex,
+                                      Gemini, Copilot, opencode, Devin (docs/model-tiers.md)
 
 ──────────────────────────────────────────────────────────────
  How it works — Two Phases, One 7-Step Cycle

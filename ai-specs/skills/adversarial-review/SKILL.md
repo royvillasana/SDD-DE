@@ -1,6 +1,18 @@
+---
+name: adversarial-review
+description: Red-team a finished implementation against its specs before commit and write the findings report. Use after /visual-verify passes.
+context: fork
+agent: px-reviewer
+background: false
+---
+
 # Skill: adversarial-review
 
 Red-team the implementation before committing. Challenge every assumption: does the code actually match the spec?
+
+**Delegation.** This step is meant to run in the `px-reviewer` subagent. Claude Code does that itself (`context: fork`). In any other tool, unless you already are `px-reviewer`: if the tool has custom subagents, hand this whole step to `px-reviewer` with the feature or component name and wait for its summary; if it has none, run the step here.
+
+As `px-reviewer` you have a fresh context: no conversation history and no way to ask the user. Everything needed is in files; where this skill says to ask, confirm or STOP, return `BLOCKED: <what is needed>` instead. End with the short summary your agent file defines, not the full output.
 
 ## When to invoke
 

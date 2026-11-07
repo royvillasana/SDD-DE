@@ -58,6 +58,7 @@ Use only CSS custom properties from globals.css. No hardcoded values."
 
 Rules:
 - One task per prompt. Never ask Claude to implement the full spec in one shot.
+- To run a task on a cheaper model, use `/implement-spec <feature> [task]`: it does exactly one task in a subagent (see `model-tiers.md`) and you still inspect the result in the dev server.
 - After each task: mark it complete in the spec (`- [ ]` → `- [x]`).
 - After each task: run the dev server and visually inspect the change before continuing.
 

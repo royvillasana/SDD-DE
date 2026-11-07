@@ -1,6 +1,18 @@
+---
+name: visual-verify
+description: Verify a finished implementation against its design reference and the spec, layer by layer, and write the report. Use after all spec tasks are checked.
+context: fork
+agent: px-visual-checker
+background: false
+---
+
 # Skill: visual-verify
 
 Run a structured visual QA comparing the live implementation to the design spec.
+
+**Delegation.** This step is meant to run in the `px-visual-checker` subagent. Claude Code does that itself (`context: fork`). In any other tool, unless you already are `px-visual-checker`: if the tool has custom subagents, hand this whole step to `px-visual-checker` with the feature or component name and wait for its summary; if it has none, run the step here.
+
+As `px-visual-checker` you have a fresh context: no conversation history and no way to ask the user. Everything needed is in files; where this skill says to ask, confirm or STOP, return `BLOCKED: <what is needed>` instead. End with the short summary your agent file defines, not the full output.
 
 ## When to invoke
 
